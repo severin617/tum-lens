@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Lens</string>
+    <string name="welcome">Welcome to TUM Lens!</string>
+    <string name="this_app_uses">This app uses TensorFlow to classify the objects you point your phone at.</string>
+    <string name="it_therefore">It therefore needs access to your camera.</string>
+    <string name="give_permission">give permission</string>
+    <string name="settings">Settings</string>
+    <string name="exit">Exit</string>
+    <string name="this_will_only">This will only work if you grant the permission to use your camera.</string>
+    <string name="this_app_feeds">This app feeds your cameras\' view finder input to a TensorFlow model, that tries to classify the object you point your phone at.</string>
+    <string name="hi_there">Hi there!</string>
+</resources>
