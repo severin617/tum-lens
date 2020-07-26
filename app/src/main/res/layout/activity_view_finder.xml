@@ -7,19 +7,106 @@
     android:orientation="vertical"
     tools:context=".ViewFinder">
 
-    <!--  OUTPUT des LIVE Camera Feed  -->
+
+
+
+
+    <!--  WRAPPER for MENU BAR  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/menu_bar"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#000"
+        android:layoutDirection="ltr"
+        android:orientation="vertical"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+<!--    TODO: https://www.youtube.com/watch?v=Z1w3y0saKjY    -->
+<!--    TODO: create custom buttons with visual states    -->
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_rotate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_baseline_cached_30"
+            android:tint="#fff"
+            android:background="@null"
+
+            android:layout_marginStart="16dp"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_flash"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_flash"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_baseline_flash_on_30"
+            android:tint="#fff"
+            android:background="@null"
+
+
+
+            android:layout_marginStart="18dp"
+
+            app:layout_constraintStart_toEndOf="@id/btn_rotate"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <!--    launches the image validator (live vs converted)    -->
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_validate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_baseline_aspect_ratio_30"
+            android:tint="#fff"
+            android:background="@null"
+            android:layout_marginStart="18dp"
+
+            app:layout_constraintStart_toEndOf="@id/btn_flash"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_settings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_baseline_settings_30"
+            android:tint="#fff"
+            android:background="@null"
+
+            android:layout_marginEnd="16dp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--  OUTPUT of LIVE Camera Feed  -->
     <androidx.camera.view.PreviewView
         android:id="@+id/viewFinder"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:background="#000"
 
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menu_bar"
         app:layout_constraintBottom_toTopOf="@+id/wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!--  WRAPPER für die RESULTS  -->
+
+
+    <!--  WRAPPER for RESULTS  -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/wrapper"
         android:layout_width="match_parent"
@@ -31,7 +118,8 @@
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/viewFinder"
+        app:layout_constraintBottom_toTopOf="@+id/modelSelector_wrapper">
 
         <!--  SUGGESTIONS -->
         <TextView
@@ -232,7 +320,7 @@
 
 
 
-
+        <!--    TIME    -->
         <TextView
             android:id="@+id/time"
             android:layout_width="match_parent"
@@ -249,5 +337,62 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--  MODEL SELECTOR  -->
+    <!--  WRAPPER for MENU BAR  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/modelSelector_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#000"
+        android:layoutDirection="ltr"
+        android:orientation="vertical"
+
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wrapper"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="0dp"
+        >
+
+
+        <HorizontalScrollView
+            android:id="@+id/modelSelector"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+
+            >
+
+            <com.google.android.material.chip.ChipGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MobileNet Float"/>
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MobileNet Quantized"/>
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MobileNet Float"/>
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MobileNet Quantized"/>
+            </com.google.android.material.chip.ChipGroup>
+
+        </HorizontalScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,10 +11,18 @@ import java.io.IOException;
 /** This TensorFlow Lite classifier works with the Inception Net V1 model. */
 public class Classifier_Inception_v1_quant extends Classifier {
 
+    // TODO: das hier mal wirklich aufklären...
 
-    // ANALOG
-    private static final float IMAGE_MEAN = 127.5f;
-    private static final float IMAGE_STD = 127.5f;
+    /**
+     * The QUANTIZED model does not require normalization, thus set mean as 0.0f, and std as 1.0f to
+     * bypass the normalization.
+     */
+    private static final float IMAGE_MEAN = 0.0f;
+    private static final float IMAGE_STD = 1.0f;
+
+//     FLOAT MODEL model
+//    private static final float IMAGE_MEAN = 127.5f;
+//    private static final float IMAGE_STD = 127.5f;
 
     // brauchen wir das überhaupt?!?!?!
     /** Quantized MobileNet requires additional dequantization to the output probability. */
@@ -57,6 +65,17 @@ public class Classifier_Inception_v1_quant extends Classifier {
     }
 
 
+
+
+    @Override
+    public int getInputDimX() {
+        return 224;
+    }
+
+    @Override
+    public int getInputDimY() {
+        return 224;
+    }
 
 
 //

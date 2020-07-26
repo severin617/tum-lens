@@ -70,4 +70,14 @@ public class ClassifierFloatMobileNet extends Classifier {
   protected TensorOperator getPostprocessNormalizeOp() {
     return new NormalizeOp(PROBABILITY_MEAN, PROBABILITY_STD);
   }
+
+  @Override
+  public int getInputDimX() {
+    return 224;
+  }
+
+  @Override
+  public int getInputDimY() {
+    return 224;
+  }
 }

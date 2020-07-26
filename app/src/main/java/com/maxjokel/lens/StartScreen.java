@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -39,6 +40,14 @@ public class StartScreen extends AppCompatActivity {
         // set corresponding layout
         setContentView(R.layout.activity_start_screen);
 
+
+        // TODO: does not work...
+        // change appearance of status bar
+        // [source: https://stackoverflow.com/a/47322331]
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Navigation bar the soft bottom of some phones like nexus and some Samsung note series
+//            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.black));     //status bar or the time bar at the top
+//        }
 
         // check if permissions are already granted
         // if so, then launch directly into the view-finder activity
@@ -93,7 +102,7 @@ public class StartScreen extends AppCompatActivity {
 
         if (ContextCompat.checkSelfPermission(StartScreen.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 
-            // permission to use CAMERA is given, start right into VIEWFINDER and do NOT push the StartScreen to HISTORY
+            // permission to use CAMERA is given, start right into VIEWFINDER and REMOVE StartScreen from HISTORY
 
             Intent intent = new Intent(StartScreen.this, ViewFinder.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);

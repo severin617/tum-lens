@@ -11,10 +11,10 @@ Further reading: https://developer.android.com/studio/debug/dev-options
 
 
 ### 2 Clone Repository in Android Studio
-`git clone ...`
+`git clone ...` to local
 Size of repository caused by the `.tflite` models in `/assets` folder.
 
 ### 3 Connect your Phone via Cable
+Open up Android Studio and import the previously cloned project.
 It needs to appear in the drop down in the upper menu bar of Android Studio.
-
-### 4 Run
+Now, run the project. The app should automatically launch on your phone.

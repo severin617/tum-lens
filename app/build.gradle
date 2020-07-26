@@ -40,6 +40,12 @@ dependencies {
 
 
     // +++
+    // Material Design  -  25.07.2020
+    // +++
+    implementation 'com.google.android.material:material:1.2.0-rc01'
+
+
+    // +++
     // CameraX core library  -  08.07.2020, 15:35
     // +++
     def camerax_version = "1.0.0-beta04"

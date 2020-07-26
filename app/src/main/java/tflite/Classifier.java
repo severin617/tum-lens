@@ -39,6 +39,7 @@ import org.tensorflow.lite.support.label.TensorLabel;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.MappedByteBuffer;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -247,22 +248,49 @@ public abstract class Classifier {
     LOGGER.d("Created a Tensorflow Lite Image Classifier.");
   }
 
-  /** Runs inference and returns the classification results. */
+  /** Runs inference and returns the classification results.
+   *
+   * @param: bitmap:            die zuvor aus YUV zu RGB konvertierte Bitmap
+   * @param: sensorOrientation: 0, weil warum nicht...
+   *
+   * */
   public List<Recognition> recognizeImage(final Bitmap bitmap, int sensorOrientation) {
     // Logs this method so that it can be analyzed with systrace.
     Trace.beginSection("recognizeImage");
 
     Trace.beginSection("loadImage");
     long startTimeForLoadImage = SystemClock.uptimeMillis();
+
+    // ZUR INFO: inputImageBuffer = new TensorImage(imageDataType);
     inputImageBuffer = loadImage(bitmap, sensorOrientation);
+
+//    System.out.println("-> bitmap           Width and Height: " + bitmap.getWidth() + "px x " + bitmap.getHeight() + "px; has " + bitmap.getByteCount() + " bytes. has alpha: " + bitmap.hasAlpha());
+//    System.out.println("-> inputImageBuffer Width and Height: " + inputImageBuffer.getWidth() + "px x " + inputImageBuffer.getHeight() + "px; data type: " + inputImageBuffer.getDataType());
+
+
     long endTimeForLoadImage = SystemClock.uptimeMillis();
     Trace.endSection();
     LOGGER.v("Timecost to load the image: " + (endTimeForLoadImage - startTimeForLoadImage));
+//    System.out.println("Timecost to load the image: " + (endTimeForLoadImage - startTimeForLoadImage));
+// BIS HIER HER KOMMEN WIR SCHON MAL
+
 
     // Runs the inference call.
     Trace.beginSection("runInference");
     long startTimeForReference = SystemClock.uptimeMillis();
+
+//    this one works with MobileNet, etc.
     tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer().rewind());
+
+// 25. Juli: attempt to make InceptionNet work
+// "Cannot convert between a TensorFlowLite buffer with 150.528 [=224x224*3] bytes and a Java Buffer with 602.112 [448x448*3] bytes."
+//
+//   602.112 = 448x448 x 3
+//    also werden die Dimensionen verdoppelt?!
+
+// -> Java Buffer ist scheinbar zu groß...
+
+
     long endTimeForReference = SystemClock.uptimeMillis();
     Trace.endSection();
     LOGGER.v("Timecost to run model inference: " + (endTimeForReference - startTimeForReference));
@@ -310,13 +338,24 @@ public abstract class Classifier {
     inputImageBuffer.load(bitmap);
 
     // Creates processor for the TensorImage.
-    int cropSize = Math.min(bitmap.getWidth(), bitmap.getHeight());
+//    ALT
+//    int cropSize = Math.min(bitmap.getWidth(), bitmap.getHeight());
+
+//    NEU
+    int cropSize = getInputDimX();
+
     int numRotation = sensorOrientation / 90;
     // TODO(b/143564309): Fuse ops inside ImageProcessor.
     ImageProcessor imageProcessor =
         new ImageProcessor.Builder()
             .add(new ResizeWithCropOrPadOp(cropSize, cropSize))
-            .add(new ResizeOp(imageSizeX, imageSizeY, ResizeMethod.NEAREST_NEIGHBOR))
+
+            // ALTE METHODE: aus dem IMAGE selbst herleiten
+//            .add(new ResizeOp(imageSizeX, imageSizeY, ResizeMethod.NEAREST_NEIGHBOR))
+
+            // NEUE METHODE: aus den MODEL INFOS herleiten
+            // Hintergrund: Preview-Dimension ist unzuverlässig, liegert nicht zwangsläufig die intendierte Bildgröße
+            .add(new ResizeOp(getInputDimX(), getInputDimY(), ResizeMethod.NEAREST_NEIGHBOR))
             .add(new Rot90Op(numRotation))
             .add(getPreprocessNormalizeOp())
             .build();
@@ -367,4 +406,13 @@ public abstract class Classifier {
    * 1.0f, respectively.
    */
   protected abstract TensorOperator getPostprocessNormalizeOp();
+
+
+  // NEU
+  // 26. JULI
+  // muss public sein, weil wir sonst nicht aus den anderen Klassen zugreifen können
+//  protected
+  public abstract int getInputDimX();
+//  protected
+  public abstract int getInputDimY();
 }

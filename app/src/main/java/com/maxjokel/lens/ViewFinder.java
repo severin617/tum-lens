@@ -1,19 +1,26 @@
 package com.maxjokel.lens;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.media.Image;
+import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Size;
+import android.view.HapticFeedbackConstants;
 import android.view.Surface;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,6 +36,12 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
 import com.google.common.util.concurrent.ListenableFuture;
+
+import org.tensorflow.lite.support.image.ImageProcessor;
+import org.tensorflow.lite.support.image.TensorImage;
+import org.tensorflow.lite.support.image.ops.ResizeOp;
+import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp;
+import org.tensorflow.lite.support.image.ops.Rot90Op;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -75,6 +88,8 @@ public class ViewFinder extends AppCompatActivity {
 
     private ExecutorService _cameraExecutorForAnalysis = null;
 
+    private Boolean isFlashEnabled = false;
+
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -89,10 +104,14 @@ public class ViewFinder extends AppCompatActivity {
     // TF-Lite related to CLASSIFICATION:   [source: TF-Lite example app]
     private Classifier classifier;
 
-        protected int previewDimX = 480;
-//    protected int previewDimX = 224;
-        protected int previewDimY = 480;
-//    protected int previewDimY = 224;
+    protected int previewDimX = 480;
+//    protected int previewDimY = 480;
+    protected int previewDimY = 640;
+
+    // TAKEAWAY: all "Google Models" use 224x224 images as input layer
+    // TODO: streamlining
+    protected int modelInputX = 224;
+    protected int modelInputY = 224;
 
 //    protected Bitmap rgbBitmap = null;
 
@@ -120,14 +139,76 @@ public class ViewFinder extends AppCompatActivity {
         initCameraX();
 
 
-        // TODO
+
+
+        // set up Event Listeners
+
+        // turn flash on or off
+        ImageButton btn_flash = findViewById(R.id.btn_flash);
+//        btn_flash.setHapticFeedbackEnabled(true);
+        btn_flash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // TODO: update icon accordingly
+
+                if(_camera.getCameraInfo().hasFlashUnit()){
+
+                    // perform haptic feedback
+                    v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
+
+                    if(isFlashEnabled){
+                        _camera.getCameraControl().enableTorch(false);
+                    } else {
+                        _camera.getCameraControl().enableTorch(true);
+                    }
+
+                    isFlashEnabled = !isFlashEnabled;
+
+                }
+            }
+        });
+
+
+        // JUMP TO VALIDATOR VIEW
+        ImageButton btn_validate = findViewById(R.id.btn_validate);
+        btn_validate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
+                Intent intent = new Intent(ViewFinder.this, ImageValidator.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
+
+
+
+
+        /**
+         * mit allen Netzwerken durchverifiziert -> works :)
+         *  - ok: QUANTIZED_MOBILENET
+         *  - ok: QUANTIZED_EFFICIENTNET
+         *  - ok: INCEPTION_V1 (quantized)
+         *  - ok: FLOAT_MOBILENET
+         *  - ok: FLOAT_EFFICIENTNET
+        * */
+
         // initialize TF-Lite Classifier
+//        Model model = Model.FLOAT_EFFICIENTNET;
 //        Model model = Model.FLOAT_MOBILENET;
-        Model model = Model.QUANTIZED_MOBILENET;
+
+//        Model model = Model.QUANTIZED_MOBILENET;
+        Model model = Model.QUANTIZED_EFFICIENTNET;
+
 //        Model model = Model.INCEPTION_V1;
+
         Device device = Device.CPU; // Device.CPU; // Device.GPU // Device.NNAPI
         int numThreads = 3;
-//
+
         try {
             LOGGER.d("Creating classifier (model=%s, device=%s, numThreads=%d)", model, device, numThreads);
             classifier = Classifier.create(this, model, device, numThreads);
@@ -158,7 +239,8 @@ public class ViewFinder extends AppCompatActivity {
                 // init preview object that holds the camera live feed
                 _preview = new Preview.Builder()
                         .setTargetResolution(new Size(previewDimX, previewDimY)) // damit ist alles DEUTLICH SCHNELLER!!
-                        .setTargetRotation(Surface.ROTATION_180) // warum auch immer...
+//                        .setTargetRotation(Surface.ROTATION_180) // warum auch immer...
+                        .setTargetRotation(Surface.ROTATION_0) // warum auch immer...
                         .build();
 
 
@@ -166,7 +248,8 @@ public class ViewFinder extends AppCompatActivity {
                 _analysis = new ImageAnalysis.Builder()
                         .setTargetResolution(new Size(previewDimX, previewDimY)) // 06.06.2020, 18 Uhr: Bitmap muss QUADRATISCH sein
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) // async
-                        .setTargetRotation(Surface.ROTATION_180) // warum auch immer...
+//                        .setTargetRotation(Surface.ROTATION_180) // warum auch immer...
+                        .setTargetRotation(Surface.ROTATION_0) // warum auch immer...
                         .build();
 
                 // set up the image analysis use case
@@ -196,11 +279,24 @@ public class ViewFinder extends AppCompatActivity {
                         // TODO: ERKENNTNIS 17.06, 18:51
                         //       das mit der globalen Bitmap macht NUR Probleme -> NullPointerException;
                         //       lokal erscheint die bessere Wahl zu sein
-                        final Bitmap rgbBitmap = toBitmap(img);
+//                        final Bitmap rgbBitmap = toBitmap(img);
+                        final Bitmap rgbBitmap = toCroppedRGBBitmap(img);
 
+//                        final Bitmap rgbBitmap = Bitmap.createBitmap(toBitmap(img), 0, 0, previewDimX, previewDimY);
+
+
+                        // -------------
+//                        System.out.println("-> image  Width and Height: " + image.getWidth() + "px x " + image.getHeight() + "px");
+//                        System.out.println("-> bitmap Width and Height: " + rgbBitmap.getWidth() + "px x " + rgbBitmap.getHeight() + "px");
+                        // IMAGE:  352px x 288px = 101.376px
+                        // BITMAP: 224px x 224px = 50.176px
+
+//                        isCurrentlyClassifying = false;
+//                        classifier = null;
+                        // -------------
 
                         // pre classification checks
-                        if (classifier == null || rgbBitmap == null) {
+                        if (classifier == null) {
                             image.close();
                             return;
                         }
@@ -276,11 +372,31 @@ public class ViewFinder extends AppCompatActivity {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
+
+
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // toBitmap() Method   [source: https://stackoverflow.com/a/58568495]
-    // converts a YUV image to a RGB Bitmap
-    private Bitmap toBitmap(Image image) {
+    // toBitmap() Method
+    //
+    // >>based on the method developed in ImageValidator.java<<
+    //
+    // Workflow [currently only validated with square dimensions]
+    //  - convert YUV image to RGB bitmap:
+    //      - reduce quality to 35%
+    //      - crop to square (length is determined by shortest side of image)
+    //  - scale square down to model input requirements
+    //
+    // Takeaways
+    //  - "quality" doesn't seem to have a huge effect on conversion time
+    //  - both, 25% and 50% run in sub-20ms time frames
+    //
+    private Bitmap toCroppedRGBBitmap(Image image) {
+
+//        System.out.println("before convert + crop: " + image.getWidth() + "px x " + image.getHeight() + "px");
+
+        // STEP 1: convert YUV image to RGB bitmap and crop   [source: https://stackoverflow.com/a/58568495]
         Image.Plane[] planes = image.getPlanes();
+
         ByteBuffer yBuffer = planes[0].getBuffer();
         ByteBuffer uBuffer = planes[1].getBuffer();
         ByteBuffer vBuffer = planes[2].getBuffer();
@@ -290,18 +406,248 @@ public class ViewFinder extends AppCompatActivity {
         int vSize = vBuffer.remaining();
 
         byte[] nv21 = new byte[ySize + uSize + vSize];
-        //U and V are swapped
         yBuffer.get(nv21, 0, ySize);
         vBuffer.get(nv21, ySize, vSize);
         uBuffer.get(nv21, ySize + vSize, uSize);
 
         YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
 
+        // IDEA: the object of desire is probably in the image center;
+        // so it should not matter, if we loose some pixels near the bezels
+        // -> factor is currently 90% of the smaller side
+        int cropSize = (int)(0.9 * Math.min(image.getWidth(), image.getHeight()));
+
+        // calc offsets for cropping
+        int offShortSide = (int)(0.5 * (Math.min(image.getWidth(), image.getHeight()) - cropSize));
+        int offLongSide = (int)(0.5 * (Math.max(image.getWidth(), image.getHeight()) - cropSize));
+
+        // convert to RGB and crop; quality is set to 35%
+        if (image.getWidth() < image.getHeight()){
+            // PORTRAIT
+            yuvImage.compressToJpeg(
+                    new Rect(
+                            offShortSide,                       // left
+                            offLongSide,                        // top
+                            (image.getWidth()-offShortSide),    // right
+                            (image.getHeight()-offLongSide)),   // bottom
+                    35, out);                            // note the byte-buffer at the end of the command
+        } else {
+            // LANDSCAPE
+            yuvImage.compressToJpeg(
+                    new Rect(
+                            offLongSide,
+                            offShortSide,
+                            (image.getWidth()-offLongSide),
+                            (image.getHeight()-offShortSide)),
+                    35, out);
+        }
+
+        // finally, create bitmap
         byte[] imageBytes = out.toByteArray();
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        Bitmap temp1 = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
+
+//        System.out.println("after convert + crop: " + temp1.getWidth() + "px x " + temp1.getHeight() + "px");
+
+
+        // STEP 2: scale down to required dimensions
+        Bitmap temp2 = Bitmap.createScaledBitmap(temp1, modelInputX, modelInputY, true);
+
+        // STEP 3: rotate by 90 degrees
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+
+        return Bitmap.createBitmap(temp2, 0, 0, temp2.getWidth(), temp2.getHeight(), matrix, true);
+
     }
+    // end of method - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+
+// BACKUP 26. JULI:
+// rumexperimentiert, quasi der Work in Progress;
+// TODO: LÖSCHEN
+//
+//    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//    // toBitmap() Method   [source: https://stackoverflow.com/a/58568495]
+//    // converts a YUV image to a RGB Bitmap
+//
+//
+//    // das Image img aus dem Analyzer-Use-Case wird hier vom YUV zum RGB Format umgewandelt
+//    // dabei wird eine Bitmap erstellt
+//    //
+//    // AKTUELL: Bitmap-Größe bei Aufruf der Klasse festgelegt;
+//    // -> wollen das dynamisch machen, so dass die Größe vom Model abhängig ist
+//
+//    // Ausschnitt von oben:
+//    /*
+//        protected int previewDimX = 480;
+//        protected int previewDimY = 480;
+//
+//        ...
+//
+//        final Bitmap rgbBitmap = toBitmap(img);
+//        -> wir returnen also eine Bitmap
+//        -> die Größe wird aktuell aus dem IMAGE abgeleitet
+//           diese wiederum basiert auf dem Preview bzw. den Werten oben
+//
+//
+//
+//     // direkt aus CLASSIFIER.JAVA
+//    private TensorImage loadImage(final Bitmap bitmap, int sensorOrientation) {
+//        // Loads bitmap into a TensorImage.
+//        inputImageBuffer.load(bitmap);
+//
+//        // Creates processor for the TensorImage.
+//        int cropSize = Math.min(bitmap.getWidth(), bitmap.getHeight());
+//        int numRotation = sensorOrientation / 90;
+//        ImageProcessor imageProcessor =
+//                new ImageProcessor.Builder()
+//                        .add(new ResizeWithCropOrPadOp(cropSize, cropSize))
+//                        .add(new ResizeOp(imageSizeX, imageSizeY, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
+//                        .add(new Rot90Op(numRotation))
+//                        .add(getPreprocessNormalizeOp())
+//                        .build();
+//        return imageProcessor.process(inputImageBuffer);
+//    }
+//    */
+//    private Bitmap toCroppedBitmapRGB(Image image) {
+//
+//        // workflow
+//        //  - convert Image to Bitmap
+//        //  - convert YUV to RGB; reduce quality to 0.8
+//        //  - crop to square
+//        //  - scale down to appropriate model input size
+//
+//        // IDEA:
+//        //  - wahrscheinlich befindet sich das Objekt relativ mittig im Bildausschnitt
+//        //    -> Bild quadratisch croppe, mit 80% der kleineren Seite
+//        //    -> das an erster Stelle, weil somit weniger Rechenaufwand oder?
+//        //  - dann umwandeln
+//        //  - dann und runterskalieren
+//
+////
+//        System.out.println("before convert + crop: " + image.getWidth() + "px x " + image.getHeight() + "px");
+//
+//        // STEP 1: convert YUV to RGB
+//        Image.Plane[] planes = image.getPlanes();
+//
+//        ByteBuffer yBuffer = planes[0].getBuffer();
+//        ByteBuffer uBuffer = planes[1].getBuffer();
+//        ByteBuffer vBuffer = planes[2].getBuffer();
+//
+//        int ySize = yBuffer.remaining();
+//        int uSize = uBuffer.remaining();
+//        int vSize = vBuffer.remaining();
+//
+//        byte[] nv21 = new byte[ySize + uSize + vSize];
+//        //U and V are swapped
+//        yBuffer.get(nv21, 0, ySize);
+//        vBuffer.get(nv21, ySize, vSize);
+//        uBuffer.get(nv21, ySize + vSize, uSize);
+//
+//        YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+////        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 80, out);
+//
+//
+//        // the object of desire is probably in the image center;
+//        // so it should not matter, if we loose some pixels near the bezels
+//        // -> factor is currently 80% of the smaller side
+//        int cropSize = (int)(0.8 * Math.min(image.getWidth(), image.getHeight()));
+//
+//        // calc offsets
+//        int offShortSide = (int)(0.5 * (Math.min(image.getWidth(), image.getHeight()) - cropSize));
+//        int offLongSide = (int)(0.5 * (Math.max(image.getWidth(), image.getHeight()) - cropSize));
+//
+//        // convert to RGB and crop; quality is set to 75%
+//        if (image.getWidth() < image.getHeight()){
+//            // PORTRAIT
+//            yuvImage.compressToJpeg(
+//                    new Rect(
+//                            offShortSide,                       // left
+//                            offLongSide,                        // top
+//                            (image.getWidth()-offShortSide),    // right
+//                            (image.getHeight()-offLongSide)),   // bottom
+//                    75, out);                            // note the byte-buffer at the end of the command
+//        } else {
+//            // LANDSCAPE
+//            yuvImage.compressToJpeg(
+//                    new Rect(
+//                            offLongSide,                       // left
+//                            offShortSide,                      // top
+//                            (image.getWidth()-offLongSide),    // right
+//                            (image.getHeight()-offShortSide)), // bottom
+//                    75, out);
+//        }
+//
+////        THIS ONE WORKS
+////        yuvImage.compressToJpeg(new Rect(0, 0, cropSize, cropSize), 80, out); // HIER HINTEN steht, dass in den Byte-Stream geschrieben wird
+//
+//
+//
+//        byte[] imageBytes = out.toByteArray();
+//        Bitmap temp1 = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+//
+//// KIND OF WORKS :)
+////        runOnUiThread( new Runnable() {
+////            @Override
+////            public void run() {
+////                showBitmap(temp1);
+////            }
+////        });
+//
+//
+//        System.out.println("after convert + crop: " + temp1.getWidth() + "px x " + temp1.getHeight() + "px");
+//
+//        // STEP 2: resize
+////        Bitmap temp2 = Bitmap.createScaledBitmap(temp1, previewDimX, previewDimY, true);
+//        Bitmap temp2 = Bitmap.createScaledBitmap(temp1, modelInputX, modelInputY, true);
+//
+//        System.out.println("after resize: " + temp2.getWidth() + "px x " + temp2.getHeight() + "px");
+//
+//
+//        // STEP 3: crop
+//        // TODO: wir wollen das "Kernstück" in der "Mitte"!
+//
+//        // evtl: int cropDimension =  Math.min(bitmap.getWidth(), bitmap.getHeight());
+////        Bitmap temp3 = ThumbnailUtils.extractThumbnail(temp2, previewDimX, previewDimY);
+////        Bitmap temp3 = ThumbnailUtils.extractThumbnail(temp2, previewDimX, previewDimX);
+//        Bitmap temp3 = ThumbnailUtils.extractThumbnail(temp2, modelInputX, modelInputY);
+////        Bitmap temp3 = ThumbnailUtils.extractThumbnail(temp1, modelInputX, modelInputY);
+//
+////            System.out.println("this is toBitmap(); temp3-Dimensions: " + temp3.getWidth() + "px x " + temp3.getHeight() + "px");
+//
+//        return temp3;
+//
+//    }
+// BACKUP 25. JULI: funktioniert einwandfrei :)
+//    private Bitmap toBitmapWORKING(Image image) {
+//
+//        Image.Plane[] planes = image.getPlanes();
+//
+//        ByteBuffer yBuffer = planes[0].getBuffer();
+//        ByteBuffer uBuffer = planes[1].getBuffer();
+//        ByteBuffer vBuffer = planes[2].getBuffer();
+//
+//        int ySize = yBuffer.remaining();
+//        int uSize = uBuffer.remaining();
+//        int vSize = vBuffer.remaining();
+//
+//        byte[] nv21 = new byte[ySize + uSize + vSize];
+//        //U and V are swapped
+//        yBuffer.get(nv21, 0, ySize);
+//        vBuffer.get(nv21, ySize, vSize);
+//        uBuffer.get(nv21, ySize + vSize, uSize);
+//
+//        YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 80, out);
+//
+//        byte[] imageBytes = out.toByteArray();
+//        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+//    }
     // end of method
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
