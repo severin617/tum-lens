@@ -54,9 +54,12 @@ import tflite.Classifier;
 
     26.07.2020, 10:45
 
-    ...
-    ...
-    ...
+    - mainly for debugging, in order to verify the image pre-processing
+    - shows end result of cropping and scaling the view finder
+
+
+// TODO: aufräumen!
+
 
 + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
@@ -110,6 +113,9 @@ public class ImageValidator extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        // set status bar background to black
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.black));
+
         setContentView(R.layout.activity_image_validator);
 
         // initialize CameraX
@@ -120,6 +126,7 @@ public class ImageValidator extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
+        // we need to launch the view finder activity explicitly
         Intent intent = new Intent(ImageValidator.this, ViewFinder.class);
         startActivity(intent);
         finish();

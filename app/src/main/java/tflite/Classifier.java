@@ -58,6 +58,9 @@ public abstract class Classifier {
     FLOAT_EFFICIENTNET,
     QUANTIZED_EFFICIENTNET,
     INCEPTION_V1
+
+    // 30.08.2020
+    , PFUSCH
   }
 
   /** The runtime device type used for executing classification. */
@@ -68,7 +71,7 @@ public abstract class Classifier {
   }
 
   /** Number of results to show in the UI. */
-  private static final int MAX_RESULTS = 3;
+  private static final int MAX_RESULTS = 5;
 
   /** The loaded TensorFlow Lite model. */
   private MappedByteBuffer tfliteModel;
@@ -127,6 +130,11 @@ public abstract class Classifier {
     } else if (model == Model.INCEPTION_V1) {
       return new Classifier_Inception_v1_quant(activity, device, numThreads);
     }
+
+    // 30.08.2020
+     else if (model == Model.PFUSCH) {
+       return new Pfusch_InceptionV1(activity, device, numThreads);
+     }
 
 
     else {

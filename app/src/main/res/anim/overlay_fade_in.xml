@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/accelerate_decelerate_interpolator">
+
+    <!-- DOCS: https://developer.android.com/reference/android/view/animation/Animation -->
+
+    <!--  we achieve the "appearing from above" effect through 'pivotX' with a negative sign  -->
+
+    <scale
+        android:fromXScale="0.0"
+        android:toXScale="1.0"
+        android:fromYScale="0.0"
+        android:toYScale="1.0"
+        android:pivotX="50%"
+        android:pivotY="-35%"
+        android:duration="250"
+        android:fillAfter="true" />
+
+    <alpha
+        android:fromAlpha="0"
+        android:toAlpha="1"
+        android:duration="250"
+        android:fillAfter="true" />
+
+</set>

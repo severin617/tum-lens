@@ -32,10 +32,17 @@ public class StartScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // switch back to default theme [source: https://android.jlelse.eu/the-complete-android-splash-screen-guide-c7db82bce565]
+        setTheme(R.style.AppTheme);
+
         super.onCreate(savedInstanceState);
 
         // prevent display from being dimmed down
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // set status bar background to black
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.black));
 
         // set corresponding layout
         setContentView(R.layout.activity_start_screen);

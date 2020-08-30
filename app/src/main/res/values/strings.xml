@@ -9,4 +9,5 @@
     <string name="this_will_only">This will only work if you grant the permission to use your camera.</string>
     <string name="this_app_feeds">This app feeds your cameras\' view finder input to a TensorFlow model, that tries to classify the object you point your phone at.</string>
     <string name="hi_there">Hi there!</string>
+    <string name="per_frame_classification_results">Per frame classification results</string>
 </resources>
