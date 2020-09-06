@@ -52,6 +52,7 @@ import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 
@@ -171,6 +172,10 @@ public class ViewFinder extends AppCompatActivity
 
     private boolean isShowingSettingsOverlay = false;
 
+    private boolean _isSettingsOverlayDisabled = false;
+
+
+
     // needs to be protected, but not private
     protected ImageButton _btn_show_hide_settings_overlay;
 
@@ -179,7 +184,7 @@ public class ViewFinder extends AppCompatActivity
 
 
     // initialize bottom sheet for classification results
-    private LinearLayout bottomSheet;
+    private LinearLayout _bottomSheet;
     private BottomSheetBehavior bottomSheetBehavior;
 
 
@@ -250,20 +255,42 @@ public class ViewFinder extends AppCompatActivity
 
 
         // initialize bottom sheet for classification results
-        bottomSheet = findViewById(R.id.bottom_sheet);
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        _bottomSheet = findViewById(R.id.bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(_bottomSheet);
 //
-//        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-//            @Override
-//            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-//
-//            }
-//
-//            @Override
-//            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-//
-//            }
-//        });
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+                // check if new state is 'expanded'; if so, then disable the 'settings overlay'
+                if(newState == BottomSheetBehavior.STATE_EXPANDED) {
+
+                    _isSettingsOverlayDisabled = true;
+
+                    // hide menu bar button
+                    Animation basic_fade_out = (Animation) AnimationUtils.loadAnimation(ViewFinder.this, R.anim.basic_fade_out_150);
+                    _btn_show_hide_settings_overlay.startAnimation(basic_fade_out);
+                    _btn_show_hide_settings_overlay.setVisibility(View.GONE);
+
+
+                } if (newState == BottomSheetBehavior.STATE_COLLAPSED){
+
+                    _isSettingsOverlayDisabled = false;
+
+                    // show menu bar button
+                    Animation basic_fade_in = (Animation) AnimationUtils.loadAnimation(ViewFinder.this, R.anim.basic_fade_in_150);
+                    _btn_show_hide_settings_overlay.startAnimation(basic_fade_in);
+                    _btn_show_hide_settings_overlay.setVisibility(View.VISIBLE);
+
+                }
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
 
 
 
@@ -523,6 +550,29 @@ public class ViewFinder extends AppCompatActivity
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
+    @Override
+    public void onBackPressed() {
+
+        // in case the 'settingsOverlay' is active, hide it onBackPressed
+        if(isShowingSettingsOverlay) { // HIDE settings overlay
+
+            Animation overlay_fade_out = (Animation) AnimationUtils.loadAnimation(this, R.anim.overlay_fade_out);
+            _settingsOverlay.startAnimation(overlay_fade_out);
+            _settingsOverlay.setVisibility(View.GONE); // hide element
+
+            // show menu bar button
+            Animation basic_fade_in = (Animation) AnimationUtils.loadAnimation(this, R.anim.basic_fade_in);
+            _btn_show_hide_settings_overlay.startAnimation(basic_fade_in);
+            _btn_show_hide_settings_overlay.setVisibility(View.VISIBLE);
+
+            isShowingSettingsOverlay = false;
+        } else {
+            // otherwise, fire the super-event
+            super.onBackPressed();
+        }
+    }
+
+
     protected void reInitClassifier(){
 //        Device device = Device.CPU; // Device.CPU; // Device.GPU // Device.NNAPI
 //        int numThreads = 3;
@@ -604,6 +654,8 @@ public class ViewFinder extends AppCompatActivity
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
 
+        if (_isSettingsOverlayDisabled) return false;
+
         // BASIC IDEA
         //
         // we use 'swipe down' and 'swipe up' gestures to show and hide the settings panel.
@@ -669,6 +721,12 @@ public class ViewFinder extends AppCompatActivity
 //            toast.show();
 
             if(!isShowingSettingsOverlay) {
+
+//                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) _bottomSheet.getLayoutParams();
+//                params.setBehavior(null);
+
+//                params.setBehavior(new AppBarLayout.ScrollingViewBehavior(_bottomSheet.getContext(), null));
+
                 // SHOW settings overlay
                 Animation fade_in = (Animation) AnimationUtils.loadAnimation(this, R.anim.overlay_fade_in);
                 _settingsOverlay.setVisibility(View.VISIBLE); // make element visible
