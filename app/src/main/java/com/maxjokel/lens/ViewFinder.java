@@ -1,7 +1,9 @@
 package com.maxjokel.lens;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -30,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +58,7 @@ import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
+import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.chip.Chip;
@@ -86,6 +90,12 @@ import helpers.Logger;
 import tflite.Classifier;
 import tflite.Classifier.Device;
 import tflite.Classifier.Model;
+import tflite.ClassifierFloatEfficientNet;
+import tflite.ClassifierFloatMobileNet;
+import tflite.ClassifierQuantizedEfficientNet;
+import tflite.ClassifierQuantizedMobileNet;
+import tflite.Classifier_Inception_v1_quant;
+import tflite.Pfusch_InceptionV1;
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
@@ -100,9 +110,11 @@ import tflite.Classifier.Model;
 
 public class ViewFinder extends AppCompatActivity
         implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
-//        implements GestureDetector.OnGestureListener {
-//        implements View.OnTouchListener, GestureDetector.OnGestureListener {
+// unfortunately we currently need both, the OnGestureListener and OnDoubleTapListener, in order
+// to make the DoubleTap-Listener work...
 
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
     // init new Logger instance
@@ -127,6 +139,11 @@ public class ViewFinder extends AppCompatActivity
     private PreviewView _viewFinder;
 
 
+    int lens_front_back = 0;
+    //  -> 0: lens facing back
+    //  -> 1: lens facing front
+
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -141,7 +158,7 @@ public class ViewFinder extends AppCompatActivity
     private Classifier classifier;
 
     protected int previewDimX = 480;
-//    protected int previewDimY = 480;
+    //    protected int previewDimY = 480;
     protected int previewDimY = 640;
 
     // TAKEAWAY: all "Google Models" use 224x224 images as input layer
@@ -155,37 +172,24 @@ public class ViewFinder extends AppCompatActivity
     private boolean isClassificationPaused = false;
 
 
-    protected Model _model = null;
+    protected Model _model = Model.FLOAT_MOBILENET;
     protected int _numberOfThreads = 3; // default is 3
     protected Device _processingUnit = Device.CPU; // CPU is default
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
-    // gesture related
+    // 'double tap' gesture
     private GestureDetectorCompat mGestureDetector;
-    private static final String DEBUG_TAG = "Gestures";
-
-
-
-    private CardView _settingsOverlay;
-
-    private boolean isShowingSettingsOverlay = false;
-
-    private boolean _isSettingsOverlayDisabled = false;
-
-
-
-    // needs to be protected, but not private
-    protected ImageButton _btn_show_hide_settings_overlay;
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
     // initialize bottom sheet for classification results
-    private LinearLayout _bottomSheet;
+    private NestedScrollView _bottomSheet;
     private BottomSheetBehavior bottomSheetBehavior;
+
 
 
 
@@ -201,7 +205,7 @@ public class ViewFinder extends AppCompatActivity
     private int _counter = 0;
     private List<ResultItem> _list = null;
 
-//    Map<Integer, ResultItem> _map = new HashMap<Integer, ResultItem>();
+    //    Map<Integer, ResultItem> _map = new HashMap<Integer, ResultItem>();
     Map<String, ResultItem> _map = new HashMap<String, ResultItem>(); // hashCode() eignet sich nicht, müssen doch getId() verwenden! -> String
 
     List<Classifier.Recognition> _sammlung = new LinkedList<Classifier.Recognition>();
@@ -210,9 +214,30 @@ public class ViewFinder extends AppCompatActivity
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
+    // instantiate new SharedPreferences object
+    SharedPreferences prefs = null;
+
+    SharedPreferences.Editor prefEditor = null;
+
+    // TODO: das muss vermutlich in das onCreate() rein
+
+
+
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+
+        // load sharedPreferences object and set up editor
+        prefs = getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE);
+        prefEditor = prefs.edit();
+
 
         // prevent display from being dimmed down
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -225,74 +250,127 @@ public class ViewFinder extends AppCompatActivity
         setContentView(R.layout.activity_view_finder);
 
 
-
-
-
-
-
-
-
-
-
-
         // set up gesture detection   [source: https://developer.android.com/training/gestures/detector#java]
         // Instantiate the gesture detector with the application context
         mGestureDetector = new GestureDetectorCompat(this,this);
 
-        //         Set the gesture detector as the double tap listener.
-//        mDetector.setOnDoubleTapListener(this);
 
 
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+    // +           SET UP USER INTERFACE COMPONENTS            +
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
-
+        // init view finder that displays the camera output
         _viewFinder = findViewById(R.id.viewFinder);
-        _settingsOverlay = findViewById(R.id.SettingsOverlay);
 
 
-        _playButton = findViewById(R.id.btn_play);
+        // TODO: wenn man die Objekte in der 'onDoubleTap' einfach neu läd, dann kann man die auch hier lokal setzen
+        // in center of view finder to visualize auto focus area
         _focusCircle = findViewById(R.id.focus_circle);
+
+
+        // restart the classification if paused
+        _playButton = findViewById(R.id.btn_play);
+
+        // dims down the view finder when classification is paused
         _viewFinderShaddow = findViewById(R.id.view_finder_shaddow);
 
 
-        // initialize bottom sheet for classification results
+        // initialize bottom sheet for classification results and settings
+        // TODO: local
         _bottomSheet = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(_bottomSheet);
-//
-        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
-                // check if new state is 'expanded'; if so, then disable the 'settings overlay'
-                if(newState == BottomSheetBehavior.STATE_EXPANDED) {
-
-                    _isSettingsOverlayDisabled = true;
-
-                    // hide menu bar button
-                    Animation basic_fade_out = (Animation) AnimationUtils.loadAnimation(ViewFinder.this, R.anim.basic_fade_out_150);
-                    _btn_show_hide_settings_overlay.startAnimation(basic_fade_out);
-                    _btn_show_hide_settings_overlay.setVisibility(View.GONE);
+//        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+//            @Override
+//            public void onStateChanged(@NonNull View bottomSheet, int newState) {}
+//            @Override
+//            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
+//        });
 
 
-                } if (newState == BottomSheetBehavior.STATE_COLLAPSED){
-
-                    _isSettingsOverlayDisabled = false;
-
-                    // show menu bar button
-                    Animation basic_fade_in = (Animation) AnimationUtils.loadAnimation(ViewFinder.this, R.anim.basic_fade_in_150);
-                    _btn_show_hide_settings_overlay.startAnimation(basic_fade_in);
-                    _btn_show_hide_settings_overlay.setVisibility(View.VISIBLE);
-
-                }
-
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
 
 
+
+
+
+
+
+
+
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+    // +   LOAD SHARED PREFERENCES and init app accordingly    +
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+        // number of threads
+        int saved_numberOfThreads = prefs.getInt("threads", 0);
+        if ((saved_numberOfThreads > 0) && (saved_numberOfThreads <= 15)) {
+            _numberOfThreads = saved_numberOfThreads; // update if within accepted range
+        }
+
+
+        // device
+        int saved_device = prefs.getInt("device", 0);
+
+        if(saved_device == Device.GPU.hashCode()){
+            _processingUnit = Device.GPU;
+        } else if(saved_device == Device.NNAPI.hashCode()){
+            _processingUnit = Device.NNAPI;
+        } else { // use CPU as default
+            _processingUnit = Device.CPU;
+        }
+
+        String cName = "chip_" + _processingUnit.name();
+        int cId = getResources().getIdentifier(cName, "id", getPackageName());
+        Chip c = findViewById(cId);
+        c.setChecked(true);
+
+
+        // model
+        int helper = 0;
+        int saved_model = prefs.getInt("model", 0);
+
+        if(saved_model == Model.QUANTIZED_MOBILENET.hashCode()){
+            _model = Model.QUANTIZED_MOBILENET;
+            helper = 2;
+        } else if (saved_model == Model.FLOAT_EFFICIENTNET.hashCode()) {
+            _model = Model.FLOAT_EFFICIENTNET;
+            helper = 3;
+        } else if (saved_model == Model.QUANTIZED_EFFICIENTNET.hashCode()) {
+            _model = Model.QUANTIZED_EFFICIENTNET;
+            helper = 4;
+        } else if (saved_model == Model.INCEPTION_V1.hashCode()) {
+            _model = Model.INCEPTION_V1;
+            helper = 5;
+        } else if (saved_model == Model.INCEPTION_V1_selfConverted.hashCode()) {
+            _model = Model.INCEPTION_V1_selfConverted;
+            helper = 6;
+        } else { // set FLOAT_MOBILENET as default
+            _model = Model.FLOAT_MOBILENET;
+            helper = 1;
+        }
+
+        // set initial RadioButton selection
+        String rName = "radioButton" + helper;
+        int rId = getResources().getIdentifier(rName, "id", getPackageName());
+        RadioButton r = findViewById(rId);
+        r.setChecked(true);
+
+
+        // lens   [0: back, 1: front]
+        lens_front_back = prefs.getInt("lens", 0);
+
+
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+    // +                  INIT CORE FEATURES                   +
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+        updateThreadCounter();
+
+        reInitClassifier();
 
         // initialize CameraX
         initCameraX();
@@ -301,6 +379,12 @@ public class ViewFinder extends AppCompatActivity
 
 
 
+
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+    // +                SET UP EVENT LISTENERS                 +
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+        // restart paused classification
         _playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -321,31 +405,29 @@ public class ViewFinder extends AppCompatActivity
             }
         });
 
-        // init button and set up OnClickListener
-        _btn_show_hide_settings_overlay = findViewById(R.id.btn_show_hide_settings_overlay);
-        _btn_show_hide_settings_overlay.setOnClickListener(new View.OnClickListener() {
+        // rotate camera
+        ImageButton btn_rotate = findViewById(R.id.btn_rotate);
+        btn_rotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isShowingSettingsOverlay) {
-                    // SHOW settings overlay
-                    Animation fade_in = (Animation) AnimationUtils.loadAnimation(ViewFinder.this, R.anim.overlay_fade_in);
-                    _settingsOverlay.setVisibility(View.VISIBLE); // make element visible
-                    _settingsOverlay.startAnimation(fade_in);
 
-                    // hide menu bar button
-                    Animation basic_fade_out = (Animation) AnimationUtils.loadAnimation(ViewFinder.this, R.anim.basic_fade_out);
-                    _btn_show_hide_settings_overlay.startAnimation(basic_fade_out);
-                    _btn_show_hide_settings_overlay.setVisibility(View.GONE);
+                // perform haptic feedback
+                v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
 
-                    isShowingSettingsOverlay = true;
+                // switch lens by changing global variable
+                if(lens_front_back == 0) {
+                    lens_front_back = 1;
+                } else {
+                    lens_front_back = 0;
                 }
+
+                initCameraX();
+
+                prefEditor.putInt("lens", lens_front_back);
+                prefEditor.apply();
+
             }
         });
-
-
-
-        // set up Event Listeners
-
 
         // turn flash on or off
         ImageButton btn_flash = findViewById(R.id.btn_flash);
@@ -360,7 +442,7 @@ public class ViewFinder extends AppCompatActivity
 
                     if(isFlashEnabled){
                         _camera.getCameraControl().enableTorch(false);
-                        btn_flash.setColorFilter(ContextCompat.getColor(ViewFinder.this, R.color.white));
+                        btn_flash.setColorFilter(ContextCompat.getColor(ViewFinder.this, R.color.colorPrimary));
                     } else {
                         btn_flash.setColorFilter(ContextCompat.getColor(ViewFinder.this, R.color.colorAccent));
                         _camera.getCameraControl().enableTorch(true);
@@ -373,7 +455,7 @@ public class ViewFinder extends AppCompatActivity
         });
 
 
-        // JUMP TO VALIDATOR VIEW
+        // jump to validator view
         ImageButton btn_validate = findViewById(R.id.btn_validate);
         btn_validate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -386,111 +468,93 @@ public class ViewFinder extends AppCompatActivity
             }
         });
 
-
+        // decrease or increase number of threads
         ImageButton btn_threads_minus = findViewById(R.id.btn_threads_minus);
         btn_threads_minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
+                v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
                 if(_numberOfThreads > 1){ _numberOfThreads--; }
                 updateThreadCounter();
-//                reInitClassifier();
+                reInitClassifier();
             }
         });
         ImageButton btn_threads_plus = findViewById(R.id.btn_threads_plus);
         btn_threads_plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
+                v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
                 if(_numberOfThreads < 15){ _numberOfThreads++; }
                 updateThreadCounter();
-//                reInitClassifier();
+                reInitClassifier();
             }
         });
 
 
-//        // wenn das overlay angezeigt wird, dann durch Klick auf die Fläche wieder ausblenden
-//        _settingsOverlay.setOnClickListener(new View.OnClickListener(){
-//
-//            @Override
-//            public void onClick(View v) {
-//                hideSettings();
-//            }
-//        });
 
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+    // +           NETWORK SELECTOR via RadioGroup             +
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
-
-        // NETWORK SELECTOR via RadioGroup
-
-        // set initial selection
-        RadioButton b = findViewById(R.id.radioButton1);
-        b.setChecked(true);
-//        _model = Model.FLOAT_MOBILENET;
-        _model = Model.PFUSCH;
-        reInitClassifier();
-
-
-        // init RadioGroup
+        // init RadioGroup and event listener
         RadioGroup radioGroup = findViewById(R.id.modelSelector_RadioGroup);
-
-        // Event listener
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-                Toast toast;
+                // perform haptic feedback
+                group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
 
                 switch (checkedId) {
                     case -1:
                         _model = null;
-                        toast = Toast.makeText(ViewFinder.this, "Choices cleared", Toast.LENGTH_SHORT);
                         break;
                     case R.id.radioButton1:
                         _model = Model.FLOAT_MOBILENET;
-                        toast = Toast.makeText(ViewFinder.this, "Float MobileNet", Toast.LENGTH_SHORT);
                         break;
                     case R.id.radioButton2:
                         _model = Model.QUANTIZED_MOBILENET;
-                        toast = Toast.makeText(ViewFinder.this, "Quantized MobileNet", Toast.LENGTH_SHORT);
                         break;
                     case R.id.radioButton3:
                         _model = Model.FLOAT_EFFICIENTNET;
-                        toast = Toast.makeText(ViewFinder.this, "Float EfficientNet", Toast.LENGTH_SHORT);
                         break;
                     case R.id.radioButton4:
                         _model = Model.QUANTIZED_EFFICIENTNET;
-                        toast = Toast.makeText(ViewFinder.this, "Quantized EfficientNet", Toast.LENGTH_SHORT);
                         break;
                     case R.id.radioButton5:
                         _model = Model.INCEPTION_V1;
-                        toast = Toast.makeText(ViewFinder.this, "Inception Net V1", Toast.LENGTH_SHORT);
+                        break;
+                    case R.id.radioButton6:
+                        _model = Model.INCEPTION_V1_selfConverted;
                         break;
                     default:
-                        toast = Toast.makeText(ViewFinder.this, "default", Toast.LENGTH_SHORT);
                         _model = null;
                         break;
                 }
 
-                reInitClassifier();
+                // save selection to SharedPreferences
+                prefEditor.putInt("model", _model.hashCode());
+                prefEditor.apply();
 
-                toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 50);
-                toast.show();
+                // update classifier
+                reInitClassifier();
             }
         });
 
 
-        // PROCESSING UNIT SELECTOR via ChipGroup
 
-        // set initial selection
-        Chip c = findViewById(R.id.chip_CPU);
-        c.setChecked(true);
-        _processingUnit = Device.CPU;
-        reInitClassifier();
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+    // +        PROCESSING UNIT SELECTOR via ChipGroup         +
+    // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
+        // init chip group and event listener
         ChipGroup chipGroup = findViewById(R.id.chipGroup_processing_unit);
         chipGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(ChipGroup group, int checkedId) {
+
+                // perform haptic feedback
+                group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
 
                 switch (checkedId) {
                     case R.id.chip_CPU:
@@ -507,86 +571,35 @@ public class ViewFinder extends AppCompatActivity
                         break;
                 }
 
+                // save selection to SharedPreferences
+                prefEditor.putInt("device", _processingUnit.hashCode());
+                prefEditor.apply();
+
+                // update classifier
                 reInitClassifier();
 
             }
         });
-
-
-
-
-
-        /**
-         * mit allen Netzwerken durchverifiziert -> works :)
-         *  - ok: QUANTIZED_MOBILENET
-         *  - ok: QUANTIZED_EFFICIENTNET
-         *  - ok: INCEPTION_V1 (quantized)
-         *  - ok: FLOAT_MOBILENET
-         *  - ok: FLOAT_EFFICIENTNET
-        * */
-
-        // initialize TF-Lite Classifier
-//        Model model = Model.FLOAT_EFFICIENTNET;
-//        Model model = Model.FLOAT_MOBILENET;
-
-//        Model model = Model.QUANTIZED_MOBILENET;
-//        Model model = Model.QUANTIZED_EFFICIENTNET;
-
-//        Model model = Model.INCEPTION_V1;
-//        // TODO: Pfusch beseitigen!!
-//        Model model = _model;
-//
-//        Device device = Device.CPU; // Device.CPU; // Device.GPU // Device.NNAPI
-//        int numThreads = 3;
-//
-//        try {
-//            LOGGER.d("Creating classifier (model=%s, device=%s, numThreads=%d)", model, device, numThreads);
-//            classifier = Classifier.create(this, model, device, numThreads);
-//        } catch (IOException e) { LOGGER.e(e, "Failed to create classifier."); }
-
-
     }
     // END OF 'onCreate()' METHOD
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
-    @Override
-    public void onBackPressed() {
+    // reInitClassifier() Method
+    // will try to instantiate a new TF-Lite classifier
+    //
+    protected void reInitClassifier(){
+        try {
+            LOGGER.d("Creating classifier (model=%s, device=%s, numThreads=%d)", _model, _processingUnit, _numberOfThreads);
 
-        // in case the 'settingsOverlay' is active, hide it onBackPressed
-        if(isShowingSettingsOverlay) { // HIDE settings overlay
+            classifier = Classifier.create(this, _model, _processingUnit, _numberOfThreads);
 
-            Animation overlay_fade_out = (Animation) AnimationUtils.loadAnimation(this, R.anim.overlay_fade_out);
-            _settingsOverlay.startAnimation(overlay_fade_out);
-            _settingsOverlay.setVisibility(View.GONE); // hide element
-
-            // show menu bar button
-            Animation basic_fade_in = (Animation) AnimationUtils.loadAnimation(this, R.anim.basic_fade_in);
-            _btn_show_hide_settings_overlay.startAnimation(basic_fade_in);
-            _btn_show_hide_settings_overlay.setVisibility(View.VISIBLE);
-
-            isShowingSettingsOverlay = false;
-        } else {
-            // otherwise, fire the super-event
-            super.onBackPressed();
+        } catch (IOException e) {
+            LOGGER.e(e, "Failed to create classifier.");
         }
     }
 
 
-    protected void reInitClassifier(){
-//        Device device = Device.CPU; // Device.CPU; // Device.GPU // Device.NNAPI
-//        int numThreads = 3;
-
-        try {
-            LOGGER.d("Creating classifier (model=%s, device=%s, numThreads=%d)", _model, _processingUnit, _numberOfThreads);
-            classifier = Classifier.create(this, _model, _processingUnit, _numberOfThreads);
-        } catch (IOException e) { LOGGER.e(e, "Failed to create classifier."); }
-    }
-
-    protected void updateThreadCounter(){
-        TextView tv = findViewById(R.id.tv_threads);
-        tv.setText( "" + _numberOfThreads);
-    }
 
 
 
@@ -602,6 +615,8 @@ public class ViewFinder extends AppCompatActivity
     protected void onResume() {
 
         super.onResume();
+        isClassificationPaused = false;
+
     }
 
 
@@ -609,10 +624,9 @@ public class ViewFinder extends AppCompatActivity
     // FOKUS verliert, aber immer noch läuft
     @Override
     protected void onPause() {
-        super.onPause();
 
-        // TODO
-        // z.B: die Klassifizierung beenden
+        super.onPause();
+        isClassificationPaused = true;
     }
 
     @Override
@@ -651,104 +665,8 @@ public class ViewFinder extends AppCompatActivity
         return super.onTouchEvent(event);
     }
 
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
 
-        if (_isSettingsOverlayDisabled) return false;
-
-        // BASIC IDEA
-        //
-        // we use 'swipe down' and 'swipe up' gestures to show and hide the settings panel.
-        //
-        // when a so called 'fling' gesture is detected, we verify its distance and velocity to make
-        // sure, that the gesture was intended by the user.
-        // we currently have no use for 'swipe left' or 'swipe right', so we discard those events.
-        //
-        // when detecting 'swipe down' and 'swipe up' gestures, we are only interested in the vertical axis
-        //
-        // the actual animation is defined as xml, see /anim directory
-        //
-        // somewhat useful reference:
-        //   https://androidexample.com/Swipe_screen_left__right__top_bottom/index.php?view=article_discription&aid=95&aaid=118
-
-//        Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
-//        Log.d(DEBUG_TAG, "onFling!  X: " + event1.getX() + " to " + event2.getX() + "  and  Y: " + event1.getY() + " to " + event2.getY());
-//        Log.d(DEBUG_TAG, "onFling!  Y: " + event1.getY() + " to " + event2.getY() + "  = " + Math.abs(event2.getY() - event1.getY()) + " Pixels");
-//        Log.d(DEBUG_TAG, "onFling!  velocityY: " + velocityY);
-
-        // STEP 1: calc fling distance
-        final float distanceY = Math.abs(event2.getY() - event1.getY());
-
-        // STEP 2: check for "realistic" distances
-        if(distanceY < 200 || distanceY > 900){
-            Log.d(DEBUG_TAG, "this swipe was TOO SHORT or TOO LONG");
-            return false;
-        }
-
-        // STEP 3: check for "realistic" velocity
-        if(Math.abs(velocityY) < 900){
-            Log.d(DEBUG_TAG, "this swipe down was TOO SLOW");
-            return false;
-        }
-
-        // STEP 4: UP or DOWN?
-        if(event2.getY() < event1.getY()){ // UP
-
-//            Toast toast = Toast.makeText(ViewFinder.this, "swipe UP detected!", Toast.LENGTH_SHORT);
-//            toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 50);
-//            toast.show();
-
-            if(isShowingSettingsOverlay) {
-                // HIDE settings overlay
-                Animation overlay_fade_out = (Animation) AnimationUtils.loadAnimation(this, R.anim.overlay_fade_out);
-                _settingsOverlay.startAnimation(overlay_fade_out);
-                _settingsOverlay.setVisibility(View.GONE); // hide element
-
-                // hide menu bar button
-                Animation basic_fade_in = (Animation) AnimationUtils.loadAnimation(this, R.anim.basic_fade_in);
-                _btn_show_hide_settings_overlay.startAnimation(basic_fade_in);
-                _btn_show_hide_settings_overlay.setVisibility(View.VISIBLE);
-
-                isShowingSettingsOverlay = false;
-            } else {
-                return false;
-            }
-
-        } else { // DOWN
-
-//            Toast toast = Toast.makeText(ViewFinder.this, "swipe DOWN detected!", Toast.LENGTH_SHORT);
-//            toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 50);
-//            toast.show();
-
-            if(!isShowingSettingsOverlay) {
-
-//                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) _bottomSheet.getLayoutParams();
-//                params.setBehavior(null);
-
-//                params.setBehavior(new AppBarLayout.ScrollingViewBehavior(_bottomSheet.getContext(), null));
-
-                // SHOW settings overlay
-                Animation fade_in = (Animation) AnimationUtils.loadAnimation(this, R.anim.overlay_fade_in);
-                _settingsOverlay.setVisibility(View.VISIBLE); // make element visible
-                _settingsOverlay.startAnimation(fade_in);
-
-                // show menu bar button
-                Animation basic_fade_out = (Animation) AnimationUtils.loadAnimation(this, R.anim.basic_fade_out);
-                _btn_show_hide_settings_overlay.startAnimation(basic_fade_out);
-                _btn_show_hide_settings_overlay.setVisibility(View.GONE);
-
-                isShowingSettingsOverlay = true;
-            } else {
-                return false;
-            }
-        }
-
-        return true;
-
-    }
-
-
-
+    // onDoubleTap   -> pauses the classification
     @Override
     public boolean onDoubleTap(MotionEvent e) {
 
@@ -788,46 +706,7 @@ public class ViewFinder extends AppCompatActivity
 
 
 
-    @Override
-    public boolean onDown(MotionEvent event) {
-//        Log.d(DEBUG_TAG,"onDown: " + event.toString());
-        return true;
-    }
 
-
-
-
-    // ignoring those methods:
-    @Override
-    public void onLongPress(MotionEvent event) {
-//        Log.d(DEBUG_TAG, "onLongPress: " + event.toString());
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent event1, MotionEvent event2, float distanceX, float distanceY) {
-//        Log.d(DEBUG_TAG, "onScroll: " + event1.toString() + event2.toString());
-        return true;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent event) {
-//        Log.d(DEBUG_TAG, "onShowPress: " + event.toString());
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent event) {
-//        Log.d(DEBUG_TAG, "onSingleTapUp: " + event.toString());
-        return true;
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        return false;
-    }
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {
-        return false;
-    }
 
     // END
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -838,6 +717,11 @@ public class ViewFinder extends AppCompatActivity
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // initCameraX() Method
     // initializes CameraX and with that the live preview and image analyzer
+    //
+    // lens_front_back
+    //  -> 0: lens facing back
+    //  -> 1: lens facing front
+    //
 
     private void initCameraX() {
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
@@ -847,10 +731,23 @@ public class ViewFinder extends AppCompatActivity
                 // init new camera provider
                 ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
 
-                // select the back facing lens
-                CameraSelector cameraSelector = new CameraSelector.Builder()
-                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                        .build();
+
+                // select lens
+                CameraSelector cameraSelector = null;
+                if(lens_front_back == 1) { // FRONT FACING
+                    cameraSelector = new CameraSelector.Builder()
+                            .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
+                            .build();
+                } else { // BACK FACING
+                    cameraSelector = new CameraSelector.Builder()
+                            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                            .build();
+                }
+
+//                // select the back facing lens
+//                CameraSelector cameraSelector = new CameraSelector.Builder()
+//                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+//                        .build();
 
 
                 // init preview object that holds the camera live feed
@@ -942,7 +839,8 @@ public class ViewFinder extends AppCompatActivity
                                         showSmoothedResults(results);
 
                                         final TextView time = findViewById(R.id.time);
-                                        time.setText("this classification took " + startTimestamp + "ms");
+//                                        time.setText("this classification took " + startTimestamp + "ms");
+                                        time.setText("classifying this frame took " + startTimestamp + "ms");
 //                                        System.out.println("+YES at" + SystemClock.uptimeMillis() + " und this classification took " + startTimestamp + "ms");
                                     }
                                 });
@@ -1116,6 +1014,26 @@ public class ViewFinder extends AppCompatActivity
     // end of method
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // updateThreadCounter()
+    //
+    //   - updates component in BottomSheet accordingly
+    //   - saves number of threads to SharedPreferences object
+
+    protected void updateThreadCounter(){
+
+        // save number of threads to sharedPreferences
+        prefEditor.putInt("threads", _numberOfThreads);
+        prefEditor.apply();
+
+        // update UI
+        TextView tv = findViewById(R.id.tv_threads);
+        tv.setText( "" + _numberOfThreads);
+    }
+    // end of method
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 
@@ -1296,6 +1214,11 @@ public class ViewFinder extends AppCompatActivity
             // STEP 3: output the first 5 list elements
             if(list.size() >= 3){
 
+                final LinearLayout placeholder = findViewById(R.id.placeholder);
+                final LinearLayout actualrslts = findViewById(R.id.actual_result);
+                placeholder.setVisibility(View.GONE);
+                actualrslts.setVisibility(View.VISIBLE);
+
                 ResultItem r1 = (ResultItem) list.get(0);
                 final TextView desc1 = findViewById(R.id.pf_description1);
                 final TextView conf1 = findViewById(R.id.pf_confidence1);
@@ -1341,4 +1264,161 @@ public class ViewFinder extends AppCompatActivity
 
     // end of method
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+
+
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // unimplemented gesture-related stuff
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+
+
+
+    @Override
+    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+        return true;
+    }
+////
+////        if (_isSettingsOverlayDisabled) return false;
+////
+////        // BASIC IDEA
+////        //
+////        // we use 'swipe down' and 'swipe up' gestures to show and hide the settings panel.
+////        //
+////        // when a so called 'fling' gesture is detected, we verify its distance and velocity to make
+////        // sure, that the gesture was intended by the user.
+////        // we currently have no use for 'swipe left' or 'swipe right', so we discard those events.
+////        //
+////        // when detecting 'swipe down' and 'swipe up' gestures, we are only interested in the vertical axis
+////        //
+////        // the actual animation is defined as xml, see /anim directory
+////        //
+////        // somewhat useful reference:
+////        //   https://androidexample.com/Swipe_screen_left__right__top_bottom/index.php?view=article_discription&aid=95&aaid=118
+////
+//////        Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
+//////        Log.d(DEBUG_TAG, "onFling!  X: " + event1.getX() + " to " + event2.getX() + "  and  Y: " + event1.getY() + " to " + event2.getY());
+//////        Log.d(DEBUG_TAG, "onFling!  Y: " + event1.getY() + " to " + event2.getY() + "  = " + Math.abs(event2.getY() - event1.getY()) + " Pixels");
+//////        Log.d(DEBUG_TAG, "onFling!  velocityY: " + velocityY);
+////
+////        // STEP 1: calc fling distance
+////        final float distanceY = Math.abs(event2.getY() - event1.getY());
+////
+////        // STEP 2: check for "realistic" distances
+////        if(distanceY < 200 || distanceY > 900){
+////            Log.d(DEBUG_TAG, "this swipe was TOO SHORT or TOO LONG");
+////            return false;
+////        }
+////
+////        // STEP 3: check for "realistic" velocity
+////        if(Math.abs(velocityY) < 900){
+////            Log.d(DEBUG_TAG, "this swipe down was TOO SLOW");
+////            return false;
+////        }
+////
+////        // STEP 4: UP or DOWN?
+////        if(event2.getY() < event1.getY()){ // UP
+////
+//////            Toast toast = Toast.makeText(ViewFinder.this, "swipe UP detected!", Toast.LENGTH_SHORT);
+//////            toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 50);
+//////            toast.show();
+////
+////            if(isShowingSettingsOverlay) {
+////                // HIDE settings overlay
+////                Animation overlay_fade_out = (Animation) AnimationUtils.loadAnimation(this, R.anim.overlay_fade_out);
+////                _settingsOverlay.startAnimation(overlay_fade_out);
+////                _settingsOverlay.setVisibility(View.GONE); // hide element
+////
+////                // hide menu bar button
+////                Animation basic_fade_in = (Animation) AnimationUtils.loadAnimation(this, R.anim.basic_fade_in);
+////                _btn_show_hide_settings_overlay.startAnimation(basic_fade_in);
+////                _btn_show_hide_settings_overlay.setVisibility(View.VISIBLE);
+////
+////                isShowingSettingsOverlay = false;
+////            } else {
+////                return false;
+////            }
+////
+////        } else { // DOWN
+////
+//////            Toast toast = Toast.makeText(ViewFinder.this, "swipe DOWN detected!", Toast.LENGTH_SHORT);
+//////            toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 50);
+//////            toast.show();
+////
+////            if(!isShowingSettingsOverlay) {
+////
+//////                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) _bottomSheet.getLayoutParams();
+//////                params.setBehavior(null);
+////
+//////                params.setBehavior(new AppBarLayout.ScrollingViewBehavior(_bottomSheet.getContext(), null));
+////
+////                // SHOW settings overlay
+////                Animation fade_in = (Animation) AnimationUtils.loadAnimation(this, R.anim.overlay_fade_in);
+////                _settingsOverlay.setVisibility(View.VISIBLE); // make element visible
+////                _settingsOverlay.startAnimation(fade_in);
+////
+////                // show menu bar button
+////                Animation basic_fade_out = (Animation) AnimationUtils.loadAnimation(this, R.anim.basic_fade_out);
+////                _btn_show_hide_settings_overlay.startAnimation(basic_fade_out);
+////                _btn_show_hide_settings_overlay.setVisibility(View.GONE);
+////
+////                isShowingSettingsOverlay = true;
+////            } else {
+////                return false;
+////            }
+////        }
+////
+////        return true;
+//
+//    }
+
+
+    @Override
+    public boolean onDown(MotionEvent event) {
+//        Log.d(DEBUG_TAG,"onDown: " + event.toString());
+        return true;
+    }
+
+    // ignoring those methods:
+    @Override
+    public void onLongPress(MotionEvent event) {
+//        Log.d(DEBUG_TAG, "onLongPress: " + event.toString());
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent event1, MotionEvent event2, float distanceX, float distanceY) {
+//        Log.d(DEBUG_TAG, "onScroll: " + event1.toString() + event2.toString());
+        return true;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent event) {
+//        Log.d(DEBUG_TAG, "onShowPress: " + event.toString());
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent event) {
+//        Log.d(DEBUG_TAG, "onSingleTapUp: " + event.toString());
+        return true;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        return false;
+    }
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        return false;
+    }
+
+
+
 }

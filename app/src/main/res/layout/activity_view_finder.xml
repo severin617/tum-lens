@@ -35,22 +35,22 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <!--  WRAPPER for MENU BAR  -->
-        <LinearLayout
-            android:id="@+id/menu_bar"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:minHeight="40dp"
-            android:background="#000"
-            android:gravity="center"
-            android:orientation="horizontal">
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btn_show_hide_settings_overlay"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@null"
-                android:src="@drawable/ic_baseline_keyboard_arrow_down_30"
-                android:tint="#ddd" />
-        </LinearLayout>
+<!--        <LinearLayout-->
+<!--            android:id="@+id/menu_bar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:minHeight="40dp"-->
+<!--            android:background="#000"-->
+<!--            android:gravity="center"-->
+<!--            android:orientation="horizontal">-->
+<!--            <androidx.appcompat.widget.AppCompatImageButton-->
+<!--                android:id="@+id/btn_show_hide_settings_overlay"-->
+<!--                android:layout_width="24dp"-->
+<!--                android:layout_height="24dp"-->
+<!--                android:background="@null"-->
+<!--                android:src="@drawable/ic_baseline_keyboard_arrow_down_30"-->
+<!--                android:tint="#ddd" />-->
+<!--        </LinearLayout>-->
 
         <!--  middle wrapper  -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -142,29 +142,38 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <include layout="@layout/results_component"/>
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottom_sheet"
+
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            app:behavior_hideable="false"
+            app:behavior_peekHeight="140dp">
+            <include layout="@layout/results_component"/>
+        </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 
-    <!--  SETTINGS OVERLAY aka LAYER 3  -->
-    <!--  will be positioned above all other elements;
-          therefore needs to be the very last layout element in this xml  -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/SettingsOverlay"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        android:visibility="gone"
-        app:cardBackgroundColor="#333"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+<!--    &lt;!&ndash;  SETTINGS OVERLAY aka LAYER 3  &ndash;&gt;-->
+<!--    &lt;!&ndash;  will be positioned above all other elements;-->
+<!--          therefore needs to be the very last layout element in this xml  &ndash;&gt;-->
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:id="@+id/SettingsOverlay"-->
+<!--        android:layout_width="350dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:animateLayoutChanges="true"-->
+<!--        android:visibility="gone"-->
+<!--        app:cardBackgroundColor="#333"-->
+<!--        app:cardCornerRadius="20dp"-->
+<!--        app:cardElevation="4dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
 
-        <include layout="@layout/settings_overlay" />
-    </androidx.cardview.widget.CardView>
+<!--        <include layout="@layout/settings_overlay" />-->
+<!--    </androidx.cardview.widget.CardView>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

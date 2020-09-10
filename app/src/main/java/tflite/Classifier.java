@@ -60,7 +60,7 @@ public abstract class Classifier {
     INCEPTION_V1
 
     // 30.08.2020
-    , PFUSCH
+    , INCEPTION_V1_selfConverted
   }
 
   /** The runtime device type used for executing classification. */
@@ -132,7 +132,7 @@ public abstract class Classifier {
     }
 
     // 30.08.2020
-     else if (model == Model.PFUSCH) {
+     else if (model == Model.INCEPTION_V1_selfConverted) {
        return new Pfusch_InceptionV1(activity, device, numThreads);
      }
 
