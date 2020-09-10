@@ -1,12 +1,22 @@
 <resources>
+
+    <!--  Source: https://android.jlelse.eu/the-complete-android-splash-screen-guide-c7db82bce565  -->
+    <!-- The launcher theme. It sets the main window background to the launch_screen drawable -->
+    <style name="AppTheme.Launcher">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+<!--        <item name="colorPrimaryDark">@android:color/holo_green_light</item>-->
+    </style>
+
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+<!--    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-<!--   TODO: does currently not work...     -->
-<!--        <item name="android:statusBarColor">@color/black</item>-->
-    </style>
 
+        <!-- Edge-to-edge app content: https://developer.android.com/training/gestures/gesturenav       -->
+        <!-- does nothing, but should somehow work...        -->
+        <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="android:statusBarColor">@android:color/black</item>
+    </style>
 </resources>

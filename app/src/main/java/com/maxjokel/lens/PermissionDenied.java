@@ -1,6 +1,7 @@
 package com.maxjokel.lens;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.os.Bundle;
 import android.content.Intent;
@@ -22,6 +23,9 @@ public class PermissionDenied extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // set status bar background to black
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.black));
 
         // set corresponding layout
         setContentView(R.layout.activity_permission_denied);

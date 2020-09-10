@@ -36,12 +36,17 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ImageValidator"/>
+
+        <activity android:name=".ImageValidator"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+
         <activity android:name=".PermissionDenied" />
         <activity
             android:name=".ViewFinder"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
-        <activity android:name=".StartScreen">
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".StartScreen"
+            android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

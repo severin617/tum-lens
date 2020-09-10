@@ -58,6 +58,9 @@ public abstract class Classifier {
     FLOAT_EFFICIENTNET,
     QUANTIZED_EFFICIENTNET,
     INCEPTION_V1
+
+    // 30.08.2020
+    , INCEPTION_V1_selfConverted
   }
 
   /** The runtime device type used for executing classification. */
@@ -68,7 +71,7 @@ public abstract class Classifier {
   }
 
   /** Number of results to show in the UI. */
-  private static final int MAX_RESULTS = 3;
+  private static final int MAX_RESULTS = 5;
 
   /** The loaded TensorFlow Lite model. */
   private MappedByteBuffer tfliteModel;
@@ -127,6 +130,11 @@ public abstract class Classifier {
     } else if (model == Model.INCEPTION_V1) {
       return new Classifier_Inception_v1_quant(activity, device, numThreads);
     }
+
+    // 30.08.2020
+     else if (model == Model.INCEPTION_V1_selfConverted) {
+       return new Pfusch_InceptionV1(activity, device, numThreads);
+     }
 
 
     else {
@@ -322,43 +330,32 @@ public abstract class Classifier {
     tfliteModel = null;
   }
 
-  /** Get the image size along the x axis. */
-  public int getImageSizeX() {
-    return imageSizeX;
-  }
 
-  /** Get the image size along the y axis. */
-  public int getImageSizeY() {
-    return imageSizeY;
-  }
-
-  /** Loads input image, and applies preprocessing. */
+  /** Loads input image-bitmap, and applies preprocessing.
+   *
+   * 'ImageProcessor' is a helper feature of the TF-Lite-Package */
   private TensorImage loadImage(final Bitmap bitmap, int sensorOrientation) {
-    // Loads bitmap into a TensorImage.
+
+    // Loads bitmap into a TensorImage
     inputImageBuffer.load(bitmap);
 
-    // Creates processor for the TensorImage.
-//    ALT
 //    int cropSize = Math.min(bitmap.getWidth(), bitmap.getHeight());
-
-//    NEU
-    int cropSize = getInputDimX();
+    int cropSize = getInputDimX(); // alternative implementation
 
     int numRotation = sensorOrientation / 90;
-    // TODO(b/143564309): Fuse ops inside ImageProcessor.
+
+    // create new TF-Lite ImageProcessor to convert from Bitmap to TensorImage
     ImageProcessor imageProcessor =
         new ImageProcessor.Builder()
+                // adapted previous implementation:
+                // size of image is now based on the 'model-input-dimensions'
             .add(new ResizeWithCropOrPadOp(cropSize, cropSize))
-
-            // ALTE METHODE: aus dem IMAGE selbst herleiten
-//            .add(new ResizeOp(imageSizeX, imageSizeY, ResizeMethod.NEAREST_NEIGHBOR))
-
-            // NEUE METHODE: aus den MODEL INFOS herleiten
-            // Hintergrund: Preview-Dimension ist unzuverlässig, liegert nicht zwangsläufig die intendierte Bildgröße
+//          .add(new ResizeOp(imageSizeX, imageSizeY, ResizeMethod.NEAREST_NEIGHBOR))
             .add(new ResizeOp(getInputDimX(), getInputDimY(), ResizeMethod.NEAREST_NEIGHBOR))
             .add(new Rot90Op(numRotation))
             .add(getPreprocessNormalizeOp())
             .build();
+
     return imageProcessor.process(inputImageBuffer);
   }
 
@@ -407,6 +404,15 @@ public abstract class Classifier {
    */
   protected abstract TensorOperator getPostprocessNormalizeOp();
 
+  /** Get the image size along the x axis. */
+  public int getImageSizeX() {
+    return imageSizeX;
+  }
+
+  /** Get the image size along the y axis. */
+  public int getImageSizeY() {
+    return imageSizeY;
+  }
 
   // NEU
   // 26. JULI

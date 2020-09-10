@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: https://android.jlelse.eu/the-complete-android-splash-screen-guide-c7db82bce565 -->
+<!-- The android:opacity=”opaque” line — this is critical in preventing a flash of black as your theme transitions. -->
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
+
+    <!--  background  -->
+    <item android:drawable="@color/black"/>
+
+    <!--  icon  -->
+
+</layer-list>
