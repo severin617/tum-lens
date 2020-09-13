@@ -14,6 +14,7 @@ import android.graphics.YuvImage;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Size;
@@ -40,6 +41,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.camera2.internal.annotation.CameraExecutor;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraSelector;
@@ -109,7 +111,8 @@ import tflite.Pfusch_InceptionV1;
 + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
 public class ViewFinder extends AppCompatActivity
-        implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+        implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener,
+                   FreezeCallback {
 // unfortunately we currently need both, the OnGestureListener and OnDoubleTapListener, in order
 // to make the DoubleTap-Listener work...
 
@@ -125,7 +128,12 @@ public class ViewFinder extends AppCompatActivity
 
 
     // CameraX related:   [source: https://developer.android.com/training/camerax/preview#java]
-    private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
+    private ListenableFuture<ProcessCameraProvider> cameraProviderFuture = null;
+
+    private ProcessCameraProvider _cameraProvider = null;
+
+    private CameraSelector _cameraSelector = null;
+
     private Camera _camera = null;
 
     private Preview       _preview  = null; // CameraX use cases for live preview feed
@@ -137,6 +145,11 @@ public class ViewFinder extends AppCompatActivity
 
     // Layout element
     private PreviewView _viewFinder;
+    private ImageView _frozenPreviewWindow;
+
+
+    private CustomAnalyzer _freezeAnalyzer = null;
+    private ImageAnalysis _freezeImageAnalysis = null;
 
 
     int lens_front_back = 0;
@@ -262,6 +275,8 @@ public class ViewFinder extends AppCompatActivity
 
         // init view finder that displays the camera output
         _viewFinder = findViewById(R.id.viewFinder);
+
+        _frozenPreviewWindow = findViewById(R.id.frozen_preview);
 
 
         // TODO: wenn man die Objekte in der 'onDoubleTap' einfach neu läd, dann kann man die auch hier lokal setzen
@@ -401,6 +416,9 @@ public class ViewFinder extends AppCompatActivity
 
                 _viewFinderShaddow.animate().alpha(0f).setDuration(150).setListener(null);
 
+                // re-init live camera preview feed
+                resetFrozenViewFinder();
+
                 isClassificationPaused = !isClassificationPaused;
             }
         });
@@ -506,9 +524,6 @@ public class ViewFinder extends AppCompatActivity
                 group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
 
                 switch (checkedId) {
-                    case -1:
-                        _model = null;
-                        break;
                     case R.id.radioButton1:
                         _model = Model.FLOAT_MOBILENET;
                         break;
@@ -676,7 +691,11 @@ public class ViewFinder extends AppCompatActivity
 
         if(isClassificationPaused){ // resume classification: adjust UI
 
+            // !!! IMPORTANT !!!
             // see 'btn_pause event listener' as well!
+
+            // re-init live camera preview feed
+            resetFrozenViewFinder();
 
             _focusCircle.startAnimation(fade_in);
             _focusCircle.setVisibility(View.VISIBLE);
@@ -687,6 +706,11 @@ public class ViewFinder extends AppCompatActivity
             _viewFinderShaddow.animate().alpha(0f).setDuration(150).setListener(null);
 
         } else { // pause classification: adjust UI
+
+
+            // trigger the UI change
+            _freezeAnalyzer.freeze();
+
 
             _focusCircle.startAnimation(fade_out);
             _focusCircle.setVisibility(View.GONE);
@@ -715,6 +739,50 @@ public class ViewFinder extends AppCompatActivity
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // buildPreviewUseCase() Method
+    //
+    // inits preview object that holds the camera live feed
+    //
+    // IDEA: freeze camera-preview when classification is halted
+    // -> this can be archived by unbinding the preview use case
+    //
+    // as we need to rebind it initially and eventually, we use this method for ease of use
+
+    private void buildPreviewUseCase(){
+
+        // concept based around:
+        // https://stackoverflow.com/questions/59661727/how-to-make-camerax-preview-freeze-when-take-a-photo
+
+        // init preview object that holds the camera live feed
+        _preview = new Preview.Builder()
+                .setTargetResolution(new Size(previewDimX, previewDimY))
+                .setTargetRotation(Surface.ROTATION_0) // warum auch immer...
+                .build();
+
+
+        // bind and init camera feed to the corresponding object in our layout
+        _preview.setSurfaceProvider(_viewFinder.createSurfaceProvider());
+
+        // bind preview to CameraX lifecycle
+        _cameraProvider.bindToLifecycle(this, _cameraSelector, _preview);
+
+
+
+// TODO: das wurde mit der Alpha V0.7 entfernt :/
+// siehe auch hier: https://github.com/google/mediapipe/issues/472
+// IDEE von hier: https://stackoverflow.com/a/59045412
+//        preview.setOnPreviewOutputUpdateListener {
+//            previewOutput: Preview.PreviewOutput? ->
+//            if(!frozen)
+//                textureView.setSurfaceTexture(previewOutput.getSurfaceTexture());
+//        }
+
+
+    }
+
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // initCameraX() Method
     // initializes CameraX and with that the live preview and image analyzer
     //
@@ -729,33 +797,31 @@ public class ViewFinder extends AppCompatActivity
             try {
 
                 // init new camera provider
-                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                 _cameraProvider = cameraProviderFuture.get();
 
 
-                // select lens
-                CameraSelector cameraSelector = null;
+                // select lens (front or back) ...
+                // by initializing a new camera selector
                 if(lens_front_back == 1) { // FRONT FACING
-                    cameraSelector = new CameraSelector.Builder()
+                    _cameraSelector = new CameraSelector.Builder()
                             .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
                             .build();
                 } else { // BACK FACING
-                    cameraSelector = new CameraSelector.Builder()
+                    _cameraSelector = new CameraSelector.Builder()
                             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                             .build();
                 }
 
-//                // select the back facing lens
-//                CameraSelector cameraSelector = new CameraSelector.Builder()
-//                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-//                        .build();
-
 
                 // init preview object that holds the camera live feed
-                _preview = new Preview.Builder()
-                        .setTargetResolution(new Size(previewDimX, previewDimY)) // damit ist alles DEUTLICH SCHNELLER!!
-//                        .setTargetRotation(Surface.ROTATION_180) // warum auch immer...
-                        .setTargetRotation(Surface.ROTATION_0) // warum auch immer...
-                        .build();
+
+
+                buildPreviewUseCase();
+//                _preview = new Preview.Builder()
+//                        .setTargetResolution(new Size(previewDimX, previewDimY)) // damit ist alles DEUTLICH SCHNELLER!!
+////                        .setTargetRotation(Surface.ROTATION_180) // warum auch immer...
+//                        .setTargetRotation(Surface.ROTATION_0) // warum auch immer...
+//                        .build();
 
 
                 // init analysis object that converts every frame to a RGB bitmap and gives it to the classifier
@@ -863,16 +929,42 @@ public class ViewFinder extends AppCompatActivity
 
 
 
+
+
+
+//                // TODO: freeze preview on halt
+//                // based on: https://stackoverflow.com/a/59674075
+                ExecutorService freezeExecutor = Executors.newSingleThreadExecutor();
+
+                _freezeImageAnalysis = new ImageAnalysis.Builder()
+                        .setTargetResolution(new Size(previewDimX, previewDimY))
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) // async
+                        .setTargetRotation(Surface.ROTATION_0)
+                        .build();
+
+//                CustomAnalyzer freezeAnalyzer = new CustomAnalyzer();
+                _freezeAnalyzer = new CustomAnalyzer(this);
+                _freezeImageAnalysis.setAnalyzer(freezeExecutor, _freezeAnalyzer);
+
+                // WICHTIG: muss natürlich auch an den LifeCycle gebunden werden!!!
+                _camera = _cameraProvider.bindToLifecycle(this, _cameraSelector, _freezeImageAnalysis);
+
+
+
+
                 // Unbind any prior use cases before rebinding the ones we just set up
-                cameraProvider.unbindAll();
+                // must be removed, breaks the 'freeze preview on pause'
+//                _cameraProvider.unbindAll();
 
                 // Bind use cases to camera: {Preview, Analysis}
-                _camera = cameraProvider.bindToLifecycle(this, cameraSelector, _preview, _analysis);
+                // TODO
+//                _camera = cameraProvider.bindToLifecycle(this, cameraSelector, _preview, _analysis);
+                _camera = _cameraProvider.bindToLifecycle(this, _cameraSelector, _analysis);
 
 
                 // bind and init camera feed to the corresponding object in our layout
 //                PreviewView viewFinder = findViewById(R.id.viewFinder); no longer needed
-                _preview.setSurfaceProvider(_viewFinder.createSurfaceProvider()); // def camerax_version = "1.0.0-beta04"
+//                _preview.setSurfaceProvider(_viewFinder.createSurfaceProvider()); // def camerax_version = "1.0.0-beta04"
                 //_preview.setSurfaceProvider(viewFinder.createSurfaceProvider(_camera.getCameraInfo())); // def camerax_version = "1.0.0-beta03"
 
                 // AUTO FOCUS   [Source: https://developer.android.com/training/camerax/configuration#java]
@@ -1418,6 +1510,53 @@ public class ViewFinder extends AppCompatActivity
     public boolean onDoubleTapEvent(MotionEvent e) {
         return false;
     }
+
+
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // onFrozenBitmap() Method   -   "event listener"
+    //
+    // [Part 2] of freezing the camera feed when the user pauses the classification
+    // [Part 1] -> see 'CustomAnalyzer.java'
+    //
+    // this method hides the camera feed preview layout object
+    // and instead shows an ImageView, that displays the last active frame, before the classifcation was paused
+
+    @Override
+    public void onFrozenBitmap(Bitmap b) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                _frozenPreviewWindow.setImageBitmap(b);
+                _frozenPreviewWindow.setVisibility(View.VISIBLE);
+
+                _viewFinder.setVisibility(View.GONE);
+
+            }
+        });
+
+    }
+
+
+    // resetFrozenViewFinder() method
+    //
+    // counterpart to the method above to restore the default
+
+    public void resetFrozenViewFinder(){
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                _frozenPreviewWindow.setVisibility(View.INVISIBLE);
+                _viewFinder.setVisibility(View.VISIBLE);
+            }
+        });
+
+    }
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 

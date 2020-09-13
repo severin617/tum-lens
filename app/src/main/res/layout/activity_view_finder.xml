@@ -73,6 +73,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <!--  displays last frame when classification is halted  -->
+            <ImageView
+                android:id="@+id/frozen_preview"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <!--  for toning down the view finder as it has no 'alpha' property  -->
             <LinearLayout
                 android:id="@+id/view_finder_shaddow"

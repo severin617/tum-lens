@@ -48,7 +48,8 @@ dependencies {
     // +++
     // CameraX core library  -  08.07.2020, 15:35
     // +++
-    def camerax_version = "1.0.0-beta04"
+//    def camerax_version = "1.0.0-beta04" // TODO: Stand bis zum 13.09.2020
+    def camerax_version = "1.0.0-beta08"
 
     // The following line is optional, as the core library is included indirectly by camera-camera2
     implementation "androidx.camera:camera-core:${camerax_version}"
@@ -56,9 +57,9 @@ dependencies {
     // If you want to additionally use the CameraX Lifecycle library
     implementation "androidx.camera:camera-lifecycle:${camerax_version}"
     // If you want to additionally use the CameraX View class
-    implementation "androidx.camera:camera-view:1.0.0-alpha11"
+    implementation "androidx.camera:camera-view:1.0.0-alpha15"
     // If you want to additionally use the CameraX Extensions library
-    implementation "androidx.camera:camera-extensions:1.0.0-alpha11"
+    implementation "androidx.camera:camera-extensions:1.0.0-alpha15"
 
 
     // +++
