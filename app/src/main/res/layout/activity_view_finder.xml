@@ -87,7 +87,7 @@
 
             <!--  for toning down the view finder as it has no 'alpha' property  -->
             <LinearLayout
-                android:id="@+id/view_finder_shaddow"
+                android:id="@+id/view_finder_shadow"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -154,6 +154,15 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <!--  shadow -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            app:layout_anchor="@id/bottom_sheet"
+            android:layout_marginBottom="-10dp"
+            android:background="@drawable/shadow"/>
+
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

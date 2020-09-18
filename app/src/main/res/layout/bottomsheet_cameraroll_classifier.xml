@@ -10,7 +10,6 @@
     android:paddingHorizontal="16dp"
     android:paddingVertical="16dp"
 
-
     android:background="@drawable/rounded_corners">
 
 
@@ -56,7 +55,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
             android:textAlignment="center"
-            android:text="@string/initializing"
+            android:text="@string/waiting_for_image"
             android:textSize="14sp"/>
 
         <TextView
@@ -95,7 +94,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/pf_no1"
+                android:id="@+id/no1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAlignment="textStart"
@@ -106,18 +105,18 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView
-                android:id="@+id/pf_description1"
+                android:id="@+id/description1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="24dp"
                 android:textAlignment="textStart"
                 android:textSize="14sp"
-                app:layout_constraintStart_toEndOf="@+id/pf_no1"
+                app:layout_constraintStart_toEndOf="@+id/no1"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView
-                android:id="@+id/pf_confidence1"
+                android:id="@+id/confidence1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
@@ -138,7 +137,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/pf_no2"
+                android:id="@+id/no2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAlignment="textStart"
@@ -149,29 +148,24 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView
-                android:id="@+id/pf_description2"
+                android:id="@+id/description2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-
                 android:layout_marginStart="24dp"
                 android:textAlignment="textStart"
                 android:textSize="14sp"
-
-                app:layout_constraintStart_toEndOf="@+id/pf_no2"
+                app:layout_constraintStart_toEndOf="@+id/no2"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView
-                android:id="@+id/pf_confidence2"
+                android:id="@+id/confidence2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="0dp"
                 android:textAlignment="textEnd"
-
                 android:textSize="14sp"
-
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -184,9 +178,8 @@
             android:paddingBottom="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
-
             <TextView
-                android:id="@+id/pf_no3"
+                android:id="@+id/no3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAlignment="textStart"
@@ -195,31 +188,24 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
-
             <TextView
-                android:id="@+id/pf_description3"
+                android:id="@+id/description3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-
                 android:layout_marginStart="24dp"
                 android:textAlignment="textStart"
                 android:textSize="14sp"
-
-                app:layout_constraintStart_toEndOf="@+id/pf_no3"
+                app:layout_constraintStart_toEndOf="@+id/no3"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
-
             <TextView
-                android:id="@+id/pf_confidence3"
+                android:id="@+id/confidence3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="0dp"
                 android:textAlignment="textEnd"
-
                 android:textSize="14sp"
-
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -233,7 +219,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
             <TextView
-                android:id="@+id/pf_no4"
+                android:id="@+id/no4"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAlignment="textStart"
@@ -243,17 +229,17 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
             <TextView
-                android:id="@+id/pf_description4"
+                android:id="@+id/description4"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="24dp"
                 android:textAlignment="textStart"
                 android:textSize="14sp"
-                app:layout_constraintStart_toEndOf="@+id/pf_no4"
+                app:layout_constraintStart_toEndOf="@+id/no4"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
             <TextView
-                android:id="@+id/pf_confidence4"
+                android:id="@+id/confidence4"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
@@ -272,7 +258,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
             <TextView
-                android:id="@+id/pf_no5"
+                android:id="@+id/no5"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAlignment="textStart"
@@ -282,17 +268,17 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
             <TextView
-                android:id="@+id/pf_description5"
+                android:id="@+id/description5"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="24dp"
                 android:textAlignment="textStart"
                 android:textSize="14sp"
-                app:layout_constraintStart_toEndOf="@+id/pf_no5"
+                app:layout_constraintStart_toEndOf="@+id/no5"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
             <TextView
-                android:id="@+id/pf_confidence5"
+                android:id="@+id/confidence5"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
@@ -304,231 +290,6 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
-
-
-    <!--  horizontal separator  -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#DBDCE0"
-        android:layout_marginVertical="16dp"/>
-
-
-    <!--  SUB-HEADING of bottom sheet  -->
-    <TextView
-        android:id="@+id/sub_heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:fontFamily="sans-serif-medium"
-        android:text="@string/per_frame_classification_results"
-        android:textSize="16sp"
-        android:textColor="#444" />
-
-    <!--  per frame RESULTS row 1  -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/no1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textAlignment="textStart"
-            android:text="1:"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <TextView
-            android:id="@+id/description1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="24dp"
-            android:textAlignment="textStart"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/no1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <TextView
-            android:id="@+id/confidence1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="0dp"
-            android:textAlignment="textEnd"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--  per frame RESULTS row 2  -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/no2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textAlignment="textStart"
-            android:text="2:"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <TextView
-            android:id="@+id/description2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="24dp"
-            android:textAlignment="textStart"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/no2"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <TextView
-            android:id="@+id/confidence2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="0dp"
-            android:textAlignment="textEnd"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--  per frame RESULTS row 3  -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-        <TextView
-            android:id="@+id/no3"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textAlignment="textStart"
-            android:text="3:"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-        <TextView
-            android:id="@+id/description3"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="24dp"
-            android:textAlignment="textStart"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/no3"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-        <TextView
-            android:id="@+id/confidence3"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="0dp"
-            android:textAlignment="textEnd"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--  per frame RESULTS row 4  -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-        <TextView
-            android:id="@+id/no4"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textAlignment="textStart"
-            android:text="4:"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-        <TextView
-            android:id="@+id/description4"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="24dp"
-            android:textAlignment="textStart"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/no4"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-        <TextView
-            android:id="@+id/confidence4"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="0dp"
-            android:textAlignment="textEnd"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--  per frame RESULTS row 5  -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-        <TextView
-            android:id="@+id/no5"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textAlignment="textStart"
-            android:text="5:"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-        <TextView
-            android:id="@+id/description5"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="24dp"
-            android:textAlignment="textStart"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/no5"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-        <TextView
-            android:id="@+id/confidence5"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="0dp"
-            android:textAlignment="textEnd"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--  time  -->
     <TextView
@@ -838,108 +599,6 @@
         </com.google.android.material.chip.ChipGroup>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-    <!-- small action bar -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="viewStart"
-            android:textColor="#000"
-            android:textSize="14sp"
-            android:text="More"/>
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_rotate"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_baseline_cached_30"
-            android:tint="@color/colorPrimary"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@id/btn_flash"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_flash"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_baseline_flash_on_30"
-            android:tint="@color/colorPrimary"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/btn_validate"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        <!--    launches the image validator (live vs converted)    -->
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_validate"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_baseline_aspect_ratio_30"
-            android:tint="@color/colorPrimary"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/btn_settings"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_settings"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_baseline_settings_30"
-            android:tint="@color/colorPrimary"
-            android:background="@null"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <!--  horizontal separator  -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#DBDCE0"
-        android:layout_marginVertical="16dp"/>
-
-
-
-
-    <Button
-        android:id="@+id/btn_camera_roll_activity"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="open camera roll classifier"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
-    <!--  horizontal separator  -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#DBDCE0"
-        android:layout_marginVertical="16dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textColor="#ccc"
-        android:textSize="12sp"
-        android:text="@string/version"/>
 
 
 </LinearLayout>

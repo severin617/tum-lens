@@ -22,6 +22,9 @@
         android:name="android.permission.INTERNET"
         android:required="true" />
     <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:required="true" />
+    <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:required="true" />
     <uses-permission
@@ -38,11 +41,15 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".ImageValidator"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+            android:theme="@style/AppTheme" />
 
-        <activity android:name=".PermissionDenied" />
-        <activity
-            android:name=".ViewFinder"
+        <activity android:name=".CameraRollClassifier"
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".PermissionDenied"
+            android:theme="@style/AppTheme"/>
+
+        <activity android:name=".ViewFinder"
             android:theme="@style/AppTheme" />
 
         <activity android:name=".StartScreen"

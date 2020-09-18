@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -14,17 +13,14 @@ import android.graphics.YuvImage;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Size;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -33,21 +29,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.camera2.internal.annotation.CameraExecutor;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraSelector;
-import androidx.camera.core.CameraX;
 import androidx.camera.core.FocusMeteringAction;
-import androidx.camera.core.FocusMeteringResult;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.MeteringPoint;
@@ -56,8 +46,6 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
-import androidx.cardview.widget.CardView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.widget.NestedScrollView;
@@ -70,17 +58,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -92,12 +74,6 @@ import helpers.Logger;
 import tflite.Classifier;
 import tflite.Classifier.Device;
 import tflite.Classifier.Model;
-import tflite.ClassifierFloatEfficientNet;
-import tflite.ClassifierFloatMobileNet;
-import tflite.ClassifierQuantizedEfficientNet;
-import tflite.ClassifierQuantizedMobileNet;
-import tflite.Classifier_Inception_v1_quant;
-import tflite.Pfusch_InceptionV1;
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
@@ -152,9 +128,7 @@ public class ViewFinder extends AppCompatActivity
     private ImageAnalysis _freezeImageAnalysis = null;
 
 
-    int lens_front_back = 0;
-    //  -> 0: lens facing back
-    //  -> 1: lens facing front
+    int lens_front_back = 0; // [0 = back, 1 = front]
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -170,9 +144,8 @@ public class ViewFinder extends AppCompatActivity
     // TF-Lite related to CLASSIFICATION:   [source: TF-Lite example app]
     private Classifier classifier;
 
-    protected int previewDimX = 480;
-    //    protected int previewDimY = 480;
-    protected int previewDimY = 640;
+    protected int previewDimX = 960; //480;
+    protected int previewDimY = 1280; //640;
 
     // TAKEAWAY: all "Google Models" use 224x224 images as input layer
     // TODO: streamlining
@@ -288,11 +261,12 @@ public class ViewFinder extends AppCompatActivity
         _playButton = findViewById(R.id.btn_play);
 
         // dims down the view finder when classification is paused
-        _viewFinderShaddow = findViewById(R.id.view_finder_shaddow);
+        _viewFinderShaddow = findViewById(R.id.view_finder_shadow);
 
 
         // initialize bottom sheet for classification results and settings
         // TODO: local
+        // TODO: braucht's das überhaupt?
         _bottomSheet = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(_bottomSheet);
 //        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -439,6 +413,11 @@ public class ViewFinder extends AppCompatActivity
                     lens_front_back = 0;
                 }
 
+
+                // unbind all use cases
+                _cameraProvider.unbindAll();
+
+                // re-init CameraX
                 initCameraX();
 
                 prefEditor.putInt("lens", lens_front_back);
@@ -485,6 +464,21 @@ public class ViewFinder extends AppCompatActivity
                 finish();
             }
         });
+
+        // jump to camera roll classifier view
+        findViewById(R.id.btn_camera_roll_activity).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
+                Intent intent = new Intent(ViewFinder.this, CameraRollClassifier.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
+
 
         // decrease or increase number of threads
         ImageButton btn_threads_minus = findViewById(R.id.btn_threads_minus);
@@ -709,7 +703,7 @@ public class ViewFinder extends AppCompatActivity
 
 
             // trigger the UI change
-            _freezeAnalyzer.freeze();
+            _freezeAnalyzer.freeze(lens_front_back);
 
 
             _focusCircle.startAnimation(fade_out);
@@ -744,9 +738,7 @@ public class ViewFinder extends AppCompatActivity
     // inits preview object that holds the camera live feed
     //
     // IDEA: freeze camera-preview when classification is halted
-    // -> this can be archived by unbinding the preview use case
-    //
-    // as we need to rebind it initially and eventually, we use this method for ease of use
+    // TODO
 
     private void buildPreviewUseCase(){
 
@@ -850,6 +842,9 @@ public class ViewFinder extends AppCompatActivity
 
                         // update the flag in order to block the image pipeline for the duration of the active classification
                         isCurrentlyClassifying = true;
+
+
+//                        System.out.println("Rotation (in degrees): " + image.getImageInfo().getRotationDegrees());
 
 
                         // convert the CameraX YUV ImageProxy to a (RGB?) bitmap
@@ -970,8 +965,8 @@ public class ViewFinder extends AppCompatActivity
                 // AUTO FOCUS   [Source: https://developer.android.com/training/camerax/configuration#java]
                 CameraControl cameraControl = _camera.getCameraControl();
 
-                MeteringPointFactory factory = new SurfaceOrientedMeteringPointFactory(480, 640);
-                MeteringPoint point = factory.createPoint(240, 320);
+                MeteringPointFactory factory = new SurfaceOrientedMeteringPointFactory(previewDimX, previewDimY);
+                MeteringPoint point = factory.createPoint((int)(0.5*previewDimX), (int)(0.5*previewDimY));
 
                 FocusMeteringAction focusMeteringAction = new FocusMeteringAction.Builder(point, FocusMeteringAction.FLAG_AF)
                         .setAutoCancelDuration(2, TimeUnit.SECONDS) //auto-focus every x seconds
@@ -1087,26 +1082,6 @@ public class ViewFinder extends AppCompatActivity
 
     }
     // end of method - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    //fillBytes() method
-    //
-    // Because of the variable row stride it's not possible to know in
-    // advance the actual necessary dimensions of the yuv planes.
-    protected void fillBytes(final ImageProxy.PlaneProxy[] planes, final byte[][] yuvBytes) {
-        for (int i = 0; i < planes.length; ++i) {
-            final ByteBuffer buffer = planes[i].getBuffer();
-            if (yuvBytes[i] == null) {
-                LOGGER.d("Initializing buffer %d at size %d", i, buffer.capacity());
-                yuvBytes[i] = new byte[buffer.capacity()];
-            }
-            buffer.get(yuvBytes[i]);
-        }
-    }
-    // end of method
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // updateThreadCounter()
@@ -1304,7 +1279,7 @@ public class ViewFinder extends AppCompatActivity
 
 
             // STEP 3: output the first 5 list elements
-            if(list.size() >= 3){
+            if(list.size() >= 5){
 
                 final LinearLayout placeholder = findViewById(R.id.placeholder);
                 final LinearLayout actualrslts = findViewById(R.id.actual_result);

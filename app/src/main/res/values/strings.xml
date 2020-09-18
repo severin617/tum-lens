@@ -16,4 +16,7 @@
     <string name="other_settings">Other settings</string>
     <string name="model">Model</string>
     <string name="initializing">initializing...</string>
+    <string name="tap_to_pick_from_camera_roll">tap to pick from camera roll</string>
+    <string name="waiting_for_image">please select an image first</string>
+    <string name="choose_image">choose image</string>
 </resources>

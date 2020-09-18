@@ -7,12 +7,19 @@ import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
+import android.media.ExifInterface;
 import android.media.Image;
+import android.view.Surface;
+
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
+import androidx.camera.core.Preview;
+
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+
+import helpers.Logger;
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
@@ -41,9 +48,17 @@ interface FreezeCallback {
 
 public class CustomAnalyzer implements ImageAnalysis.Analyzer {
 
+
+    // init new Logger instance
+    private static final Logger LOGGER = new Logger();
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
     // init global variables
     protected FreezeCallback callback;
     protected boolean isFrozen;
+    protected int lens_front_back = 0; // [0 = back, 1 = front]; set 'back' as default;
 
     // constructor
     public CustomAnalyzer(FreezeCallback fcb){
@@ -64,10 +79,10 @@ public class CustomAnalyzer implements ImageAnalysis.Analyzer {
             Image img = image.getImage();
 
             @SuppressLint("UnsafeExperimentalUsageError")
-            Bitmap b = toBitmap(img);
+            Bitmap bmp = toBitmap(img, image.getImageInfo().getRotationDegrees());
 
-            // new callback
-            callback.onFrozenBitmap(b);
+            // trigger new callback
+            callback.onFrozenBitmap(bmp);
 
             // reset flag
             isFrozen = false;
@@ -80,12 +95,28 @@ public class CustomAnalyzer implements ImageAnalysis.Analyzer {
 
 
 
-    public void freeze(){
+    public void freeze(int lens){
         isFrozen = true;
+        lens_front_back = lens;
     }
 
     // converts YUV Image to RGB bitmap
-    private Bitmap toBitmap(@NonNull Image image) {
+    private Bitmap toBitmap(@NonNull Image image, int r) {
+
+        // rotate image according to the orientation
+        int rotation = 0;
+        rotation = r;
+        System.out.println("Rotation (in degrees): " + rotation);
+
+        // TODO: this does not make sense
+        // TODO: this does not make sense
+        // TODO: this does not make sense
+
+        // TODO: we need to know, if the active lens is facing
+        //    - 'forwards'  -> apply mirroring
+        //    - 'backwards' -> do nothing
+
+
 
         // STEP 1: convert YUV image to RGB bitmap   [source: https://stackoverflow.com/a/58568495]
         Image.Plane[] planes = image.getPlanes();
@@ -112,8 +143,8 @@ public class CustomAnalyzer implements ImageAnalysis.Analyzer {
                 new Rect(
                         0,                      // left
                         0,                      // top
-                        (image.getWidth()),         // right
-                        (image.getHeight())),       // bottom
+                        image.getWidth(),           // right
+                        image.getHeight()),         // bottom
                 100, out);                   // note the byte-buffer at the end of the command
 
 
@@ -122,9 +153,15 @@ public class CustomAnalyzer implements ImageAnalysis.Analyzer {
         Bitmap temp1 = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
 
 
-        // rotate by 90 degrees
+        // rotate
         Matrix matrix = new Matrix();
-        matrix.postRotate(90);
+        matrix.postRotate(rotation);
+
+        // TODO
+        // this makes no sense at all, but this workaround is necessary to re-mirror the frozen frame...
+        if(lens_front_back != 0){
+            matrix.preScale(1.0f, -1.0f);
+        }
 
         return Bitmap.createBitmap(temp1, 0, 0, temp1.getWidth(), temp1.getHeight(), matrix, true);
 

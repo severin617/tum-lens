@@ -26,7 +26,7 @@ android {
     }
     aaptOptions {
         // VERY IMPORTANT - do not compress '.tflite' files in '/assets' folder
-        noCompress "tflite"
+        noCompress "tflite", "pb"
     }
 }
 
@@ -46,9 +46,8 @@ dependencies {
 
 
     // +++
-    // CameraX core library  -  08.07.2020, 15:35
+    // CameraX core library  -  13.09.2020
     // +++
-//    def camerax_version = "1.0.0-beta04" // TODO: Stand bis zum 13.09.2020
     def camerax_version = "1.0.0-beta08"
 
     // The following line is optional, as the core library is included indirectly by camera-camera2
@@ -71,8 +70,5 @@ dependencies {
     implementation('org.tensorflow:tensorflow-lite:0.0.0-nightly') { changing = true }
     implementation('org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly') { changing = true }
     implementation('org.tensorflow:tensorflow-lite-support:0.0.0-nightly') { changing = true }
-
-    // Use local TensorFlow library
-    // implementation 'org.tensorflow:tensorflow-lite-local:0.0.0'
 
 }

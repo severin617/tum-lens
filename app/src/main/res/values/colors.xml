@@ -8,4 +8,6 @@
     <color name="red">#f00</color>
     <color name="green">#0f0</color>
     <color name="blue">#00f</color>
+    <color name="light_grey">#ccc</color>
+    <color name="very_light_grey">#fafafa</color>
 </resources>
