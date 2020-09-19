@@ -4,9 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -15,7 +13,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
-
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
@@ -28,7 +25,10 @@ import android.widget.Toast;
 
 public class StartScreen extends AppCompatActivity {
 
-    private int PERMISSION_CODE_CAMERA = 101;
+    // init global permission related variables
+    private int ALL_PERMISSIONS = 101;
+    private final String[] permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +48,8 @@ public class StartScreen extends AppCompatActivity {
         setContentView(R.layout.activity_start_screen);
 
 
-        // TODO: does not work...
-        // change appearance of status bar
-        // [source: https://stackoverflow.com/a/47322331]
-//        if (Build.VERSION.SDK_INT >= 21) {
-//            getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // Navigation bar the soft bottom of some phones like nexus and some Samsung note series
-//            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.black));     //status bar or the time bar at the top
-//        }
-
         // check if permissions are already granted
-        // if so, then launch directly into the view-finder activity
+        // if so, then launch directly into the 'ViewFinder' activity
         checkForPermissions();
 
         // no permission, show the corresponding view...
@@ -70,30 +62,22 @@ public class StartScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // check status of permission:
+                // check permissions status:
+                if (
+                        (ContextCompat.checkSelfPermission(StartScreen.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+                        &&
+                        (ContextCompat.checkSelfPermission(StartScreen.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                ) {
 
-                if (ContextCompat.checkSelfPermission(StartScreen.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-
-                    // should not get called!!
-
-
-                    // permission granted
-                    Toast toast = Toast.makeText(StartScreen.this, "You have already granted this permission!", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 32);
-                    toast.show();
-
-                    // open "viewfinder" view
+                    // permissions granted -> open 'ViewFinder' activity
                     Intent intent = new Intent(StartScreen.this, ViewFinder.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
-
 
                 } else {
 
-                    // should get called!
-
-                    // request permission as it hasn't been granted yet
-                    ActivityCompat.requestPermissions(StartScreen.this, new String[] {Manifest.permission.CAMERA}, PERMISSION_CODE_CAMERA);
-
+                    // request permissions as they haven't been granted yet
+                    ActivityCompat.requestPermissions(StartScreen.this, permissions, ALL_PERMISSIONS);
 
                 }
 
@@ -107,10 +91,14 @@ public class StartScreen extends AppCompatActivity {
     // if so, it then launches the view-finder activity
     private void checkForPermissions() {
 
-        if (ContextCompat.checkSelfPermission(StartScreen.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        // check permissions status:
+        if (
+                (ContextCompat.checkSelfPermission(StartScreen.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+                &&
+                (ContextCompat.checkSelfPermission(StartScreen.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+        ) {
 
-            // permission to use CAMERA is given, start right into VIEWFINDER and REMOVE StartScreen from HISTORY
-
+            // permissions granted -> open 'ViewFinder' activity
             Intent intent = new Intent(StartScreen.this, ViewFinder.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
@@ -124,29 +112,37 @@ public class StartScreen extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_CODE_CAMERA)  {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                // display Toast message
-//                Toast toast = Toast.makeText(getApplicationContext(), "Permission GRANTED", Toast.LENGTH_SHORT);
-//                toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 32);
-//                toast.show();
+        if (requestCode == ALL_PERMISSIONS)  {
 
-                // change view to "ViewFinder"
+            // now verify, if both permissions were granted:
+
+            boolean isGrantedForAll = false;
+
+            if ( (grantResults.length > 0) && (permissions.length == grantResults.length) ) {
+
+                for (int i = 0; i < permissions.length; i++){
+
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED){
+                        isGrantedForAll = true;
+                    } else {
+                        isGrantedForAll = false;
+                    }
+
+                }
+
+            }
+
+            if(isGrantedForAll) {
+
+                // permissions granted -> open 'ViewFinder' activity
                 Intent intent = new Intent(StartScreen.this, ViewFinder.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
 
                 finish();
 
-            } else {
-
-                // Permission is denied!
-
-                // display Toast message
-//                Toast toast = Toast.makeText(getApplicationContext(), "Permission DENIED", Toast.LENGTH_SHORT);
-//                toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 32);
-//                toast.show();
+            } else { // permissions denied
 
                 // switch to view that explains again and offers a redirect to settings
                 Intent intent = new Intent(StartScreen.this, PermissionDenied.class);
