@@ -60,7 +60,10 @@ public abstract class Classifier {
     INCEPTION_V1
 
     // 30.08.2020
-    , INCEPTION_V1_selfConverted
+    , INCEPTION_V1_selfConverted,
+
+    // 20.09.2020
+    MIRCO_MOBILENET_V3
   }
 
   /** The runtime device type used for executing classification. */
@@ -135,6 +138,12 @@ public abstract class Classifier {
      else if (model == Model.INCEPTION_V1_selfConverted) {
        return new Pfusch_InceptionV1(activity, device, numThreads);
      }
+
+     // 20.09.2020
+    else if (model == Model.MIRCO_MOBILENET_V3) {
+      return new Mirco_MobileNetV3(activity, device, numThreads);
+    }
+
 
 
     else {

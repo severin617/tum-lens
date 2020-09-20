@@ -333,6 +333,9 @@ public class ViewFinder extends AppCompatActivity
         } else if (saved_model == Model.INCEPTION_V1_selfConverted.hashCode()) {
             _model = Model.INCEPTION_V1_selfConverted;
             helper = 6;
+        } else if (saved_model == Model.MIRCO_MOBILENET_V3.hashCode()) {
+            _model = Model.MIRCO_MOBILENET_V3;
+            helper = 7;
         } else { // set FLOAT_MOBILENET as default
             _model = Model.FLOAT_MOBILENET;
             helper = 1;
@@ -535,6 +538,9 @@ public class ViewFinder extends AppCompatActivity
                         break;
                     case R.id.radioButton6:
                         _model = Model.INCEPTION_V1_selfConverted;
+                        break;
+                    case R.id.radioButton7:
+                        _model = Model.MIRCO_MOBILENET_V3;
                         break;
                     default:
                         _model = null;
