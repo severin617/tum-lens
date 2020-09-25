@@ -141,7 +141,7 @@
                 app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
                 app:behavior_hideable="false"
                 app:behavior_peekHeight="140dp">
-                <include layout="@layout/bottomsheet_cameraroll_classifier"/>
+                <include layout="@layout/camera_roll_classifier_bottom_sheet"/>
             </androidx.core.widget.NestedScrollView>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

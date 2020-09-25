@@ -19,4 +19,8 @@
     <string name="tap_to_pick_from_camera_roll">tap to pick from camera roll</string>
     <string name="waiting_for_image">please select an image first</string>
     <string name="choose_image">choose image</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="camera_settings">Camera settings</string>
+    <string name="open_camera_roll_classifier">open camera roll classifier</string>
 </resources>

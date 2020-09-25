@@ -39,23 +39,21 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".ImageValidator"
+        <activity
+            android:name=".CameraRollClassifier"
             android:theme="@style/AppTheme" />
-
-        <activity android:name=".CameraRollClassifier"
+        <activity
+            android:name=".PermissionDenied"
             android:theme="@style/AppTheme" />
-
-        <activity android:name=".PermissionDenied"
-            android:theme="@style/AppTheme"/>
-
-        <activity android:name=".ViewFinder"
+        <activity
+            android:name=".ViewFinderClassifier"
             android:theme="@style/AppTheme" />
-
-        <activity android:name=".StartScreen"
+        <activity
+            android:name=".StartScreen"
             android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

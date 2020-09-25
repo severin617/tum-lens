@@ -34,7 +34,7 @@ public class Mirco_MobileNetV3 extends Classifier {
 
     @Override
     protected String getModelPath() {
-        return "mirco_model.tflite";
+        return "severin_model.tflite";
     }
 
     @Override

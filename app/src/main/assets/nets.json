@@ -1,0 +1,93 @@
+{
+    "timestamp": "2020-09-23T11:50:00.000Z",
+    "comment": "",
+
+    "nets": [
+
+
+        {
+            "name": "Quantized MobileNet V1",
+            "comment": "",
+            "version": 1.0,
+        
+            "isFloat": true,
+            "inputSizeArray": [1, 224, 224, 3],
+            "image_mean": 0.0,
+            "image_std": 1.0,
+            "probability_mean": 0.0,
+            "probability_std": 255.0,
+        
+            "input": "input",
+            "output": "MobilenetV1/Predictions/Reshape_1",
+        
+            "filename": "mobilenet_v1_224_quant.tflite",
+            "labels": "labels.txt",
+        
+            "numClasses": 1001,
+            "top5accuracy": "?"
+        },
+
+        
+        
+        {
+            "name": "Inception V1 (self converted)",
+            "comment": "",
+            "version": 0.1,
+
+            "isFloat": true,
+            "inputSizeArray": [1, 224, 224, 3],
+            "image_mean": 127.5,
+            "image_std": 127.5,
+            "probability_mean": 0.0,
+            "probability_std": 1.0,
+
+            "filename": "model.tflite",
+            "labels": "labels.txt",
+
+            "numClasses": 1001,
+            "top5accuracy": "?"
+        },
+
+
+
+        {
+            "name": "Mirco's MobileNet V3",
+            "comment": "transfer learning use case",
+            "version": 0.1,
+
+            "isFloat": true,
+            "inputSizeArray": [1, 224, 224, 3],
+            "image_mean": 127.5,
+            "image_std": 127.5,
+            "probability_mean": 0.0,
+            "probability_std": 1.0,
+
+            "filename": "mirco_model.tflite",
+            "labels": "mirco_labels.txt",
+
+            "numClasses": 1001,
+            "top5accuracy": "?"
+        },
+
+
+        {
+            "name": "Severin's MobileNet V3",
+            "comment": "transfer learning use case",
+            "version": 0.1,
+
+            "isFloat": true,
+            "inputSizeArray": [1, 224, 224, 3],
+            "image_mean": 127.5,
+            "image_std": 127.5,
+            "probability_mean": 0.0,
+            "probability_std": 1.0,
+
+            "filename": "severin_model.tflite",
+            "labels": "mirco_labels.txt",
+
+            "numClasses": 1001,
+            "top5accuracy": "?"
+        }
+
+    ]
+  }

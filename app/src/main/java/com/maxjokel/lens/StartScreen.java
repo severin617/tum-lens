@@ -49,7 +49,7 @@ public class StartScreen extends AppCompatActivity {
 
 
         // check if permissions are already granted
-        // if so, then launch directly into the 'ViewFinder' activity
+        // if so, then launch directly into the 'ViewFinderClassifier' activity
         checkForPermissions();
 
         // no permission, show the corresponding view...
@@ -69,8 +69,8 @@ public class StartScreen extends AppCompatActivity {
                         (ContextCompat.checkSelfPermission(StartScreen.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                 ) {
 
-                    // permissions granted -> open 'ViewFinder' activity
-                    Intent intent = new Intent(StartScreen.this, ViewFinder.class);
+                    // permissions granted -> open 'ViewFinderClassifier' activity
+                    Intent intent = new Intent(StartScreen.this, ViewFinderClassifier.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
 
@@ -98,8 +98,8 @@ public class StartScreen extends AppCompatActivity {
                 (ContextCompat.checkSelfPermission(StartScreen.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
         ) {
 
-            // permissions granted -> open 'ViewFinder' activity
-            Intent intent = new Intent(StartScreen.this, ViewFinder.class);
+            // permissions granted -> open 'ViewFinderClassifier' activity
+            Intent intent = new Intent(StartScreen.this, ViewFinderClassifier.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
 
@@ -135,8 +135,8 @@ public class StartScreen extends AppCompatActivity {
 
             if(isGrantedForAll) {
 
-                // permissions granted -> open 'ViewFinder' activity
-                Intent intent = new Intent(StartScreen.this, ViewFinder.class);
+                // permissions granted -> open 'ViewFinderClassifier' activity
+                Intent intent = new Intent(StartScreen.this, ViewFinderClassifier.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
 
