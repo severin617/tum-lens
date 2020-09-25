@@ -580,9 +580,9 @@ public class ViewFinderClassifier extends AppCompatActivity
     //
     private Bitmap toCroppedRGBBitmap(Image image) {
 
-        LOGGER.d("before convert + crop: " + image.getWidth() + "px x " + image.getHeight() + "px");
+//        LOGGER.d("before convert + crop: " + image.getWidth() + "px x " + image.getHeight() + "px");
 
-        // STEP 1: convert YUV image to RGB bitmap and crop   [source: https://stackoverflow.com/a/58568495]
+        // convert YUV image to RGB bitmap and crop   [source: https://stackoverflow.com/a/58568495]
         Image.Plane[] planes = image.getPlanes();
 
         ByteBuffer yBuffer = planes[0].getBuffer();
@@ -636,20 +636,12 @@ public class ViewFinderClassifier extends AppCompatActivity
         Bitmap temp1 = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
 
 
-        LOGGER.d("after convert + crop: " + temp1.getWidth() + "px x " + temp1.getHeight() + "px");
+//        LOGGER.d("after convert + crop: " + temp1.getWidth() + "px x " + temp1.getHeight() + "px");
 
-
-        // STEP 2: scale down to required dimensions
-        // TODO: brauchen wir gar nicht zu machen:
-        //       1: folgt noch ein nachgeschalteter ImageProcessor, der das übernimmt
-        //       2: wir wissen an der Stelle ja gar nicht, wie die Input-Nodes aussehen!
-//        Bitmap temp2 = Bitmap.createScaledBitmap(temp1, modelInputX, modelInputY, true);
-
-        // STEP 3: rotate by 90 degrees
+        // rotate by 90 degrees
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 
-//        return Bitmap.createBitmap(temp2, 0, 0, temp2.getWidth(), temp2.getHeight(), matrix, true);
         return Bitmap.createBitmap(temp1, 0, 0, temp1.getWidth(), temp1.getHeight(), matrix, true);
 
     }

@@ -10,22 +10,47 @@
             "comment": "",
             "version": 1.0,
         
-            "isFloat": true,
-            "inputSizeArray": [1, 224, 224, 3],
             "image_mean": 0.0,
             "image_std": 1.0,
             "probability_mean": 0.0,
             "probability_std": 255.0,
         
-            "input": "input",
-            "output": "MobilenetV1/Predictions/Reshape_1",
-        
             "filename": "mobilenet_v1_224_quant.tflite",
             "labels": "labels.txt",
         
-            "numClasses": 1001,
+            "top5accuracy": "89.0%"
+        },
+
+
+        {
+            "name": "Float EfficientNet (fp32)",
+        
+            "image_mean": 127.0,
+            "image_std": 128.0,
+            "probability_mean": 0.0,
+            "probability_std": 1.0,
+        
+            "filename": "efficientnet-lite0-fp32.tflite",
+            "labels": "labels_without_background.txt",
+        
             "top5accuracy": "?"
         },
+
+        {
+            "name": "Quantized EfficientNet (int8)",
+        
+            "image_mean": 0.0,
+            "image_std": 1.0,
+            "probability_mean": 0.0,
+            "probability_std": 255.0,
+        
+            "filename": "efficientnet-lite0-int8.tflite",
+            "labels": "labels_without_background.txt",
+        
+            "top5accuracy": "?"
+        },
+
+
 
         
         
@@ -34,18 +59,15 @@
             "comment": "",
             "version": 0.1,
 
-            "isFloat": true,
-            "inputSizeArray": [1, 224, 224, 3],
             "image_mean": 127.5,
             "image_std": 127.5,
             "probability_mean": 0.0,
             "probability_std": 1.0,
 
-            "filename": "model.tflite",
+            "filename": "inception_v1_self.tflite",
             "labels": "labels.txt",
 
-            "numClasses": 1001,
-            "top5accuracy": "?"
+            "top5accuracy": "89.8%"
         },
 
 
@@ -55,8 +77,6 @@
             "comment": "transfer learning use case",
             "version": 0.1,
 
-            "isFloat": true,
-            "inputSizeArray": [1, 224, 224, 3],
             "image_mean": 127.5,
             "image_std": 127.5,
             "probability_mean": 0.0,
@@ -65,7 +85,6 @@
             "filename": "mirco_model.tflite",
             "labels": "mirco_labels.txt",
 
-            "numClasses": 1001,
             "top5accuracy": "?"
         },
 
@@ -75,8 +94,6 @@
             "comment": "transfer learning use case",
             "version": 0.1,
 
-            "isFloat": true,
-            "inputSizeArray": [1, 224, 224, 3],
             "image_mean": 127.5,
             "image_std": 127.5,
             "probability_mean": 0.0,
@@ -85,7 +102,6 @@
             "filename": "severin_model.tflite",
             "labels": "mirco_labels.txt",
 
-            "numClasses": 1001,
             "top5accuracy": "?"
         }
 

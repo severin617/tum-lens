@@ -51,9 +51,6 @@ public class ModelConfig {
     // probability standard deviation [float or quantized]
     private float probabilityStd;
 
-    // sizes of model's input layer
-    private int[] inputSizeArray = new int[4];
-
 
 
     // TODO: 25.09.2020, 15:30 Uhr
@@ -83,8 +80,6 @@ public class ModelConfig {
 
         this.probabilityMean = getJSONFloat(object, "probability_mean");
         this.probabilityStd = getJSONFloat(object, "probability_std");
-
-        this.inputSizeArray = getJSONInputSizeArray(object);
 
         LOGGER.i("Created ModelConfig for " + this.getName() + " with id " + this.getId());
 
@@ -160,8 +155,6 @@ public class ModelConfig {
                 this.probabilityMean = getJSONFloat(obj, "probability_mean");
                 this.probabilityStd = getJSONFloat(obj, "probability_std");
 
-                this.inputSizeArray = getJSONInputSizeArray(obj);
-
                 this.id = this.filenameModel.hashCode();
 
 
@@ -194,7 +187,6 @@ public class ModelConfig {
         this.imageStd = 127.5f;
         this.probabilityMean = 0.0f;
         this.probabilityStd = 1.0f;
-        this.inputSizeArray = new int[] {1, 224, 224, 3};
         this.id = this.filenameModel.hashCode();
 
         LOGGER.i("Created DEFAULT ModelConfig for " + this.name);
@@ -227,18 +219,13 @@ public class ModelConfig {
         return new NormalizeOp(this.probabilityMean, this.probabilityStd);
     }
 
-    protected int[] getInputSizeArray() {
-        return this.inputSizeArray;
-    }
-
-
     // ---------------------------------------------------------------------------------------------
     // HELPERS
 
 
     private String getJSONString(JSONObject o, String p){
 
-        String r = null;
+        String r = "null";
 
         try {
             r = o.getString(p);
@@ -262,27 +249,6 @@ public class ModelConfig {
         }
 
         return (float)r;
-    }
-
-    private int[] getJSONInputSizeArray(JSONObject o){
-
-        JSONArray t = null;
-        int[] r = new int[4];
-
-        try {
-            t = o.getJSONArray("inputSizeArray");
-
-            r[0] = t.getInt(0);
-            r[1] = t.getInt(1);
-            r[2] = t.getInt(2);
-            r[3] = t.getInt(3);
-
-        } catch (JSONException e) {
-            LOGGER.e("Error retrieving parameter " + "inputSizeArray" + " from 'nets' JSON array.");
-            e.printStackTrace();
-        }
-
-        return r;
     }
 
 

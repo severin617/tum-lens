@@ -130,10 +130,7 @@ public class StandaloneClassifier {
     // set up initial 'ModelConfig' object and related helper functions
 
     private ModelConfig modelConfig;
-
     private TensorOperator getPreprocessNormalizeOp(){ return modelConfig.getPreprocessNormalizeOp(); }
-
-    private int[] getInputSizeArray(){ return modelConfig.getInputSizeArray(); }
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
