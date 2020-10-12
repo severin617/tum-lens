@@ -58,7 +58,7 @@ import java.util.concurrent.TimeUnit;
 
 import helpers.Logger;
 
-public class ViewFinderClassifier extends AppCompatActivity
+public class ViewFinder extends AppCompatActivity
             implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener,
             FreezeCallback,
             ClassifierEvents,
@@ -104,7 +104,7 @@ public class ViewFinderClassifier extends AppCompatActivity
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // TF-Lite related to CLASSIFICATION:   [source: TF-Lite example app]
-    private StandaloneClassifier classifier;
+    private Classifier classifier;
 
     protected int previewDimX = 960;
     protected int previewDimY = 1280;
@@ -159,7 +159,7 @@ public class ViewFinderClassifier extends AppCompatActivity
 
 
         // set corresponding layout
-        setContentView(R.layout.activity_view_finder_classifier);
+        setContentView(R.layout.activity_view_finder);
 
 
         // set up gesture detection   [source: https://developer.android.com/training/gestures/detector#java]
@@ -246,8 +246,8 @@ public class ViewFinderClassifier extends AppCompatActivity
                 ImageView focusCircle = findViewById(R.id.focus_circle);
 
                 // load 150ms animations
-                Animation fade_in = (Animation) AnimationUtils.loadAnimation(ViewFinderClassifier.this, R.anim.basic_fade_in_150);
-                Animation fade_out = (Animation) AnimationUtils.loadAnimation(ViewFinderClassifier.this, R.anim.basic_fade_out_150);
+                Animation fade_in = (Animation) AnimationUtils.loadAnimation(ViewFinder.this, R.anim.basic_fade_in_150);
+                Animation fade_out = (Animation) AnimationUtils.loadAnimation(ViewFinder.this, R.anim.basic_fade_out_150);
 
                 focusCircle.startAnimation(fade_in);
                 focusCircle.setVisibility(View.VISIBLE);
@@ -269,7 +269,7 @@ public class ViewFinderClassifier extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
-                Intent intent = new Intent(ViewFinderClassifier.this, CameraRollClassifier.class);
+                Intent intent = new Intent(ViewFinder.this, CameraRoll.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 finish();
@@ -299,7 +299,7 @@ public class ViewFinderClassifier extends AppCompatActivity
         // +       just >changing< the configuration within the class based on the updated
         // +       SharedPreferences does NOT work;
         // +
-        // +       we therefore call 'classifier = new StandaloneClassifier(this)';
+        // +       we therefore call 'classifier = new Classifier(this)';
         // +       this will init a new 'Classifier' object, that is built on the current config
         // +       saved in SharedPreferences
         // +
@@ -351,7 +351,7 @@ public class ViewFinderClassifier extends AppCompatActivity
     private void reInitClassifier(){
 
         try {
-            classifier = new StandaloneClassifier(this);
+            classifier = new Classifier(this);
         } catch (IOException e) {
             LOGGER.e("Error occured while trying to re-init the classifier: " + e);
             e.printStackTrace();
@@ -440,8 +440,9 @@ public class ViewFinderClassifier extends AppCompatActivity
                 //    threaded ExecutorService; so I removed it for now;
 
                 // run inference on image
-                final List<StandaloneClassifier.Recognition> results =
-                        classifier.recognizeImage(rgbBitmap, 0);
+                final List<Classifier.Recognition> results =
+//                        classifier.recognizeImage(rgbBitmap, 0);
+                        classifier.recognizeImage(rgbBitmap);
 
 
                 startTimestamp = SystemClock.uptimeMillis() - startTime;
@@ -479,7 +480,7 @@ public class ViewFinderClassifier extends AppCompatActivity
     //
     private void buildFreezeUseCase(){
 
-        // init analysis object for processing the last frame
+        // init analysis object for processing last frame
         _freezeImageAnalysis = new ImageAnalysis.Builder()
                 .setTargetResolution(new Size(previewDimX, previewDimY))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -671,8 +672,8 @@ public class ViewFinderClassifier extends AppCompatActivity
         ImageView focusCircle = findViewById(R.id.focus_circle);
 
         // load 150ms animations
-        Animation fade_in = (Animation) AnimationUtils.loadAnimation(ViewFinderClassifier.this, R.anim.basic_fade_in_150);
-        Animation fade_out = (Animation) AnimationUtils.loadAnimation(ViewFinderClassifier.this, R.anim.basic_fade_out_150);
+        Animation fade_in = (Animation) AnimationUtils.loadAnimation(ViewFinder.this, R.anim.basic_fade_in_150);
+        Animation fade_out = (Animation) AnimationUtils.loadAnimation(ViewFinder.this, R.anim.basic_fade_out_150);
 
         if(isClassificationPaused){ // resume classification: adjust UI
 
@@ -792,9 +793,9 @@ public class ViewFinderClassifier extends AppCompatActivity
 
             if(isFlashEnabled){
                 _camera.getCameraControl().enableTorch(false);
-                btn.setColorFilter(ContextCompat.getColor(ViewFinderClassifier.this, R.color.colorPrimary));
+                btn.setColorFilter(ContextCompat.getColor(ViewFinder.this, R.color.colorPrimary));
             } else {
-                btn.setColorFilter(ContextCompat.getColor(ViewFinderClassifier.this, R.color.colorAccent));
+                btn.setColorFilter(ContextCompat.getColor(ViewFinder.this, R.color.colorAccent));
                 _camera.getCameraControl().enableTorch(true);
             }
 

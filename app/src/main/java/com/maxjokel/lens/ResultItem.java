@@ -2,6 +2,18 @@ package com.maxjokel.lens;
 
 import java.util.Comparator;
 
+/* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+    We use this class for realizing the "smoothed results".
+
+    For each classified frame we obtain a list with the top-n prediction results.
+    We store the top-3 items as 'ResultItem' objects in a dedicated list,
+    that we sort by the number of occurrences after we the results of x frames.
+
+    For that reason we implement the custom comparator.
+
++ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+
 public class ResultItem implements Comparable<ResultItem>{
 
     String title;

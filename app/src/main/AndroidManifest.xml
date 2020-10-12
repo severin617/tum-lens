@@ -40,13 +40,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".CameraRollClassifier"
+            android:name=".CameraRoll"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".PermissionDenied"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ViewFinderClassifier"
+            android:name=".ViewFinder"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".StartScreen"

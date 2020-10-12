@@ -14,6 +14,17 @@ import java.nio.charset.StandardCharsets;
 
 import helpers.Logger;
 
+/* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+    We use objects of this class to represent the models specified in the 'assets/nets.json' file
+    and store them in the ListSingleton instance.
+
+    The ModelConfig objects are created directly from a passed JSON object.
+
+    Please note that a models 'private int id;' is based on the filename .
+
++ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+
 public class ModelConfig {
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -53,7 +64,6 @@ public class ModelConfig {
 
 
 
-    // TODO: 25.09.2020, 15:30 Uhr
     public ModelConfig(JSONObject object){
 
         // IDEA

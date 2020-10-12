@@ -43,7 +43,7 @@ import helpers.Logger;
 
 + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
-public class CameraRollClassifier extends AppCompatActivity implements ClassifierEvents {
+public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
 
     // init new Logger instance
     private static final Logger LOGGER = new Logger();
@@ -51,7 +51,7 @@ public class CameraRollClassifier extends AppCompatActivity implements Classifie
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // TF-Lite related
-    private StandaloneClassifier classifier;
+    private Classifier classifier;
     private long startTimestamp;
 
 
@@ -96,7 +96,7 @@ public class CameraRollClassifier extends AppCompatActivity implements Classifie
 
 
         // set corresponding layout
-        setContentView(R.layout.activity_camera_roll_classifier);
+        setContentView(R.layout.activity_camera_roll);
 
 
 
@@ -199,7 +199,7 @@ public class CameraRollClassifier extends AppCompatActivity implements Classifie
     private void reInitClassifier(){
 
         try {
-            classifier = new StandaloneClassifier(this);
+            classifier = new Classifier(this);
         } catch (IOException e) {
             LOGGER.e("Error occured while trying to re-init the classifier: " + e);
             e.printStackTrace();
@@ -273,7 +273,7 @@ public class CameraRollClassifier extends AppCompatActivity implements Classifie
                     classify(bmp);
 
                 } else {
-                    LOGGER.e("Error occured while processing bitmap in CameraRollClassifier: bitmap is null!");
+                    LOGGER.e("Error occured while processing bitmap in CameraRoll: bitmap is null!");
                 }
 
 
@@ -339,8 +339,9 @@ public class CameraRollClassifier extends AppCompatActivity implements Classifie
         final long startTime = SystemClock.uptimeMillis();
 
         // run inference on image
-        final List<StandaloneClassifier.Recognition> results =
-                classifier.recognizeImage(bmp, 0);
+        final List<Classifier.Recognition> results =
+//                classifier.recognizeImage(bmp, 0);
+                classifier.recognizeImage(bmp);
 
         startTimestamp = SystemClock.uptimeMillis() - startTime;
 
@@ -360,7 +361,7 @@ public class CameraRollClassifier extends AppCompatActivity implements Classifie
     @Override
     public void onBackPressed() {
         // we need to launch the view finder activity explicitly
-        Intent intent = new Intent(CameraRollClassifier.this, ViewFinderClassifier.class);
+        Intent intent = new Intent(CameraRoll.this, ViewFinder.class);
         startActivity(intent);
         finish();
     }

@@ -1,21 +1,12 @@
 package com.maxjokel.lens;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.YuvImage;
-import android.media.Image;
 import android.os.SystemClock;
 import android.os.Trace;
-
-import androidx.camera.core.ImageProxy;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
@@ -28,13 +19,10 @@ import org.tensorflow.lite.support.image.ImageProcessor;
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.image.ops.ResizeOp;
 import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp;
-import org.tensorflow.lite.support.image.ops.Rot90Op;
 import org.tensorflow.lite.support.label.TensorLabel;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -65,8 +53,12 @@ interface ClassifierEvents {
 // TODO     YET I DO NOT UNDERSTAND HOW THIS WORKS WHEN USING PROPER CLASSES...
 
 
-public class StandaloneClassifier {
-//public class StandaloneClassifier implements ClassifierEvents { // NOPE!!! DOES NOT WORK
+//  NOTE THAT THIS IS ORIGINALLY BASED ON:    https://github.com/tensorflow/examples/tree/master/lite/examples/image_classification/android
+
+
+
+public class Classifier {
+//public class Classifier implements ClassifierEvents { // NOPE!!! DOES NOT WORK
 
 
     private static final Logger LOGGER = new Logger();
@@ -138,7 +130,7 @@ public class StandaloneClassifier {
     // constructor
     // Activity argument is required for reading from '/assets'
     // this method is adapted from the official TF-Lite example
-    protected StandaloneClassifier(Activity activity) throws IOException {
+    protected Classifier(Activity activity) throws IOException {
 
         // reset, just to make sure
         close();
@@ -237,7 +229,8 @@ public class StandaloneClassifier {
      * @param: sensorOrientation: 0, weil warum nicht...
      *
      * */
-    public List<StandaloneClassifier.Recognition> recognizeImage(final Bitmap bitmap, int sensorOrientation) {
+//    public List<Classifier.Recognition> recognizeImage(final Bitmap bitmap, int sensorOrientation) {
+    public List<Classifier.Recognition> recognizeImage(final Bitmap bitmap) {
 
         // Logs this method so that it can be analyzed with systrace.
         Trace.beginSection("recognizeImage");
@@ -246,7 +239,8 @@ public class StandaloneClassifier {
         long startTimeForLoadImage = SystemClock.uptimeMillis();
 
         // ZUR INFO: inputImageBuffer = new TensorImage(imageDataType);
-        inputImageBuffer = loadImage(bitmap, sensorOrientation);
+//        inputImageBuffer = loadImage(bitmap, sensorOrientation);
+        inputImageBuffer = loadImage(bitmap);
 
         long endTimeForLoadImage = SystemClock.uptimeMillis();
         Trace.endSection();
@@ -295,20 +289,21 @@ public class StandaloneClassifier {
     /** Loads input image-bitmap, and applies preprocessing.
      *
      * 'ImageProcessor' is a helper feature of the TF-Lite-Package */
-    private TensorImage loadImage(final Bitmap bitmap, int sensorOrientation) {
+//    private TensorImage loadImage(final Bitmap bitmap, int sensorOrientation) {
+    private TensorImage loadImage(final Bitmap bitmap) {
 
         // load bitmap into TensorImage
         inputImageBuffer.load(bitmap);
 
         int cropSize = Math.min(bitmap.getWidth(), bitmap.getHeight());
-        int numRotation = sensorOrientation / 90;
+//        int numRotation = sensorOrientation / 90;
 
         // create new TF-Lite ImageProcessor to convert from Bitmap to TensorImage
         ImageProcessor imageProcessor =
                 new ImageProcessor.Builder()
                         .add(new ResizeWithCropOrPadOp(cropSize, cropSize))
                         .add(new ResizeOp(imageSizeX, imageSizeY, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
-                        .add(new Rot90Op(numRotation))
+//                        .add(new Rot90Op(numRotation))
                         .add(getPreprocessNormalizeOp())
                         .build();
 
@@ -321,12 +316,12 @@ public class StandaloneClassifier {
 
 
     /** Gets the top-k results. */
-    private static List<StandaloneClassifier.Recognition> getTopKProbability(Map<String, Float> labelProb) {
+    private static List<Classifier.Recognition> getTopKProbability(Map<String, Float> labelProb) {
         // Find the best classifications.
-        PriorityQueue<StandaloneClassifier.Recognition> pq =
+        PriorityQueue<Classifier.Recognition> pq =
                 new PriorityQueue<>(
                         MAX_RESULTS,
-                        new Comparator<StandaloneClassifier.Recognition>() {
+                        new Comparator<Classifier.Recognition>() {
                             @Override
                             public int compare(Recognition lhs, Recognition rhs) {
                                 return Float.compare(rhs.getConfidence(), lhs.getConfidence());
@@ -334,10 +329,10 @@ public class StandaloneClassifier {
                         });
 
         for (Map.Entry<String, Float> entry : labelProb.entrySet()) {
-            pq.add(new StandaloneClassifier.Recognition("" + entry.getKey(), entry.getKey(), entry.getValue(), null));
+            pq.add(new Classifier.Recognition("" + entry.getKey(), entry.getKey(), entry.getValue(), null));
         }
 
-        final ArrayList<StandaloneClassifier.Recognition> recognitions = new ArrayList<>();
+        final ArrayList<Classifier.Recognition> recognitions = new ArrayList<>();
         int recognitionsSize = Math.min(pq.size(), MAX_RESULTS);
         for (int i = 0; i < recognitionsSize; ++i) {
             recognitions.add(pq.poll());
@@ -469,7 +464,7 @@ public class StandaloneClassifier {
         //  - if there is a ModelConfig that matches the specified id: return this item if
         //  - otherwise: return default "Float MobileNet V1"
 
-        int id = prefs.getInt("20200925_model", 0); // TODO
+        int id = prefs.getInt("model", 0); // TODO
 
         for (int i = 0; i < MODEL_LIST.size(); i++){
 

@@ -24,7 +24,7 @@ public class SmoothedPredictionsFragment extends Fragment {
     // init global variables related to 'showSmoothedRecognitionResults()'
     private int _counter = 0;
     Map<String, ResultItem> _map = new HashMap<String, ResultItem>();
-    List<StandaloneClassifier.Recognition> _collection = new LinkedList<StandaloneClassifier.Recognition>();
+    List<Classifier.Recognition> _collection = new LinkedList<Classifier.Recognition>();
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -62,7 +62,7 @@ public class SmoothedPredictionsFragment extends Fragment {
 
     @UiThread
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
-    public void showSmoothedRecognitionResults(List<StandaloneClassifier.Recognition> results) {
+    public void showSmoothedRecognitionResults(List<Classifier.Recognition> results) {
 
         if (_counter <= 9){
 
@@ -71,23 +71,23 @@ public class SmoothedPredictionsFragment extends Fragment {
 
             if (results != null) { // if there are results, add them to the list
 
-                StandaloneClassifier.Recognition recognition0 = results.get(0);
+                Classifier.Recognition recognition0 = results.get(0);
                 if ((recognition0 != null) && (recognition0.getTitle() != null) && (recognition0.getConfidence() != null))  {
                     _collection.add(recognition0);
                 }
-                StandaloneClassifier.Recognition recognition1 = results.get(1);
+                Classifier.Recognition recognition1 = results.get(1);
                 if ((recognition1 != null) && (recognition1.getTitle() != null) && (recognition1.getConfidence() != null))  {
                     _collection.add(recognition1);
                 }
-                StandaloneClassifier.Recognition recognition2 = results.get(2);
+                Classifier.Recognition recognition2 = results.get(2);
                 if ((recognition2 != null) && (recognition2.getTitle() != null) && (recognition2.getConfidence() != null))  {
                     _collection.add(recognition2);
                 }
-                StandaloneClassifier.Recognition recognition3 = results.get(3);
+                Classifier.Recognition recognition3 = results.get(3);
                 if ((recognition3 != null) && (recognition3.getTitle() != null) && (recognition3.getConfidence() != null))  {
                     _collection.add(recognition3);
                 }
-                StandaloneClassifier.Recognition recognition4 = results.get(4);
+                Classifier.Recognition recognition4 = results.get(4);
                 if ((recognition4 != null) && (recognition4.getTitle() != null) && (recognition4.getConfidence() != null))  {
                     _collection.add(recognition4);
                 }
@@ -112,7 +112,7 @@ public class SmoothedPredictionsFragment extends Fragment {
             // iterate
             for (int i=0; i < _collection.size(); i++) {
 
-                StandaloneClassifier.Recognition a = _collection.get(i); // improve memory efficiency
+                Classifier.Recognition a = _collection.get(i); // improve memory efficiency
 
                 if (list.size() == 0){ // if list is empty, just add ResultItem to it
 
@@ -196,7 +196,7 @@ public class SmoothedPredictionsFragment extends Fragment {
             // reset data structures for next iteration
             _counter = 0;
             _map = new HashMap<String, ResultItem>();
-            _collection = new LinkedList<StandaloneClassifier.Recognition>();
+            _collection = new LinkedList<Classifier.Recognition>();
 
         }
 

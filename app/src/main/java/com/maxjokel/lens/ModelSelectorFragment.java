@@ -25,15 +25,15 @@ import java.util.List;
 import java.util.Objects;
 
 
-/* TODO
+/*
  *  FRAGMENT FOR 'MODEL SELECTOR' ELEMENT IN BOTTOM SHEET
  *
  * -> we use a fragment here, because we reuse this component in
- *    'ViewFinderClassifier' as well as in
- *    'CameraRollClassifier'
+ *    'ViewFinder' as well as in
+ *    'CameraRoll'
  *
  * -> additionally, the actual selector UI is created dynamically based on the nets.json file
- *    in the /assets directory
+ *    in the /assets directory that this fragment obtains via the ListSingleton instance
  *
  *
  * -> should be the most elegant solution to this
@@ -176,7 +176,7 @@ public class ModelSelectorFragment extends Fragment {
     // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
         // get saved model Id from SharedPreferences
-        int id = prefs.getInt("20200925_model", 0); // TODO
+        int id = prefs.getInt("model", 0);
         RadioButton r = view.findViewById(id);
 
         if(id == 0 || r == null){
@@ -213,7 +213,7 @@ public class ModelSelectorFragment extends Fragment {
                 }
 
                 // save selection to SharedPreferences
-                prefEditor.putInt("20200925_model", modelId); // TODO
+                prefEditor.putInt("model", modelId);
                 prefEditor.apply();
 
 

@@ -12,6 +12,21 @@ import java.util.List;
 
 import helpers.Logger;
 
+
+/* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+    SINGLETON pattern for creating a 'single source of truth'
+
+    We init a new 'ListSingleton' instance when the app is launched.
+    It parses the 'nets.json' file in the '/assets' directory and creates for each item in the
+    'nets' array a 'ModelConfig' object by calling its constructor and passing the json array element.
+
+    The List<ModelConfig> list is used in 'ModelSelectorFragment' to build its RadioGroup dynamically
+    around the models specified in 'nets.json'
+
++ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+
+
 public class ListSingleton {
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
