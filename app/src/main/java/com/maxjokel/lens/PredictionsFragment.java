@@ -16,11 +16,12 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PredictionsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+/* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+ *
+ * Fragment for displaying the classification results (per frame)
+ *
+ * + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+
 public class PredictionsFragment extends Fragment {
 
     public PredictionsFragment() {

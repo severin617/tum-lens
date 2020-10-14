@@ -25,11 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -47,15 +42,14 @@ import android.widget.ImageView;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import helpers.ImageUtils;
 import helpers.Logger;
 
 public class ViewFinder extends AppCompatActivity
@@ -421,7 +415,7 @@ public class ViewFinder extends AppCompatActivity
                 // convert the CameraX YUV ImageProxy to a (RGB?) bitmap
                 @androidx.camera.core.ExperimentalGetImage
                 Image img = image.getImage();
-                final Bitmap rgbBitmap = toCroppedRGBBitmap(img);
+                final Bitmap rgbBitmap = ImageUtils.toCroppedBitmap(img, image.getImageInfo().getRotationDegrees());
 
 
                 // pre classification checks
@@ -441,7 +435,6 @@ public class ViewFinder extends AppCompatActivity
 
                 // run inference on image
                 final List<Classifier.Recognition> results =
-//                        classifier.recognizeImage(rgbBitmap, 0);
                         classifier.recognizeImage(rgbBitmap);
 
 
@@ -559,94 +552,6 @@ public class ViewFinder extends AppCompatActivity
 
     } // END of initCameraX()  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-
-
-
-
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // toBitmap() Method
-    //
-    // >>based on the method developed in ImageValidator.java<<
-    //
-    // Workflow [currently only validated with square dimensions]
-    //  - convert YUV image to RGB bitmap:
-    //      - reduce quality to 35%
-    //      - crop to square (length is determined by shortest side of image)
-    //  - scale square down to model input requirements
-    //
-    // Takeaways
-    //  - "quality" doesn't seem to have a huge effect on conversion time
-    //  - both, 25% and 50% run in sub-20ms time frames
-    //
-    private Bitmap toCroppedRGBBitmap(Image image) {
-
-//        LOGGER.d("before convert + crop: " + image.getWidth() + "px x " + image.getHeight() + "px");
-
-        // convert YUV image to RGB bitmap and crop   [source: https://stackoverflow.com/a/58568495]
-        Image.Plane[] planes = image.getPlanes();
-
-        ByteBuffer yBuffer = planes[0].getBuffer();
-        ByteBuffer uBuffer = planes[1].getBuffer();
-        ByteBuffer vBuffer = planes[2].getBuffer();
-
-        int ySize = yBuffer.remaining();
-        int uSize = uBuffer.remaining();
-        int vSize = vBuffer.remaining();
-
-        byte[] nv21 = new byte[ySize + uSize + vSize];
-        yBuffer.get(nv21, 0, ySize);
-        vBuffer.get(nv21, ySize, vSize);
-        uBuffer.get(nv21, ySize + vSize, uSize);
-
-        YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        // IDEA: the object of desire is probably in the image center;
-        // so it should not matter, if we loose some pixels near the bezels
-        // -> factor is currently 90% of the smaller side
-        int cropSize = (int)(0.9 * Math.min(image.getWidth(), image.getHeight()));
-
-        // calc offsets for cropping
-        int offShortSide = (int)(0.5 * (Math.min(image.getWidth(), image.getHeight()) - cropSize));
-        int offLongSide = (int)(0.5 * (Math.max(image.getWidth(), image.getHeight()) - cropSize));
-
-        // convert to RGB and crop; quality is set to 35%
-        if (image.getWidth() < image.getHeight()){
-            // PORTRAIT
-            yuvImage.compressToJpeg(
-                    new Rect(
-                            offShortSide,                       // left
-                            offLongSide,                        // top
-                            (image.getWidth()-offShortSide),    // right
-                            (image.getHeight()-offLongSide)),   // bottom
-                    35, out);                            // note the byte-buffer at the end of the command
-        } else {
-            // LANDSCAPE
-            yuvImage.compressToJpeg(
-                    new Rect(
-                            offLongSide,
-                            offShortSide,
-                            (image.getWidth()-offLongSide),
-                            (image.getHeight()-offShortSide)),
-                    35, out);
-        }
-
-        // finally, create bitmap
-        byte[] imageBytes = out.toByteArray();
-        Bitmap temp1 = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-
-
-//        LOGGER.d("after convert + crop: " + temp1.getWidth() + "px x " + temp1.getHeight() + "px");
-
-        // rotate by 90 degrees
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-
-        return Bitmap.createBitmap(temp1, 0, 0, temp1.getWidth(), temp1.getHeight(), matrix, true);
-
-    }
-    // END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 

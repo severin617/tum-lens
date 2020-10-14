@@ -5,9 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -21,17 +20,15 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import helpers.ImageUtils;
 import helpers.Logger;
 
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-
-    18.07.2020
 
     this activity lets you pick an image from camera roll and will classify it
 
@@ -53,6 +50,9 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
     // TF-Lite related
     private Classifier classifier;
     private long startTimestamp;
+
+    // holds the last image, so that when the model is changed we can re-run classification
+    private Bitmap savedBitmap = null;
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -192,6 +192,14 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
         // ... and try to re-int it
         reInitClassifier();
 
+
+        // if there is a saved Bitmap, re-run the classification
+        if(savedBitmap != null) {
+            classify(savedBitmap);
+        }
+
+
+
     } // END of onClassifierConfigChanged - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // reInitClassifier() Method
@@ -206,9 +214,6 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
         }
 
     }
-
-
-
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -242,11 +247,10 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
                     ExifInterface exif = new ExifInterface(inputStream);
                     int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                    LOGGER.d("EXIF", "Exif: " + orientation);
+//                    LOGGER.d("EXIF", "Exif: " + orientation);
 
                     // rotate accordingly
                     Matrix matrix = new Matrix();
-
                     if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
                         matrix.postRotate(90);
                     }
@@ -256,27 +260,29 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
                     else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                         matrix.postRotate(270);
                     }
-
                     bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                // display and classify
+                // display, then crop and classify
                 if (bmp != null) {
 
+                    // render to screen
                     ImageView iv = findViewById(R.id.bmp_camera_roll);
                     iv.setImageBitmap(bmp);
 
+                    // use helper class to crop the bitmap to square
+                    Bitmap croppedBitmap = ImageUtils.cropBitmap(bmp);
+                    savedBitmap = croppedBitmap;
+
                     // start classification
-                    classify(bmp);
+                    classify(croppedBitmap);
 
                 } else {
-                    LOGGER.e("Error occured while processing bitmap in CameraRoll: bitmap is null!");
+                    LOGGER.e("Error occurred while processing bitmap in CameraRoll: bitmap is null!");
                 }
-
-
 
                 // adjust UI: show button to select another image
                 if(_isInitialCall){
@@ -293,55 +299,10 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     public void classify(Bitmap bitmap){
 
-
-        // IDEA: the object of desire is probably in the image center;
-        // so it should not matter, if we loose some pixels near the bezels
-        // -> factor is currently 90% of the smaller side
-        int cropSize = (int)(0.9 * Math.min(bitmap.getWidth(), bitmap.getHeight()));
-
-        // calc offsets for cropping
-        int offShortSide = (int)(0.5 * (Math.min(bitmap.getWidth(), bitmap.getHeight()) - cropSize));
-        int offLongSide = (int)(0.5 * (Math.max(bitmap.getWidth(), bitmap.getHeight()) - cropSize));
-
-        Bitmap temp1 = null;
-
-        // crop to square
-        if (bitmap.getWidth() < bitmap.getHeight()){
-            // PORTRAIT
-            temp1 = Bitmap.createBitmap(bitmap,
-                    offShortSide,                       // left
-                    offLongSide,                        // top
-                    (bitmap.getWidth() - offShortSide),   // right
-                    (bitmap.getHeight() - offLongSide));  // bottom
-        } else {
-            // LANDSCAPE
-            temp1 = Bitmap.createBitmap(bitmap,
-                    offLongSide,
-                    offShortSide,
-                    (bitmap.getWidth() - offLongSide),
-                    (bitmap.getHeight() - offShortSide));
-        }
-
-
-        // compress, quality is set to 35%
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        temp1.compress(Bitmap.CompressFormat.JPEG, 35, out);
-        byte[] imageBytes = out.toByteArray();
-        Bitmap temp2 = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-
-        // rotate by 90 degrees
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-
-        Bitmap bmp = Bitmap.createBitmap(temp2, 0, 0, temp2.getWidth(), temp2.getHeight(), matrix, true);
-
-
         final long startTime = SystemClock.uptimeMillis();
 
         // run inference on image
-        final List<Classifier.Recognition> results =
-//                classifier.recognizeImage(bmp, 0);
-                classifier.recognizeImage(bmp);
+        final List<Classifier.Recognition> results = classifier.recognizeImage(bitmap);
 
         startTimestamp = SystemClock.uptimeMillis() - startTime;
 
@@ -360,6 +321,12 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
     // intercept 'back button pressed' event
     @Override
     public void onBackPressed() {
+
+        savedBitmap = null;
+
+        classifier.close();
+        classifier = null;
+
         // we need to launch the view finder activity explicitly
         Intent intent = new Intent(CameraRoll.this, ViewFinder.class);
         startActivity(intent);

@@ -26,6 +26,17 @@ enum ProcessingUnit {
     NNAPI
 }
 
+
+/* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+ *
+ * This fragment controls the processing unit selector in the BottomSheet of the ViewFinder activity;
+ * based on the enum above
+ *
+ * + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+
+
+
+
 public class ProcessingUnitSelectorFragment extends Fragment {
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

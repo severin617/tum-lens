@@ -20,6 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
+/* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+ *
+ * Fragment that controls the frame number selector in the BottomSheet of the ViewFinder activity
+ *
+ * + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+
+
+
 public class ThreadNumberFragment extends Fragment {
 
     // instantiate new SharedPreferences object

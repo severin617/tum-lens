@@ -21,6 +21,12 @@ interface CameraEvents {
     void onFlashToggled();
 
 }
+/* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+*
+* This fragment controls the camera settings in the BottomSheet in the 'ViewFinder' activity
+*
+* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+
 
 public class CameraSettingsFragment extends Fragment {
 

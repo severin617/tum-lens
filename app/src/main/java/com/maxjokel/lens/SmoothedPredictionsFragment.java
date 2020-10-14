@@ -17,6 +17,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+
+/* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+ *
+ * Fragment for displaying the classification smoothed results
+ *
+ * + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
+
+
+
 public class SmoothedPredictionsFragment extends Fragment {
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

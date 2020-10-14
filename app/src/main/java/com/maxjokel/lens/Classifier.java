@@ -33,13 +33,6 @@ import java.util.PriorityQueue;
 import helpers.Logger;
 
 
-
-interface ClassifierEvents {
-    void onClassifierConfigChanged(Activity activity);
-}
-
-
-
 // TODO     IMPORTANT FINDING [24.09.2020, 00:55]
 // TODO
 // TODO         please do not use filenames with multiple '.' in them; those files will get
