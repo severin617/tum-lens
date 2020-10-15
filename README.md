@@ -1,3 +1,10 @@
+# Performance Branch
+
+This branch is based around a `static` implementation of the TF-Lite classifier.
+Note that this version is still in development and contains bugs `:(`
+
+---
+
 # Running TUM Lens on your Android smartphone
 
 ### 1 Activate Developer Mode
