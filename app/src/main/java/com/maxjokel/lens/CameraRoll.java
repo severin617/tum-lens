@@ -45,11 +45,8 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
     // init new Logger instance
     private static final Logger LOGGER = new Logger();
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // TF-Lite related
-    private Classifier classifier;
-    private long startTimestamp;
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // holds the last image, so that when the model is changed we can re-run classification
     private Bitmap savedBitmap = null;
@@ -76,7 +73,6 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 
 
     @Override
@@ -115,16 +111,23 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
         fragmentTransaction.add(R.id.results_container, predictionsFragment, "predictionsFragment");
         fragmentTransaction.commit();
 
+
+        // add StaticClassifier to list of event listeners
+        //      please note that it is absolutely critical that this happens before all the other
+        //      listeners are added to the list;
+        //      otherwise the classifier will get notified too late and run the old model on the image!
+        StaticClassifier sc = null;
+        try {
+            sc = new StaticClassifier();
+            msf.addListener(sc);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         // for transmitting events back from the fragment to this class
         msf.addListener(this);
 
-
-
-        // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-        // +                   INIT CLASSIFIER                     +
-        // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-
-        reInitClassifier();
 
 
 
@@ -180,40 +183,28 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
     // onClassifierConfigChanged(Activity activity)
     //
     // this method is part of the 'ClassifierEvents' Interface; it gets called when the user taps a
-    // RadioButton in the 'ModelSelector' section of the BottomSheet; this method will re-init the
-    // classifier object to the user's preferences by calling the constructor;
+    // RadioButton in the 'ModelSelector' section of the BottomSheet;
+    // will trigger the 'classify()' method to run inference on last image a second time;
     //
     @Override
     public void onClassifierConfigChanged(Activity activity){
 
-        // now, close the classifier ...
-        classifier.close();
-
-        // ... and try to re-int it
-        reInitClassifier();
-
-
         // if there is a saved Bitmap, re-run the classification
         if(savedBitmap != null) {
-            classify(savedBitmap);
+
+            LOGGER.i("CameraRoll was notified about change in configuration; calling 'classify()' again!");
+
+            try {
+                classify(savedBitmap);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
 
 
 
     } // END of onClassifierConfigChanged - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    // reInitClassifier() Method
-    // will try to instantiate a new TF-Lite classifier
-    private void reInitClassifier(){
-
-        try {
-            classifier = new Classifier(this);
-        } catch (IOException e) {
-            LOGGER.e("Error occured while trying to re-init the classifier: " + e);
-            e.printStackTrace();
-        }
-
-    }
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -278,7 +269,11 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
                     savedBitmap = croppedBitmap;
 
                     // start classification
-                    classify(croppedBitmap);
+                    try {
+                        classify(croppedBitmap);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
                 } else {
                     LOGGER.e("Error occurred while processing bitmap in CameraRoll: bitmap is null!");
@@ -297,14 +292,19 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    public void classify(Bitmap bitmap){
+    public void classify(Bitmap bitmap) throws InterruptedException {
 
         final long startTime = SystemClock.uptimeMillis();
 
-        // run inference on image
-        final List<Classifier.Recognition> results = classifier.recognizeImage(bitmap);
+        final List<StaticClassifier.Recognition> results = StaticClassifier.recognizeImage(bitmap);
 
-        startTimestamp = SystemClock.uptimeMillis() - startTime;
+        LOGGER.i("RESULT 0: " + results.get(0));
+        LOGGER.i("RESULT 1: " + results.get(1));
+        LOGGER.i("RESULT 2: " + results.get(2));
+        LOGGER.i("RESULT 3: " + results.get(3));
+        LOGGER.i("RESULT 4: " + results.get(4));
+
+        final long startTimestamp = SystemClock.uptimeMillis() - startTime;
 
         runOnUiThread( new Runnable() {
             @Override
@@ -322,12 +322,10 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
     @Override
     public void onBackPressed() {
 
+        // reset saved bitmap
         savedBitmap = null;
 
-        classifier.close();
-        classifier = null;
-
-        // we need to launch the view finder activity explicitly
+        // launch view finder activity
         Intent intent = new Intent(CameraRoll.this, ViewFinder.class);
         startActivity(intent);
         finish();

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -139,8 +140,13 @@ public class ProcessingUnitSelectorFragment extends Fragment {
                 prefEditor.apply();
 
                 // trigger classifier update   [source: https://stackoverflow.com/a/6270150]
-                for (ClassifierEvents events : listeners)
-                    events.onClassifierConfigChanged(getActivity());
+                for (ClassifierEvents events : listeners) {
+                    try {
+                        events.onClassifierConfigChanged(getActivity());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 
             }
         });

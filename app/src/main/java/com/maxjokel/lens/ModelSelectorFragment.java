@@ -20,6 +20,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -218,12 +219,26 @@ public class ModelSelectorFragment extends Fragment {
 
 
                 // trigger classifier update   [source: https://stackoverflow.com/a/6270150]
-                for (ClassifierEvents events : listeners)
-                    events.onClassifierConfigChanged(getActivity());
+                for (ClassifierEvents events : listeners) {
+                    try {
+                        events.onClassifierConfigChanged(getActivity());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 
             }
         });
 
     } // END of onViewCreated(...) - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    @Override
+    public void onDestroy() {
+
+        // clear list of listeners when destroyed
+        listeners = null;
+
+        super.onDestroy();
+    }
 
 }

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -102,8 +103,13 @@ public class ThreadNumberFragment extends Fragment {
                     updateThreadCounter();
 
                     // trigger classifier update   [source: https://stackoverflow.com/a/6270150]
-                    for (ClassifierEvents events : listeners)
-                        events.onClassifierConfigChanged(getActivity());
+                    for (ClassifierEvents events : listeners) {
+                        try {
+                            events.onClassifierConfigChanged(getActivity());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                 }
 
@@ -125,8 +131,13 @@ public class ThreadNumberFragment extends Fragment {
                     updateThreadCounter();
 
                     // trigger classifier update   [source: https://stackoverflow.com/a/6270150]
-                    for (ClassifierEvents events : listeners)
-                        events.onClassifierConfigChanged(getActivity());
+                    for (ClassifierEvents events : listeners) {
+                        try {
+                            events.onClassifierConfigChanged(getActivity());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                 }
                 

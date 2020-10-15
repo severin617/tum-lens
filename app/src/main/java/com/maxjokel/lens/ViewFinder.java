@@ -28,6 +28,7 @@ import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.os.Trace;
 import android.util.Size;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
@@ -191,6 +192,21 @@ public class ViewFinder extends AppCompatActivity
         fragmentTransaction.add(R.id.processing_unit_container, processingUnitSelectorFragment, "processingUnitSelectorFragment");
         fragmentTransaction.commit();
 
+
+
+        // add StaticClassifier to list of event listeners
+        //      please note that it is absolutely critical that this happens before all the other
+        //      listeners are added to the list;
+        //      otherwise the classifier will get notified too late and run the old model on the image!
+        StaticClassifier sc = null;
+        try {
+            sc = new StaticClassifier();
+            msf.addListener(sc);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         // for transmitting events back from the fragment to this class
         msf.addListener(this);
         cameraSettingsFragment.addListener(this);
@@ -217,7 +233,7 @@ public class ViewFinder extends AppCompatActivity
         // +                  INIT CORE FEATURES                   +
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
-        reInitClassifier();
+//        reInitClassifier();
 
 
         // load lens rotation from SharedPreferences  [0: back, 1: front]
@@ -306,52 +322,70 @@ public class ViewFinder extends AppCompatActivity
         // +
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
-        // first, reset and unbind
-        _analysis.clearAnalyzer();
-        _cameraProvider.unbind(_analysis);
 
-        // then shut down ExecutorService
-        _cameraExecutorForAnalysis.shutdown();
+//        isClassificationPaused = true;
+//
+//
+//        LOGGER.i("ViewFinder: resetting analysis use case....");
+//        Trace.beginSection("ViewFinder: resetting analysis use case");
+//
+//
+//        // first, reset and unbind
+//        _analysis.clearAnalyzer();
+//        _cameraProvider.unbind(_analysis);
+//
+//        Trace.endSection();
 
-        // wait for termination   [source: https://stackoverflow.com/a/28391316]
-        boolean isStillWaiting = true;
-        while (isStillWaiting) {
-            try {
-                isStillWaiting = !_cameraExecutorForAnalysis.awaitTermination(50, TimeUnit.MILLISECONDS);
-                if (isStillWaiting) LOGGER.d("Awaiting shutdown of '_cameraExecutorForAnalysis'.");
-            } catch (InterruptedException e) {
-                LOGGER.d("Interrupted while awaiting completion of callback threads - trying again...");
-            }
-        }
-
-        // isStillWaiting == false, so we can proceed to change the classifier config
-        LOGGER.i("'_cameraExecutorForAnalysis' is now shutdown; proceeding to re-init classifier...");
-
-        // now, close the classifier ...
-        classifier.close();
-
-        // ... and try to re-int it
-        reInitClassifier();
-
+//         then shut down ExecutorService
+//        _cameraExecutorForAnalysis.shutdown();
+//
+//        // wait for termination   [source: https://stackoverflow.com/a/28391316]
+//        boolean isStillWaiting = true;
+//        while (isStillWaiting) {
+//            try {
+//                isStillWaiting = !_cameraExecutorForAnalysis.awaitTermination(50, TimeUnit.MILLISECONDS);
+//                if (isStillWaiting) LOGGER.d("Awaiting shutdown of '_cameraExecutorForAnalysis'.");
+//            } catch (InterruptedException e) {
+//                LOGGER.d("Interrupted while awaiting completion of callback threads - trying again...");
+//            }
+//        }
+//
+//        // isStillWaiting == false, so we can proceed to change the classifier config
+//        LOGGER.i("'_cameraExecutorForAnalysis' is now shutdown; proceeding to re-init classifier...");
+//
+//        // now, close the classifier ...
+////        classifier.close();
+//
+//        // ... and try to re-int it
+////        reInitClassifier();
+//
         // finally, rebuild and bind the 'Analyzer' use case
-        buildAnalyzerUseCase();
+
+//        Trace.beginSection("ViewFinder: New analysis use case setup");
+//        buildAnalyzerUseCase();
+//        Trace.endSection();
+//
+//
+//        isClassificationPaused = false;
+//
+//        LOGGER.i("ViewFinder: analysis use case reset complete!");
 
     } // END of onClassifierConfigChanged - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
-    // reInitClassifier() Method
-    // will try to instantiate a new TF-Lite classifier
-    //
-    private void reInitClassifier(){
-
-        try {
-            classifier = new Classifier(this);
-        } catch (IOException e) {
-            LOGGER.e("Error occured while trying to re-init the classifier: " + e);
-            e.printStackTrace();
-        }
-
-    }
+//    // reInitClassifier() Method
+//    // will try to instantiate a new TF-Lite classifier
+//    //
+//    private void reInitClassifier(){
+//
+//        try {
+//            classifier = new Classifier(this);
+//        } catch (IOException e) {
+//            LOGGER.e("Error occured while trying to re-init the classifier: " + e);
+//            e.printStackTrace();
+//        }
+//
+//    }
 
 
 
@@ -366,6 +400,8 @@ public class ViewFinder extends AppCompatActivity
     // [based around: https://stackoverflow.com/q/59661727]
 
     private void buildPreviewUseCase(){
+
+        LOGGER.i("ViewFinder: building preview use case.");
 
         // init preview object that holds the camera live feed
         _preview = new Preview.Builder()
@@ -385,6 +421,8 @@ public class ViewFinder extends AppCompatActivity
     // TODO: analog zu oben mit 'Analyzer'
     private void buildAnalyzerUseCase(){
 
+        LOGGER.i("ViewFinder: building analysis use case.");
+
         // init analyzer object
         _analysis = new ImageAnalysis.Builder()
                 .setTargetResolution(new Size(previewDimX, previewDimY))
@@ -401,60 +439,118 @@ public class ViewFinder extends AppCompatActivity
             @SuppressLint("UnsafeExperimentalUsageError") @Override
             public void analyze(@NonNull ImageProxy image) {
 
-                // do not accept additional images if there is already a classification running
-//                if(isCurrentlyClassifying || isClassificationPaused  || true){
+
+                // Logs this method so that it can be analyzed with systrace.
+                Trace.beginSection("analyzing");
+
+
+                if(StaticClassifier.getIsBlocked()){
+                    LOGGER.i("*** ViewFinder: closing as Classifier is blocked! ***");
+                    image.close(); // close the image in order to clear the pipeline
+                    return;
+                }
+
+
+
                 if(isCurrentlyClassifying || isClassificationPaused){
                     image.close(); // close the image in order to clear the pipeline
                     return;
                 }
 
-                // update the flag in order to block the image pipeline for the duration of the active classification
-                isCurrentlyClassifying = true;
-
-
-                // convert the CameraX YUV ImageProxy to a (RGB?) bitmap
                 @androidx.camera.core.ExperimentalGetImage
                 Image img = image.getImage();
                 final Bitmap rgbBitmap = ImageUtils.toCroppedBitmap(img, image.getImageInfo().getRotationDegrees());
 
 
-                // pre classification checks
-                if (classifier == null) {
-                    image.close();
-                    return;
+                int i = 0;
+                try {
+                    i = StaticClassifier.recognizeImage2(rgbBitmap);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                LOGGER.i("Classifier output: " + i);
 
-                final long startTime = SystemClock.uptimeMillis();
-
-
-                // TODO:   RECONSIDER
-                // this part was initially wrapped within 'new Thread( new Runnable() { @Override public void run() { }}).start();'
-                //
-                // -> seemed kind of unnecessary, as the 'Analyzer' itself is running within a single
-                //    threaded ExecutorService; so I removed it for now;
-
-                // run inference on image
-                final List<Classifier.Recognition> results =
-                        classifier.recognizeImage(rgbBitmap);
+                Trace.endSection();
 
 
-                startTimestamp = SystemClock.uptimeMillis() - startTime;
-
-                runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        // pass list to fragment, that renders the recognition results to UI
-                        predictionsFragment.showRecognitionResults(results, startTimestamp);
-                        smoothedPredictionsFragment.showSmoothedRecognitionResults(results);
-                    }
-                });
 
 
-                // now that the classification is done, reset the flag
-                isCurrentlyClassifying = false;
-
-                // close the image no matter what
+                Trace.beginSection("closing image");
                 image.close();
+
+
+                Trace.endSection();
+//
+//                // do not accept additional images if there is already a classification running
+////                if(isCurrentlyClassifying || isClassificationPaused  || true){
+//                if(isCurrentlyClassifying || isClassificationPaused){
+//                    image.close(); // close the image in order to clear the pipeline
+//                    return;
+//                }
+//
+//                // update the flag in order to block the image pipeline for the duration of the active classification
+//                isCurrentlyClassifying = true;
+//
+//
+//                // convert the CameraX YUV ImageProxy to a (RGB?) bitmap
+//                @androidx.camera.core.ExperimentalGetImage
+//                Image img = image.getImage();
+//                final Bitmap rgbBitmap = ImageUtils.toCroppedBitmap(img, image.getImageInfo().getRotationDegrees());
+//
+//
+//                // pre classification checks
+////                if (classifier == null) {
+////                    image.close();
+////                    return;
+////                }
+////
+////
+//                if (rgbBitmap == null) {
+//                    LOGGER.i("ViewFinder: closing due to 'rgbBitmap == null'!");
+//                    image.close();
+//                    return;
+//                }
+//
+//                final long startTime = SystemClock.uptimeMillis();
+//
+//
+//                // TODO:   RECONSIDER
+//                // this part was initially wrapped within 'new Thread( new Runnable() { @Override public void run() { }}).start();'
+//                //
+//                // -> seemed kind of unnecessary, as the 'Analyzer' itself is running within a single
+//                //    threaded ExecutorService; so I removed it for now;
+//
+//                // run inference on image
+////                final List<Classifier.Recognition> results = classifier.recognizeImage(rgbBitmap);
+////                final List<StaticClassifier.Recognition> results;
+//                List<StaticClassifier.Recognition> results = null;
+//                try {
+//                    results = StaticClassifier.recognizeImage(rgbBitmap);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                startTimestamp = SystemClock.uptimeMillis() - startTime;
+//
+//
+//                // Android Studio Workaround....
+//                final List<StaticClassifier.Recognition> finalResults = results;
+//
+////                runOnUiThread(new Runnable() {
+////                    @Override
+////                    public void run() {
+////                        // pass list to fragment, that renders the recognition results to UI
+////                        predictionsFragment.showRecognitionResults(finalResults, startTimestamp);
+//////                        smoothedPredictionsFragment.showSmoothedRecognitionResults(results);
+////                    }
+////                });
+//
+//
+//                // now that the classification is done, reset the flag
+//                isCurrentlyClassifying = false;
+//
+//                // close the image no matter what
+//                image.close();
 
             } // END of analyze(@NonNull ImageProxy image) - - - - - - - - - - - - - - - - - - - - -
         }); // END of _analysis.setAnalyzer ...  - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -472,6 +568,8 @@ public class ViewFinder extends AppCompatActivity
     // based on: https://stackoverflow.com/a/59674075
     //
     private void buildFreezeUseCase(){
+
+        LOGGER.i("ViewFinder: building freeze use case.");
 
         // init analysis object for processing last frame
         _freezeImageAnalysis = new ImageAnalysis.Builder()
@@ -502,6 +600,8 @@ public class ViewFinder extends AppCompatActivity
     // initializes a new 'CameraX' instance, including preview and two analysis use cases
     //
     private void initCameraX() {
+
+        LOGGER.i("ViewFinder: initializing CameraX.");
 
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
 
@@ -544,6 +644,8 @@ public class ViewFinder extends AppCompatActivity
                         .build();
                 cameraControl.startFocusAndMetering(focusMeteringAction);
 
+
+                LOGGER.i("ViewFinder: CameraX initialization complete!");
 
             } catch (InterruptedException | ExecutionException exception) {
                 LOGGER.e("Error occurred while setting up CameraX: " + exception.toString());
@@ -745,14 +847,14 @@ public class ViewFinder extends AppCompatActivity
     @Override
     protected void onDestroy() {
 
-        isClassificationPaused = true;
-        classifier.close();
-
-        _analysis.clearAnalyzer();
-        _cameraProvider.unbindAll();
-
-        _cameraExecutorForAnalysis.shutdownNow();
-        _cameraExecutorForFreezing.shutdownNow();
+//        isClassificationPaused = true;
+//        classifier.close();
+//
+//        _analysis.clearAnalyzer();
+//        _cameraProvider.unbindAll();
+//
+//        _cameraExecutorForAnalysis.shutdownNow();
+//        _cameraExecutorForFreezing.shutdownNow();
 
         super.onDestroy();
     }
