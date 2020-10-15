@@ -111,6 +111,8 @@ public final class StaticClassifier implements ClassifierEvents {
 
     private static CountDownLatch countDownLatch = new CountDownLatch(1);
 
+    private static CountDownLatch latchThatBlocksInitIfClassificationIsRunning = new CountDownLatch(1);
+
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -132,8 +134,9 @@ public final class StaticClassifier implements ClassifierEvents {
     }
 
     // private constructor
-    private StaticClassifier(int i) throws IOException {
+    private StaticClassifier(int i) throws IOException, InterruptedException {
 
+        latchThatBlocksInitIfClassificationIsRunning.countDown();
         initialize();
 
     }
@@ -144,7 +147,7 @@ public final class StaticClassifier implements ClassifierEvents {
     static {
         try {
             instance = new StaticClassifier(0);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -169,7 +172,8 @@ public final class StaticClassifier implements ClassifierEvents {
         // call initialize()
         try {
             instance = new StaticClassifier(0);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
+            LOGGER.e("IOException in onClassifierConfigChanged");
             e.printStackTrace();
         }
 
@@ -182,7 +186,9 @@ public final class StaticClassifier implements ClassifierEvents {
     //
     // load preferences and set up classifier accordingly
     //
-    private void initialize() throws IOException {
+    private void initialize() throws IOException, InterruptedException {
+
+        latchThatBlocksInitIfClassificationIsRunning.await();
 
         isBlocked = true;
 
@@ -242,6 +248,7 @@ public final class StaticClassifier implements ClassifierEvents {
                 LOGGER.i("??? successfully loaded tflitemodel");
 
             } catch (IOException e) {
+                LOGGER.e("FEHLER in tfliteModel = FileUtil.loadMappedFile()");
                 e.printStackTrace();
             }
 
@@ -254,6 +261,7 @@ public final class StaticClassifier implements ClassifierEvents {
                 labels = FileUtil.loadLabels(App.getContext(), modelConfig.getLabelFilename());
                 LOGGER.i("??? successfully loaded label");
             } catch (IOException e) {
+                LOGGER.e("FEHLER in tfliteModel = FileUtil.loadLabels()");
                 e.printStackTrace();
             }
 
@@ -271,7 +279,7 @@ public final class StaticClassifier implements ClassifierEvents {
             // finally, create a new interpreter
 
             Trace.beginSection("initializing new classifier");
-            LOGGER.i("??? trying to init 'tflite'");
+            LOGGER.i("??? trying to init 'tflite' new classifier");
             tflite = new Interpreter(tfliteModel, tfliteOptions);
             LOGGER.i("??? successfully init 'tflite'!!");
             Trace.endSection();
@@ -306,6 +314,11 @@ public final class StaticClassifier implements ClassifierEvents {
 
 
             LOGGER.i("Created a TensorFlow Lite Image Classifier with model '" + modelConfig.getName() + "'");
+
+
+
+            LOGGER.i("is tfliteModel == null???" + (tfliteModel == null) + "");
+            LOGGER.i("is tflite == null???" + (tflite == null) + "");
 
 
             // classifier is now initialized, reset counter to allow 'recognizeImage()'
@@ -351,7 +364,14 @@ public final class StaticClassifier implements ClassifierEvents {
         long startTimeForReference = SystemClock.uptimeMillis();
 
         // run inference
-        tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer().rewind());
+//        tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer().rewind());
+
+        try{
+            tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer().rewind());
+        } catch (Exception e){
+            LOGGER.v("### FAILED TO RUN CLASSIFICATION ###");
+        }
+
 
         long endTimeForReference = SystemClock.uptimeMillis();
         Trace.endSection();
@@ -371,6 +391,8 @@ public final class StaticClassifier implements ClassifierEvents {
 
     public static int recognizeImage2(final Bitmap bitmap) throws InterruptedException {
 
+
+        latchThatBlocksInitIfClassificationIsRunning = new CountDownLatch(1);
 
         // wait until classifier is initialized
         countDownLatch.await();
@@ -423,6 +445,12 @@ public final class StaticClassifier implements ClassifierEvents {
         long startTimeForReference = SystemClock.uptimeMillis();
 
         // run inference
+        // TODO
+        // TODO
+        // TODO
+        // TODO: ich vermute hier die Ursache
+        // TODO: manchmal weisen die Fehlermeldungen auf diese Stelle hin, dass 'Null Object...'
+        // TODO: aber eig macht das auch keinen sinn, weil ich das ja vorher abfange?!
         tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer().rewind());
 
         long endTimeForReference = SystemClock.uptimeMillis();
@@ -431,10 +459,13 @@ public final class StaticClassifier implements ClassifierEvents {
 
 
         // Gets the map of label and probability.
-        Map<String, Float> labeledProbability =
-                new TensorLabel(labels, probabilityProcessor.process(outputProbabilityBuffer))
-                        .getMapWithFloatValue();
+//        Map<String, Float> labeledProbability =
+//                new TensorLabel(labels, probabilityProcessor.process(outputProbabilityBuffer))
+//                        .getMapWithFloatValue();
         Trace.endSection();
+
+
+        latchThatBlocksInitIfClassificationIsRunning.countDown();
 
         return 1;
     }
