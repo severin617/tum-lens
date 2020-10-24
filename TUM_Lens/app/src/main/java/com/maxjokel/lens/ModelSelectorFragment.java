@@ -57,15 +57,10 @@ public class ModelSelectorFragment extends Fragment {
     ListSingleton listSingletonInstance = ListSingleton.getInstance();
     List<ModelConfig> MODEL_LIST = listSingletonInstance.getList();
 
-
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // related to 'ClassifierEvents' Interface
+    // related to 'NewStaticClassifier'
 
-    private List<ClassifierEvents> listeners = new ArrayList<ClassifierEvents>();
-
-    public void addListener(ClassifierEvents toAdd) {
-        listeners.add(toAdd);
-    }
+    NewStaticClassifier newStaticClassifier = NewStaticClassifier.getInstance();
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -218,27 +213,12 @@ public class ModelSelectorFragment extends Fragment {
                 prefEditor.apply();
 
 
-                // trigger classifier update   [source: https://stackoverflow.com/a/6270150]
-                for (ClassifierEvents events : listeners) {
-                    try {
-                        events.onClassifierConfigChanged(getActivity());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                // trigger classifier update
+                NewStaticClassifier.onConfigChanged();
 
             }
         });
 
     } // END of onViewCreated(...) - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    @Override
-    public void onDestroy() {
-
-        // clear list of listeners when destroyed
-        listeners = null;
-
-        super.onDestroy();
-    }
 
 }

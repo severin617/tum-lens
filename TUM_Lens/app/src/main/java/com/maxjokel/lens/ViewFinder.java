@@ -56,9 +56,7 @@ import helpers.Logger;
 public class ViewFinder extends AppCompatActivity
             implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener,
             FreezeCallback,
-            ClassifierEvents,
-            CameraEvents,
-            ReinitializationListener{
+            CameraEvents {
 
 
     // init new Logger instance
@@ -100,8 +98,6 @@ public class ViewFinder extends AppCompatActivity
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // TF-Lite related to CLASSIFICATION:   [source: TF-Lite example app]
-    private Classifier classifier;
-
     protected int previewDimX = 960;
     protected int previewDimY = 1280;
 
@@ -129,21 +125,13 @@ public class ViewFinder extends AppCompatActivity
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
-
     PredictionsFragment predictionsFragment = null;
     SmoothedPredictionsFragment smoothedPredictionsFragment = null;
 
 
-
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-
-
-//    SingletonClassifier SINGLETONCLASSIFIER = SingletonClassifier.getInstance();
-    NewSingletonClassifier NEWSINGLETONCLASSIFIER = NewSingletonClassifier.getInstance();
-
-
-
+    // please note: the static classifier class is instantiated in 'ModelSelectorFragment'
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -221,7 +209,7 @@ public class ViewFinder extends AppCompatActivity
 //        }
         // 24.10.2020
 //        msf.addListener(SINGLETONCLASSIFIER);
-        msf.addListener(NEWSINGLETONCLASSIFIER);
+//        msf.addListener(NEWSINGLETONCLASSIFIER);
 
 
 
@@ -229,20 +217,14 @@ public class ViewFinder extends AppCompatActivity
 
 
         // for transmitting events back from the fragment to this class
-        msf.addListener(this);
         cameraSettingsFragment.addListener(this);
-        threadNumberFragment.addListener(this);
-        processingUnitSelectorFragment.addListener(this);
+// TODO: delete
+//        msf.addListener(this);
+//        threadNumberFragment.addListener(this);
+//        processingUnitSelectorFragment.addListener(this);
 
 
-        // 24.10.2020: onClassificationReinitialized-Event
-//        SINGLETONCLASSIFIER.addListener(this);
-//        SingletonClassifier.addListener(this);
 
-
-        // FINDING:
-        //   do NOT do this; does not work! we need to re-instantiate the whole classifier object
-        // msf.addListener(classifier);
 
 
 
@@ -316,114 +298,6 @@ public class ViewFinder extends AppCompatActivity
     }
     // END OF 'onCreate()' METHOD
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // onClassifierConfigChanged(Activity activity)
-    //
-    // this method is part of the 'ClassifierEvents' Interface; it gets called when the user taps a
-    // RadioButton in the 'ModelSelector' section of the BottomSheet; this method will re-init the
-    // classifier object to the user's preferences by calling the constructor;
-    //
-    @Override
-    public void onClassifierConfigChanged(Activity activity){
-
-        // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-        // +   FINDING   –   24.09.2020, 11:30
-        // +
-        // +    1. we need to re-init the 'Classifier' object;
-        // +       just >changing< the configuration within the class based on the updated
-        // +       SharedPreferences does NOT work;
-        // +
-        // +       we therefore call 'classifier = new Classifier(this)';
-        // +       this will init a new 'Classifier' object, that is built on the current config
-        // +       saved in SharedPreferences
-        // +
-        // +
-        // +    2. before updating 'classifier', we first need to make sure, that all related
-        // +       Threads are terminated (will cause SegFaults otherwise!);
-        // +
-        // +       for this reason, we first call '_cameraExecutorForAnalysis.shutdown();' and then
-        // +       wait for the ExecutorService's termination with the while routine below
-        // +
-        // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-
-
-//        isClassificationPaused = true;
-//
-//
-//        LOGGER.i("ViewFinder: resetting analysis use case....");
-//        Trace.beginSection("ViewFinder: resetting analysis use case");
-//
-//
-//        // first, reset and unbind
-//        _analysis.clearAnalyzer();
-//        _cameraProvider.unbind(_analysis);
-//
-//        Trace.endSection();
-
-//         then shut down ExecutorService
-//        _cameraExecutorForAnalysis.shutdown();
-//
-//        // wait for termination   [source: https://stackoverflow.com/a/28391316]
-//        boolean isStillWaiting = true;
-//        while (isStillWaiting) {
-//            try {
-//                isStillWaiting = !_cameraExecutorForAnalysis.awaitTermination(50, TimeUnit.MILLISECONDS);
-//                if (isStillWaiting) LOGGER.d("Awaiting shutdown of '_cameraExecutorForAnalysis'.");
-//            } catch (InterruptedException e) {
-//                LOGGER.d("Interrupted while awaiting completion of callback threads - trying again...");
-//            }
-//        }
-//
-//        // isStillWaiting == false, so we can proceed to change the classifier config
-//        LOGGER.i("'_cameraExecutorForAnalysis' is now shutdown; proceeding to re-init classifier...");
-//
-//        // now, close the classifier ...
-////        classifier.close();
-//
-//        // ... and try to re-int it
-////        reInitClassifier();
-//
-        // finally, rebuild and bind the 'Analyzer' use case
-
-//        Trace.beginSection("ViewFinder: New analysis use case setup");
-//        buildAnalyzerUseCase();
-//        Trace.endSection();
-//
-//
-//        isClassificationPaused = false;
-//
-//        LOGGER.i("ViewFinder: analysis use case reset complete!");
-
-    } // END of onClassifierConfigChanged - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-//    // reInitClassifier() Method
-//    // will try to instantiate a new TF-Lite classifier
-//    //
-//    private void reInitClassifier(){
-//
-//        try {
-//            classifier = new Classifier(this);
-//        } catch (IOException e) {
-//            LOGGER.e("Error occured while trying to re-init the classifier: " + e);
-//            e.printStackTrace();
-//        }
-//
-//    }
-
-
-
-
-    // 24.10.2020
-    @Override
-    public void onClassifierReinitialized(){
-//        LOGGER.i("### ViewFinder notified about classifier reinitialization successful ### ");
-//        SINGLETONCLASSIFIER = SingletonClassifier.getInstance();
-//        LOGGER.i("### ViewFinder: SINGLETONCLASSIFIER = SingletonClassifier.getInstance(); ### ");
-    }
 
 
 
@@ -513,6 +387,11 @@ public class ViewFinder extends AppCompatActivity
                 Image img = image.getImage();
                 final Bitmap rgbBitmap = ImageUtils.toCroppedBitmap(img, image.getImageInfo().getRotationDegrees());
 
+                if(rgbBitmap == null){
+                    LOGGER.i("*** ViewFinder: closing as Bitmap == NULL ***");
+                    image.close(); // close the image in order to clear the pipeline
+                    return;
+                }
 
 
 //                int i = 0;
@@ -526,8 +405,27 @@ public class ViewFinder extends AppCompatActivity
 //                } catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
-                int i = NEWSINGLETONCLASSIFIER.recognizeImage(rgbBitmap);
-                LOGGER.i("Classifier output: " + i);
+//                int i = NEWSINGLETONCLASSIFIER.recognizeImage(rgbBitmap);
+//                LOGGER.i("Classifier output: " + i);
+
+
+                final long startTime = SystemClock.uptimeMillis();
+//                final List<Recognition> results = NEWSINGLETONCLASSIFIER.recognizeImage(rgbBitmap);
+                final List<Recognition> results = NewStaticClassifier.recognizeImage(rgbBitmap);
+                startTimestamp = SystemClock.uptimeMillis() - startTime;
+
+
+
+
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // pass list to fragment, that renders the recognition results to UI
+                        predictionsFragment.showRecognitionResults(results, startTimestamp);
+//                        smoothedPredictionsFragment.showSmoothedRecognitionResults(results);
+                    }
+                });
 
                 Trace.endSection();
 
@@ -541,7 +439,7 @@ public class ViewFinder extends AppCompatActivity
 
                 Trace.endSection();
 
-                LOGGER.i("*** ViewFinder: analyze() ENDE *** \n");
+                LOGGER.i("*** ViewFinder: analyze() ENDE; received " + results.size() + "  results *** \n");
 //
 //                // do not accept additional images if there is already a classification running
 ////                if(isCurrentlyClassifying || isClassificationPaused  || true){
@@ -909,16 +807,14 @@ public class ViewFinder extends AppCompatActivity
     @Override
     protected void onDestroy() {
 
-//        isClassificationPaused = true;
-//        classifier.close();
-//
-//        _analysis.clearAnalyzer();
-//        _cameraProvider.unbindAll();
-//
-//        _cameraExecutorForAnalysis.shutdownNow();
-//        _cameraExecutorForFreezing.shutdownNow();
-
         super.onDestroy();
+
+        _analysis.clearAnalyzer();
+        _cameraProvider.unbindAll();
+
+        _cameraExecutorForAnalysis.shutdownNow();
+        _cameraExecutorForFreezing.shutdownNow();
+
     }
     // END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

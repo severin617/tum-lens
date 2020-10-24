@@ -48,18 +48,8 @@ public class ProcessingUnitSelectorFragment extends Fragment {
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // related to 'ClassifierEvents' Interface
 
-    private List<ClassifierEvents> listeners = new ArrayList<ClassifierEvents>();
-
-    public void addListener(ClassifierEvents toAdd) {
-        listeners.add(toAdd);
-    }
-
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    private ProcessingUnit _processingUnit = ProcessingUnit.CPU; // CPU is default
+    private ProcessingUnit PROCESSINGUNIT = ProcessingUnit.CPU; // CPU is default
 
 
     // Required empty public constructor
@@ -95,15 +85,15 @@ public class ProcessingUnitSelectorFragment extends Fragment {
         int saved_device = prefs.getInt("processing_unit", 0);
 
         if(saved_device == ProcessingUnit.GPU.hashCode()){
-            _processingUnit = ProcessingUnit.GPU;
+            PROCESSINGUNIT = ProcessingUnit.GPU;
         } else if(saved_device == ProcessingUnit.NNAPI.hashCode()){
-            _processingUnit = ProcessingUnit.NNAPI;
+            PROCESSINGUNIT = ProcessingUnit.NNAPI;
         } else { // use CPU as default
-            _processingUnit = ProcessingUnit.CPU;
+            PROCESSINGUNIT = ProcessingUnit.CPU;
         }
 
         // set initial selection
-        String cName = "chip_" + _processingUnit.name();
+        String cName = "chip_" + PROCESSINGUNIT.name();
         int cId = getResources().getIdentifier(cName, "id", getActivity().getPackageName());
         Chip c = getView().findViewById(cId);
         c.setChecked(true);
@@ -124,29 +114,24 @@ public class ProcessingUnitSelectorFragment extends Fragment {
 
                 switch (checkedId) {
                     case R.id.chip_GPU:
-                        _processingUnit = ProcessingUnit.GPU;
+                        PROCESSINGUNIT = ProcessingUnit.GPU;
                         break;
                     case R.id.chip_NNAPI:
-                        _processingUnit = ProcessingUnit.NNAPI;
+                        PROCESSINGUNIT = ProcessingUnit.NNAPI;
                         break;
                     default: // includes CPU
-                        _processingUnit = ProcessingUnit.CPU;
+                        PROCESSINGUNIT = ProcessingUnit.CPU;
                         break;
                 }
 
                 // init Editor and save selection to SharedPreferences
                 prefEditor = prefs.edit();
-                prefEditor.putInt("processing_unit", _processingUnit.hashCode());
+                prefEditor.putInt("processing_unit", PROCESSINGUNIT.hashCode());
                 prefEditor.apply();
 
-                // trigger classifier update   [source: https://stackoverflow.com/a/6270150]
-                for (ClassifierEvents events : listeners) {
-                    try {
-                        events.onClassifierConfigChanged(getActivity());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+
+                // trigger classifier update
+                NewStaticClassifier.onConfigChanged();
 
             }
         });

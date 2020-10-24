@@ -59,13 +59,15 @@ public class PredictionsFragment extends Fragment {
 
     @UiThread
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
-    public void showRecognitionResults(List<StaticClassifier.Recognition> results, long time) {
+    public void showRecognitionResults(List<Recognition> results, long time) {
+//    public void showRecognitionResults(List<StaticClassifier.Recognition> results, long time) {
 //    public void showRecognitionResults(List<Classifier.Recognition> results, long time) {
 
 
         // this is called right after 'onCreateView()'
 
-        if (results != null) {
+//        if (results != null) {
+        if (results != null && results.size() > 0) {
 
             // get list length
             int resultsLength = results.size();
@@ -85,7 +87,8 @@ public class PredictionsFragment extends Fragment {
 
             // result at index 0
 //            Classifier.Recognition recognition0 = results.get(0);
-            StaticClassifier.Recognition recognition0 = results.get(0);
+//            StaticClassifier.Recognition recognition0 = results.get(0);
+            Recognition recognition0 = results.get(0);
             if (recognition0 != null && recognition0.getTitle() != null && recognition0.getConfidence() != null) {
                 final TextView desc = Objects.requireNonNull(getView()).findViewById(R.id.pf_description0);
                 final TextView conf = getView().findViewById(R.id.pf_confidence0);
@@ -95,7 +98,8 @@ public class PredictionsFragment extends Fragment {
 
             // result at index 1
 //            Classifier.Recognition recognition1 = results.get(1);
-            StaticClassifier.Recognition recognition1 = results.get(1);
+//            StaticClassifier.Recognition recognition1 = results.get(1);
+            Recognition recognition1 = results.get(1);
             if (recognition1 != null && recognition1.getTitle() != null && recognition1.getConfidence() != null) {
                 final TextView desc = Objects.requireNonNull(getView()).findViewById(R.id.pf_description1);
                 final TextView conf = getView().findViewById(R.id.pf_confidence1);
@@ -105,7 +109,8 @@ public class PredictionsFragment extends Fragment {
 
             // result at index 2
 //            Classifier.Recognition recognition2 = results.get(2);
-            StaticClassifier.Recognition recognition2 = results.get(2);
+//            StaticClassifier.Recognition recognition2 = results.get(2);
+            Recognition recognition2 = results.get(2);
             if (recognition2 != null && recognition2.getTitle() != null && recognition2.getConfidence() != null) {
                 final TextView desc = Objects.requireNonNull(getView()).findViewById(R.id.pf_description2);
                 final TextView conf = getView().findViewById(R.id.pf_confidence2);
@@ -115,7 +120,8 @@ public class PredictionsFragment extends Fragment {
 
             // result at index 3
 //            Classifier.Recognition recognition3 = results.get(3);
-            StaticClassifier.Recognition recognition3 = results.get(3);
+//            StaticClassifier.Recognition recognition3 = results.get(3);
+            Recognition recognition3 = results.get(3);
             if (recognition3 != null && recognition3.getTitle() != null && recognition3.getConfidence() != null) {
                 final TextView desc = Objects.requireNonNull(getView()).findViewById(R.id.pf_description3);
                 final TextView conf = getView().findViewById(R.id.pf_confidence3);
@@ -125,7 +131,8 @@ public class PredictionsFragment extends Fragment {
 
             // result at index 4
 //            Classifier.Recognition recognition4 = results.get(4);
-            StaticClassifier.Recognition recognition4 = results.get(4);
+//            StaticClassifier.Recognition recognition4 = results.get(4);
+            Recognition recognition4 = results.get(4);
             if (recognition4 != null && recognition4.getTitle() != null && recognition4.getConfidence() != null) {
                 final TextView desc = Objects.requireNonNull(getView()).findViewById(R.id.pf_description4);
                 final TextView conf = getView().findViewById(R.id.pf_confidence4);

@@ -13,6 +13,7 @@ import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -36,14 +37,7 @@ public class ThreadNumberFragment extends Fragment {
     SharedPreferences prefs = null;
     SharedPreferences.Editor prefEditor = null;
 
-    private int _numberOfThreads = 3; // default is 3
-
-
-    // 'ClassifierEvents' Interface
-    private List<ClassifierEvents> listeners = new ArrayList<ClassifierEvents>();
-
-
-
+    private int THREADNUMBER = 3; // default is 3
 
     public ThreadNumberFragment() {
         // Required empty public constructor
@@ -80,7 +74,7 @@ public class ThreadNumberFragment extends Fragment {
         // load number of threads from SharedPreferences
         int saved_numberOfThreads = prefs.getInt("threads", 0);
         if ((saved_numberOfThreads > 0) && (saved_numberOfThreads <= 15)) {
-            _numberOfThreads = saved_numberOfThreads; // update if within accepted range
+            THREADNUMBER = saved_numberOfThreads; // update if within accepted range
         }
 
         updateThreadCounter();
@@ -89,27 +83,22 @@ public class ThreadNumberFragment extends Fragment {
 
 
         // decrease number of threads
+        ImageButton btn_minus = (ImageButton) getView().findViewById(R.id.btn_threads_minus);
         getView().findViewById(R.id.btn_threads_minus).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(_numberOfThreads > 1){
+                if(THREADNUMBER > 1){
 
                     v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
 
-                    _numberOfThreads--;
+                    THREADNUMBER--;
 
                     // update UI and save to SharedPreferences
                     updateThreadCounter();
 
-                    // trigger classifier update   [source: https://stackoverflow.com/a/6270150]
-                    for (ClassifierEvents events : listeners) {
-                        try {
-                            events.onClassifierConfigChanged(getActivity());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    // trigger classifier update
+                    NewStaticClassifier.onConfigChanged();
 
                 }
 
@@ -117,27 +106,22 @@ public class ThreadNumberFragment extends Fragment {
         });
 
         // increase number of threads
-        getView().findViewById(R.id.btn_threads_plus).setOnClickListener(new View.OnClickListener() {
+        ImageButton btn_plus = (ImageButton) getView().findViewById(R.id.btn_threads_plus);
+        btn_plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(_numberOfThreads < 15){
+                if(THREADNUMBER < 15){
 
                     v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS);
 
-                    _numberOfThreads++;
+                    THREADNUMBER++;
 
                     // update UI and save to SharedPreferences
                     updateThreadCounter();
 
-                    // trigger classifier update   [source: https://stackoverflow.com/a/6270150]
-                    for (ClassifierEvents events : listeners) {
-                        try {
-                            events.onClassifierConfigChanged(getActivity());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    // trigger classifier update
+                    NewStaticClassifier.onConfigChanged();
 
                 }
                 
@@ -156,18 +140,14 @@ public class ThreadNumberFragment extends Fragment {
     protected void updateThreadCounter(){
 
         // save number of threads to sharedPreferences
-        prefEditor.putInt("threads", _numberOfThreads);
+        prefEditor.putInt("threads", THREADNUMBER);
         prefEditor.apply();
 
         // update UI
-        TextView tv = getView().findViewById(R.id.tv_threads);
-        tv.setText( "" + _numberOfThreads);
+        TextView tv = (TextView) getView().findViewById(R.id.tv_threads);
+        if(tv != null) {
+            tv.setText("" + THREADNUMBER);
+        }
     }
-
-
-    public void addListener(ClassifierEvents toAdd) {
-        listeners.add(toAdd);
-    }
-
 
 }

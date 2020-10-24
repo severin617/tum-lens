@@ -40,7 +40,7 @@ import helpers.Logger;
 
 + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
-public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
+public class CameraRoll extends AppCompatActivity {
 
     // init new Logger instance
     private static final Logger LOGGER = new Logger();
@@ -112,21 +112,22 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
         fragmentTransaction.commit();
 
 
+        // TODO: delete?!
         // add StaticClassifier to list of event listeners
         //      please note that it is absolutely critical that this happens before all the other
         //      listeners are added to the list;
         //      otherwise the classifier will get notified too late and run the old model on the image!
-        StaticClassifier sc = null;
-        try {
-            sc = new StaticClassifier();
-            msf.addListener(sc);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        StaticClassifier sc = null;
+//        try {
+//            sc = new StaticClassifier();
+//            msf.addListener(sc);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 
         // for transmitting events back from the fragment to this class
-        msf.addListener(this);
+//        msf.addListener(this);
 
 
 
@@ -179,32 +180,7 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // onClassifierConfigChanged(Activity activity)
-    //
-    // this method is part of the 'ClassifierEvents' Interface; it gets called when the user taps a
-    // RadioButton in the 'ModelSelector' section of the BottomSheet;
-    // will trigger the 'classify()' method to run inference on last image a second time;
-    //
-    @Override
-    public void onClassifierConfigChanged(Activity activity){
 
-        // if there is a saved Bitmap, re-run the classification
-        if(savedBitmap != null) {
-
-            LOGGER.i("CameraRoll was notified about change in configuration; calling 'classify()' again!");
-
-            try {
-                classify(savedBitmap);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-
-
-    } // END of onClassifierConfigChanged - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -296,7 +272,7 @@ public class CameraRoll extends AppCompatActivity implements ClassifierEvents {
 
         final long startTime = SystemClock.uptimeMillis();
 
-        final List<StaticClassifier.Recognition> results = StaticClassifier.recognizeImage(bitmap);
+        final List<Recognition> results = NewStaticClassifier.recognizeImage(bitmap);
 
         LOGGER.i("RESULT 0: " + results.get(0));
         LOGGER.i("RESULT 1: " + results.get(1));
