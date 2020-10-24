@@ -57,7 +57,8 @@ public class ViewFinder extends AppCompatActivity
             implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener,
             FreezeCallback,
             ClassifierEvents,
-            CameraEvents {
+            CameraEvents,
+            ReinitializationListener{
 
 
     // init new Logger instance
@@ -137,6 +138,15 @@ public class ViewFinder extends AppCompatActivity
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
+
+    SingletonClassifier SINGLETONCLASSIFIER = SingletonClassifier.getInstance();
+
+
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -198,13 +208,20 @@ public class ViewFinder extends AppCompatActivity
         //      please note that it is absolutely critical that this happens before all the other
         //      listeners are added to the list;
         //      otherwise the classifier will get notified too late and run the old model on the image!
-        StaticClassifier sc = null;
-        try {
-            sc = new StaticClassifier();
-            msf.addListener(sc);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // 24.10.2020
+//        StaticClassifier sc = null;
+//        try {
+//            sc = new StaticClassifier();
+//            msf.addListener(sc);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        // 24.10.2020
+        msf.addListener(SINGLETONCLASSIFIER);
+
+
+
+
 
 
         // for transmitting events back from the fragment to this class
@@ -212,6 +229,12 @@ public class ViewFinder extends AppCompatActivity
         cameraSettingsFragment.addListener(this);
         threadNumberFragment.addListener(this);
         processingUnitSelectorFragment.addListener(this);
+
+
+        // 24.10.2020: onClassificationReinitialized-Event
+//        SINGLETONCLASSIFIER.addListener(this);
+        SingletonClassifier.addListener(this);
+
 
         // FINDING:
         //   do NOT do this; does not work! we need to re-instantiate the whole classifier object
@@ -390,6 +413,17 @@ public class ViewFinder extends AppCompatActivity
 
 
 
+    // 24.10.2020
+    @Override
+    public void onClassifierReinitialized(){
+        LOGGER.i("### ViewFinder notified about classifier reinitialization successful ### ");
+        SINGLETONCLASSIFIER = SingletonClassifier.getInstance();
+        LOGGER.i("### ViewFinder: SINGLETONCLASSIFIER = SingletonClassifier.getInstance(); ### ");
+    }
+
+
+
+
 
 
 
@@ -439,32 +473,50 @@ public class ViewFinder extends AppCompatActivity
             @SuppressLint("UnsafeExperimentalUsageError") @Override
             public void analyze(@NonNull ImageProxy image) {
 
+                LOGGER.i("*** ViewFinder: analyze() START *** ");
+
+
 
                 // Logs this method so that it can be analyzed with systrace.
                 Trace.beginSection("analyzing");
 
 
-                if(StaticClassifier.getIsBlocked()){
-                    LOGGER.i("*** ViewFinder: closing as Classifier is blocked! ***");
-                    image.close(); // close the image in order to clear the pipeline
-                    return;
-                }
+                // 24.10.2020
+//                if(StaticClassifier.getIsBlocked()){
+//                    LOGGER.i("*** ViewFinder: closing as Classifier is blocked! ***");
+//                    image.close(); // close the image in order to clear the pipeline
+//                    return;
+//                }
 
 
 
                 if(isCurrentlyClassifying || isClassificationPaused){
+                    LOGGER.i("*** ViewFinder: closing as (isCurrentlyClassifying || isClassificationPaused) == true ***");
                     image.close(); // close the image in order to clear the pipeline
                     return;
                 }
+
+                if (SINGLETONCLASSIFIER == null){
+                    LOGGER.i("*** ViewFinder: closing as (SINGLETONCLASSIFIER == null) == true ***");
+                    image.close(); // close the image in order to clear the pipeline
+                    return;
+                }
+
+
 
                 @androidx.camera.core.ExperimentalGetImage
                 Image img = image.getImage();
                 final Bitmap rgbBitmap = ImageUtils.toCroppedBitmap(img, image.getImageInfo().getRotationDegrees());
 
 
+
                 int i = 0;
                 try {
-                    i = StaticClassifier.recognizeImage2(rgbBitmap);
+//                    i = StaticClassifier.recognizeImage2(rgbBitmap);
+
+                    // 24.10.2020
+                    i = SINGLETONCLASSIFIER.recognizeImage2(rgbBitmap);
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -475,11 +527,14 @@ public class ViewFinder extends AppCompatActivity
 
 
 
+
                 Trace.beginSection("closing image");
                 image.close();
 
 
                 Trace.endSection();
+
+                LOGGER.i("*** ViewFinder: analyze() ENDE *** ");
 //
 //                // do not accept additional images if there is already a classification running
 ////                if(isCurrentlyClassifying || isClassificationPaused  || true){
