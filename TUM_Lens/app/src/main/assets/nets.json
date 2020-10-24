@@ -21,20 +21,6 @@
         },
 
         {
-            "name": "Float EfficientNet (fp32)",
-
-            "image_mean": 127.0,
-            "image_std": 128.0,
-            "probability_mean": 0.0,
-            "probability_std": 1.0,
-
-            "filename": "efficientnet-lite0-fp32.tflite",
-            "labels": "labels_without_background.txt",
-
-            "top5accuracy": "?"
-        },
-
-        {
             "name": "Quantized EfficientNet (int8)",
 
             "image_mean": 0.0,
@@ -61,7 +47,7 @@
             "filename": "inception_v1_self.tflite",
             "labels": "labels.txt",
 
-            "top5accuracy": "89.8%"
+            "top5accuracy": "Top-5 accuracy: 89.8%"
         },
 
         {
