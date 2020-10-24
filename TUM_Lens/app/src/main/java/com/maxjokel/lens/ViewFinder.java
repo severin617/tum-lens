@@ -20,7 +20,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,8 +41,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.maxjokel.lens.fragments.CameraSettingsFragment;
+import com.maxjokel.lens.fragments.ModelSelectorFragment;
+import com.maxjokel.lens.fragments.PredictionsFragment;
+import com.maxjokel.lens.fragments.ProcessingUnitSelectorFragment;
+import com.maxjokel.lens.fragments.SmoothedPredictionsFragment;
+import com.maxjokel.lens.fragments.ThreadNumberFragment;
+import com.maxjokel.lens.helpers.App;
+import com.maxjokel.lens.helpers.CameraEvents;
+import com.maxjokel.lens.helpers.FreezeAnalyzer;
+import com.maxjokel.lens.helpers.FreezeCallback;
+import com.maxjokel.lens.helpers.Recognition;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -55,8 +64,8 @@ import helpers.Logger;
 
 public class ViewFinder extends AppCompatActivity
             implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener,
-            FreezeCallback,
-            CameraEvents {
+        FreezeCallback,
+        CameraEvents {
 
 
     // init new Logger instance

@@ -1,7 +1,6 @@
-package com.maxjokel.lens;
+package com.maxjokel.lens.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -20,8 +19,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import com.maxjokel.lens.ListSingleton;
+import com.maxjokel.lens.helpers.ModelConfig;
+import com.maxjokel.lens.NewStaticClassifier;
+import com.maxjokel.lens.R;
+
 import java.util.List;
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package com.maxjokel.lens;
+package com.maxjokel.lens.fragments;
 
 import android.os.Bundle;
 
@@ -11,16 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.maxjokel.lens.helpers.CameraEvents;
+import com.maxjokel.lens.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
-interface CameraEvents {
-
-    void onRotateToggled();
-    void onFlashToggled();
-
-}
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 *
 * This fragment controls the camera settings in the BottomSheet in the 'ViewFinder' activity

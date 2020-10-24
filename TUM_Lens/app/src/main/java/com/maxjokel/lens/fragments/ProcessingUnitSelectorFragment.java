@@ -1,4 +1,4 @@
-package com.maxjokel.lens;
+package com.maxjokel.lens.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,17 +15,11 @@ import android.view.ViewGroup;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.maxjokel.lens.NewStaticClassifier;
+import com.maxjokel.lens.R;
+import com.maxjokel.lens.helpers.ProcessingUnit;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-
-enum ProcessingUnit {
-    CPU,
-    GPU,
-    NNAPI
-}
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
  *

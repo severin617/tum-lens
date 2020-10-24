@@ -1,4 +1,4 @@
-package com.maxjokel.lens;
+package com.maxjokel.lens.helpers;
 
 import android.app.Activity;
 
@@ -211,21 +211,21 @@ public class ModelConfig {
     // ---------------------------------------------------------------------------------------------
     // GETTERS
 
-    protected String getName() { return this.name; }
+    public String getName() { return this.name; }
 
-    protected int getId() { return this.id; }
+    public int getId() { return this.id; }
 
-    protected String getModelFilename() { return this.filenameModel; }
+    public String getModelFilename() { return this.filenameModel; }
 
-    protected String getLabelFilename() { return this.filenameLabels; }
+    public String getLabelFilename() { return this.filenameLabels; }
 
-    protected String getTop5accuracy() { return this.top5accuracy; }
+    public String getTop5accuracy() { return this.top5accuracy; }
 
-    protected TensorOperator getPreprocessNormalizeOp() {
+    public TensorOperator getPreprocessNormalizeOp() {
         return new NormalizeOp(this.imageMean, this.imageStd);
     }
 
-    protected TensorOperator getPostprocessNormalizeOp() {
+    public TensorOperator getPostprocessNormalizeOp() {
         return new NormalizeOp(this.probabilityMean, this.probabilityStd);
     }
 

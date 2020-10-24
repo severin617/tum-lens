@@ -1,5 +1,7 @@
 package com.maxjokel.lens;
 
+import com.maxjokel.lens.helpers.ModelConfig;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

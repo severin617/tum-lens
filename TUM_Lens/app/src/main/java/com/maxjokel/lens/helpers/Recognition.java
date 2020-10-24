@@ -1,4 +1,4 @@
-package com.maxjokel.lens;
+package com.maxjokel.lens.helpers;
 
 import android.graphics.RectF;
 

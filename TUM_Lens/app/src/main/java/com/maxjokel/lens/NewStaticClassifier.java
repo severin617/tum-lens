@@ -1,11 +1,15 @@
 package com.maxjokel.lens;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.SystemClock;
 import android.os.Trace;
+
+import com.maxjokel.lens.helpers.App;
+import com.maxjokel.lens.helpers.ModelConfig;
+import com.maxjokel.lens.helpers.ProcessingUnit;
+import com.maxjokel.lens.helpers.Recognition;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;

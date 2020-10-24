@@ -1,6 +1,5 @@
 package com.maxjokel.lens;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.maxjokel.lens.fragments.CameraRollPredictionsFragment;
+import com.maxjokel.lens.fragments.ModelSelectorFragment;
+import com.maxjokel.lens.helpers.Recognition;
 
 import java.io.IOException;
 import java.io.InputStream;

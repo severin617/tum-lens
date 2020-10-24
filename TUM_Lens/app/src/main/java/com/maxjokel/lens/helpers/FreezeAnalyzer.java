@@ -1,4 +1,4 @@
-package com.maxjokel.lens;
+package com.maxjokel.lens.helpers;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -7,6 +7,8 @@ import android.media.Image;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
+
+import com.maxjokel.lens.helpers.FreezeCallback;
 
 import helpers.ImageUtils;
 import helpers.Logger;
@@ -29,32 +31,28 @@ import helpers.Logger;
 
 + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
-
-// new callback interface, to react to changes in 'viewFinder.java'
-// [reference: https://stackoverflow.com/a/18054865]
-interface FreezeCallback {
-    void onFrozenBitmap(Bitmap b);
-}
-
 public class FreezeAnalyzer implements ImageAnalysis.Analyzer {
 
 
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // init new Logger instance
     private static final Logger LOGGER = new Logger();
 
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
     // init global variables
-    protected FreezeCallback callback;
-    protected boolean isFrozen;
-    protected int lens_front_back = 0; // [0 = back, 1 = front]; set 'back' as default;
+    private FreezeCallback callback;
+    private boolean isFrozen;
+    private int lens_front_back = 0; // [0 = back, 1 = front]; set 'back' as default;
 
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // constructor
-    public FreezeAnalyzer(FreezeCallback fcb){
+    public FreezeAnalyzer(FreezeCallback freezeCallback){
         this.isFrozen = false;
-        this.callback = fcb;
+        this.callback = freezeCallback;
     }
+
 
     @Override
     public void analyze(@NonNull ImageProxy image) {

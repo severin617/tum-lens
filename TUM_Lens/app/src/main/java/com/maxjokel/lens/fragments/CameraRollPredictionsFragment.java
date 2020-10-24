@@ -1,4 +1,4 @@
-package com.maxjokel.lens;
+package com.maxjokel.lens.fragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.maxjokel.lens.R;
+import com.maxjokel.lens.helpers.Recognition;
 
 import java.util.List;
 
