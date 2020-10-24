@@ -237,7 +237,7 @@ public class ViewFinder extends AppCompatActivity
 
         // 24.10.2020: onClassificationReinitialized-Event
 //        SINGLETONCLASSIFIER.addListener(this);
-        SingletonClassifier.addListener(this);
+//        SingletonClassifier.addListener(this);
 
 
         // FINDING:
@@ -501,11 +501,11 @@ public class ViewFinder extends AppCompatActivity
                 }
 
 //                if (SINGLETONCLASSIFIER == null){
-                if (NEWSINGLETONCLASSIFIER == null){
-                    LOGGER.i("*** ViewFinder: closing as (NEWSINGLETONCLASSIFIER == null) == true ***");
-                    image.close(); // close the image in order to clear the pipeline
-                    return;
-                }
+//                if (NEWSINGLETONCLASSIFIER == null){
+//                    LOGGER.i("*** ViewFinder: closing as (NEWSINGLETONCLASSIFIER == null) == true ***");
+//                    image.close(); // close the image in order to clear the pipeline
+//                    return;
+//                }
 
 
 
@@ -541,7 +541,7 @@ public class ViewFinder extends AppCompatActivity
 
                 Trace.endSection();
 
-                LOGGER.i("*** ViewFinder: analyze() ENDE *** ");
+                LOGGER.i("*** ViewFinder: analyze() ENDE *** \n");
 //
 //                // do not accept additional images if there is already a classification running
 ////                if(isCurrentlyClassifying || isClassificationPaused  || true){

@@ -3,6 +3,7 @@ package com.maxjokel.lens;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.SystemClock;
 import android.os.Trace;
 
 import org.tensorflow.lite.DataType;
@@ -12,7 +13,10 @@ import org.tensorflow.lite.nnapi.NnApiDelegate;
 import org.tensorflow.lite.support.common.FileUtil;
 import org.tensorflow.lite.support.common.TensorOperator;
 import org.tensorflow.lite.support.common.TensorProcessor;
+import org.tensorflow.lite.support.image.ImageProcessor;
 import org.tensorflow.lite.support.image.TensorImage;
+import org.tensorflow.lite.support.image.ops.ResizeOp;
+import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.IOException;
@@ -96,18 +100,19 @@ public class NewSingletonClassifier
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    private static CountDownLatch latchThatBlocksINITIALIZATION = new CountDownLatch(1);
+    private static CountDownLatch latchThatBlocksINITIALIZATION = new CountDownLatch(0);
     private static CountDownLatch latchThatBlocksCLASSIFICATiON;
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // non-final, but static instance
-    private static NewSingletonClassifier instance;
+    private static NewSingletonClassifier instance = null;
 
     // private constructor that can't be accessed from outside
     private NewSingletonClassifier(){
 
         Trace.beginSection("private NewSingletonClassifier()");
+//        LOGGER.i("+++ NEW: trying to exec constructor NewSingletonClassifier()");
 
         try {
             // wait for a running classification to finnish
@@ -115,13 +120,13 @@ public class NewSingletonClassifier
 
             // block any classification until the initialization is done
             latchThatBlocksCLASSIFICATiON = new CountDownLatch(1);
-            LOGGER.i("+++ NEW: latchThatBlocksCLASSIFICATiON = new CountDownLatch(1);");
+            LOGGER.i("+++ NEW: latchThatBlocksCLASSIFICATiON = new CountDownLatch(1); in constructor for NewSingletonClassifier() -> setup init");
 
-            // initialize classifier object
+            // initialize classifier object, uses extra thread!!
             initialize();
 
             latchThatBlocksCLASSIFICATiON.countDown();
-            LOGGER.i("+++ NEW: latchThatBlocksCLASSIFICATiON.countdown();");
+            LOGGER.i("+++ NEW: latchThatBlocksCLASSIFICATiON.countdown(); in constructor for NewSingletonClassifier() -> init complete");
 
         } catch (InterruptedException e) {
             LOGGER.i("+++ NEW: InterruptedException in NewSingletonClassifier()  -> latch");
@@ -185,16 +190,17 @@ public class NewSingletonClassifier
 
             // block any initialization until the classification is done
             latchThatBlocksINITIALIZATION = new CountDownLatch(1);
-            LOGGER.i("+++ NEW: latchThatBlocksINITIALIZATION = new CountDownLatch(1);");
+            LOGGER.i("+++ NEW recognizeImage: latchThatBlocksINITIALIZATION = new CountDownLatch(1);");
 
 
             // TODO
-//            classifiy();
+            int i = 0;
+            i = classify(bitmap);
 
             latchThatBlocksINITIALIZATION.countDown();
-            LOGGER.i("+++ NEW: latchThatBlocksINITIALIZATION.countdown() && returning 0");
+            LOGGER.i("+++ NEW recognizeImage: latchThatBlocksINITIALIZATION.countdown() && returning 0");
 
-            return 0;
+            return i;
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -218,7 +224,7 @@ public class NewSingletonClassifier
     private void initialize() throws IOException, InterruptedException {
 
 //        // source this out to new thread in order to reduce load on main-thread
-//        new Thread( new Runnable() { @Override public void run() {
+        new Thread( new Runnable() { @Override public void run() {
 
 //            LOGGER.i("??? starting new thread");
 
@@ -354,11 +360,103 @@ public class NewSingletonClassifier
 //        notifyListeners();
 
 
-//        }}).start(); // END of new thread
+        }}).start(); // END of new thread
 
 //        isBlocked = false;
 
     } // END OF INITIALIZE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+
+
+
+    // #############################################################################################
+
+
+    private int classify(final Bitmap bitmap) throws InterruptedException {
+
+        LOGGER.i("+++ NEW: classify()    with model '" + modelConfig.getName() + "'");
+
+
+        if (tflite == null){
+            LOGGER.i("#### #### StaticClassifier: tflite is NULL #### #### ");
+            return 999;
+        }
+        if (inputImageBuffer == null){
+            LOGGER.i("#### #### StaticClassifier: inputImageBuffer is NULL #### #### ");
+            return 888;
+        }
+        if (outputProbabilityBuffer == null){
+            LOGGER.i("#### #### StaticClassifier: outputProbabilityBuffer is NULL #### #### ");
+            return 777;
+        }
+
+
+
+        // Logs this method so that it can be analyzed with systrace.
+        Trace.beginSection("recognizeImage");
+
+        Trace.beginSection("loadImage");
+        long startTimeForLoadImage = SystemClock.uptimeMillis();
+
+        // load image into new TensorImage
+        inputImageBuffer = loadImage(bitmap);
+
+        long endTimeForLoadImage = SystemClock.uptimeMillis();
+        Trace.endSection();
+        LOGGER.v("Timecost to load the image: " + (endTimeForLoadImage - startTimeForLoadImage));
+
+
+        Trace.beginSection("runInference");
+        long startTimeForReference = SystemClock.uptimeMillis();
+
+        // run inference
+        // TODO
+        // TODO
+        // TODO
+        // TODO: ich vermute hier die Ursache
+        // TODO: manchmal weisen die Fehlermeldungen auf diese Stelle hin, dass 'Null Object...'
+        // TODO: aber eig macht das auch keinen sinn, weil ich das ja vorher abfange?!
+        tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer().rewind());
+
+        long endTimeForReference = SystemClock.uptimeMillis();
+        Trace.endSection();
+        LOGGER.v("Timecost to run model inference: " + (endTimeForReference - startTimeForReference));
+
+
+        // Gets the map of label and probability.
+//        Map<String, Float> labeledProbability =
+//                new TensorLabel(labels, probabilityProcessor.process(outputProbabilityBuffer))
+//                        .getMapWithFloatValue();
+        Trace.endSection();
+
+        return 1;
+    }
+
+
+
+
+    /** Loads input image-bitmap, and applies preprocessing.
+     *
+     * 'ImageProcessor' is a helper feature of the TF-Lite-Package */
+    private TensorImage loadImage(final Bitmap bitmap) {
+
+        // load bitmap into TensorImage
+        inputImageBuffer.load(bitmap);
+
+        int cropSize = Math.min(bitmap.getWidth(), bitmap.getHeight());
+
+        // create new TF-Lite ImageProcessor to convert from Bitmap to TensorImage
+        ImageProcessor imageProcessor =
+                new ImageProcessor.Builder()
+                        .add(new ResizeWithCropOrPadOp(cropSize, cropSize))
+                        .add(new ResizeOp(imageSizeX, imageSizeY, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
+                        .add(getPreprocessNormalizeOp())
+                        .build();
+
+        return imageProcessor.process(inputImageBuffer);
+    }
+
 
 
 }
