@@ -1,9 +1,8 @@
 {
-    "timestamp": "2020-09-23T11:50:00.000Z",
+    "timestamp": "2020-10-24T21:50:00.000Z",
     "comment": "",
 
     "nets": [
-
 
         {
             "name": "Quantized MobileNet V1",
@@ -20,7 +19,6 @@
         
             "top5accuracy": "89.0%"
         },
-
 
         {
             "name": "Float EfficientNet (fp32)",
@@ -50,10 +48,6 @@
             "top5accuracy": "?"
         },
 
-
-
-        
-        
         {
             "name": "Inception V1 (self converted)",
             "comment": "",
@@ -70,40 +64,23 @@
             "top5accuracy": "89.8%"
         },
 
-
-
         {
-            "name": "Mirco's MobileNet V3",
+            "name": "MobileNet V3 Intel Image Classification",
             "comment": "transfer learning use case",
             "version": 0.1,
-
+        
             "image_mean": 127.5,
             "image_std": 127.5,
             "probability_mean": 0.0,
             "probability_std": 1.0,
-
-            "filename": "mirco_model.tflite",
-            "labels": "mirco_labels.txt",
-
-            "top5accuracy": "?"
-        },
-
-
-        {
-            "name": "Severin's MobileNet V3",
-            "comment": "transfer learning use case",
-            "version": 0.1,
-
-            "image_mean": 127.5,
-            "image_std": 127.5,
-            "probability_mean": 0.0,
-            "probability_std": 1.0,
-
-            "filename": "severin_model.tflite",
-            "labels": "mirco_labels.txt",
-
-            "top5accuracy": "?"
+        
+            "filename": "transfer_mobilenet_v3_IIC.tflite",
+            "labels": "IIC_labels.txt",
+        
+            "top5accuracy": "transfer learning use case"
         }
+
+        
 
     ]
   }
