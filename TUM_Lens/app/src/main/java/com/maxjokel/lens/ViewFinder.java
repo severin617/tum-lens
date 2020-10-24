@@ -139,7 +139,8 @@ public class ViewFinder extends AppCompatActivity
 
 
 
-    SingletonClassifier SINGLETONCLASSIFIER = SingletonClassifier.getInstance();
+//    SingletonClassifier SINGLETONCLASSIFIER = SingletonClassifier.getInstance();
+    NewSingletonClassifier NEWSINGLETONCLASSIFIER = NewSingletonClassifier.getInstance();
 
 
 
@@ -149,6 +150,8 @@ public class ViewFinder extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        LOGGER.i("+++ Hello from ViewFinder.java +++");
 
         super.onCreate(savedInstanceState);
 
@@ -217,7 +220,8 @@ public class ViewFinder extends AppCompatActivity
 //            e.printStackTrace();
 //        }
         // 24.10.2020
-        msf.addListener(SINGLETONCLASSIFIER);
+//        msf.addListener(SINGLETONCLASSIFIER);
+        msf.addListener(NEWSINGLETONCLASSIFIER);
 
 
 
@@ -416,9 +420,9 @@ public class ViewFinder extends AppCompatActivity
     // 24.10.2020
     @Override
     public void onClassifierReinitialized(){
-        LOGGER.i("### ViewFinder notified about classifier reinitialization successful ### ");
-        SINGLETONCLASSIFIER = SingletonClassifier.getInstance();
-        LOGGER.i("### ViewFinder: SINGLETONCLASSIFIER = SingletonClassifier.getInstance(); ### ");
+//        LOGGER.i("### ViewFinder notified about classifier reinitialization successful ### ");
+//        SINGLETONCLASSIFIER = SingletonClassifier.getInstance();
+//        LOGGER.i("### ViewFinder: SINGLETONCLASSIFIER = SingletonClassifier.getInstance(); ### ");
     }
 
 
@@ -496,8 +500,9 @@ public class ViewFinder extends AppCompatActivity
                     return;
                 }
 
-                if (SINGLETONCLASSIFIER == null){
-                    LOGGER.i("*** ViewFinder: closing as (SINGLETONCLASSIFIER == null) == true ***");
+//                if (SINGLETONCLASSIFIER == null){
+                if (NEWSINGLETONCLASSIFIER == null){
+                    LOGGER.i("*** ViewFinder: closing as (NEWSINGLETONCLASSIFIER == null) == true ***");
                     image.close(); // close the image in order to clear the pipeline
                     return;
                 }
@@ -510,16 +515,18 @@ public class ViewFinder extends AppCompatActivity
 
 
 
-                int i = 0;
-                try {
-//                    i = StaticClassifier.recognizeImage2(rgbBitmap);
-
-                    // 24.10.2020
-                    i = SINGLETONCLASSIFIER.recognizeImage2(rgbBitmap);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                int i = 0;
+//                try {
+////                    i = StaticClassifier.recognizeImage2(rgbBitmap);
+//
+//                    // 24.10.2020
+////                    i = SINGLETONCLASSIFIER.recognizeImage2(rgbBitmap);
+//                    i = NEWSINGLETONCLASSIFIER.recognizeImage(rgbBitmap);
+//
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+                int i = NEWSINGLETONCLASSIFIER.recognizeImage(rgbBitmap);
                 LOGGER.i("Classifier output: " + i);
 
                 Trace.endSection();
