@@ -107,6 +107,13 @@ public class PredictionsFragment extends Fragment {
             // get list length
             int resultsLength = results.size();
 
+            // show all
+            pf_row4.setVisibility(View.VISIBLE);
+            pf_row3.setVisibility(View.VISIBLE);
+            pf_row2.setVisibility(View.VISIBLE);
+            pf_row1.setVisibility(View.VISIBLE);
+            pf_row0.setVisibility(View.VISIBLE);
+
             // hide result rows, if there are not enough classes
             if(resultsLength < 5)
                 pf_row4.setVisibility(View.GONE);

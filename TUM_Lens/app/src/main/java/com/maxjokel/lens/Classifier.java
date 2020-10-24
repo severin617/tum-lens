@@ -36,7 +36,17 @@ import java.util.concurrent.CountDownLatch;
 
 import helpers.Logger;
 
-public class NewStaticClassifier {
+
+/**
+ * This 'classifier' implementation is based around the idea that a single "classifier instance"
+ * is sufficient for both, ViewFinder and CameraRoll activity;
+ *
+ * By exposing the 'classifier' as static class it can be accessed very efficiently from both
+ * both activities, resulting in a much improved user experience;
+ *
+ * */
+
+public class Classifier {
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -114,10 +124,10 @@ public class NewStaticClassifier {
     // constructor
 
     // non-final, but static instance
-    private static NewStaticClassifier instance = null;
+    private static Classifier instance = null;
 
     // private constructor that can't be accessed from outside
-    private NewStaticClassifier(){
+    private Classifier(){
 
         Trace.beginSection("private NewSingletonClassifier()");
 //        LOGGER.i("+++ NEW: trying to exec constructor NewSingletonClassifier()");
@@ -146,10 +156,10 @@ public class NewStaticClassifier {
     }
 
     // public "constructor" that returns the instance
-    public static synchronized NewStaticClassifier getInstance() {
+    public static synchronized Classifier getInstance() {
 
-        if (NewStaticClassifier.instance == null){
-            NewStaticClassifier.instance = new NewStaticClassifier();
+        if (Classifier.instance == null){
+            Classifier.instance = new Classifier();
         }
 
         return instance;
@@ -169,7 +179,7 @@ public class NewStaticClassifier {
 
         // init new instance
         Trace.beginSection("+++ NEW: onClassifierConfigChanged: instance = new NewSingletonClassifier();");
-        NewStaticClassifier.instance = new NewStaticClassifier();
+        Classifier.instance = new Classifier();
         Trace.endSection();
 
         LOGGER.i("+++ NEW: successfully initialized new instance");
@@ -195,7 +205,7 @@ public class NewStaticClassifier {
 
             // block any initialization until the classification is done
             latchThatBlocksINITIALIZATION = new CountDownLatch(1);
-            LOGGER.i("+++ NEW recognizeImage: latchThatBlocksINITIALIZATION = new CountDownLatch(1);");
+//            LOGGER.i("+++ NEW recognizeImage: latchThatBlocksINITIALIZATION = new CountDownLatch(1);");
 
 
             // make sure Bitmap is not null
@@ -203,11 +213,11 @@ public class NewStaticClassifier {
 
 
             // run classification on bitmap
-            List<Recognition> recognitions = classify2(bitmap);
+            List<Recognition> recognitions = classify(bitmap);
 
 
             latchThatBlocksINITIALIZATION.countDown();
-            LOGGER.i("+++ NEW recognizeImage: latchThatBlocksINITIALIZATION.countdown() && returning 0");
+//            LOGGER.i("+++ NEW recognizeImage: latchThatBlocksINITIALIZATION.countdown() && returning 0");
 
             return recognitions;
 
@@ -381,17 +391,17 @@ public class NewStaticClassifier {
      * @param: bitmap:            a RGB bitmap
      *
      * */
-    public static List<Recognition> classify2(final Bitmap bitmap) throws InterruptedException {
+    public static List<Recognition> classify(final Bitmap bitmap) throws InterruptedException {
 
         Trace.beginSection("NewSingletonClassifier classify()");
 
         if ((INTERPRETER == null) || (inputImageBuffer == null) || (outputProbabilityBuffer == null) ){
-            LOGGER.i("+++ NEW, classify2(): (tflite is NULL) || (inputImageBuffer is NULL) || (outputProbabilityBuffer is NULL)");
+            LOGGER.i("### NEW, classify(): (tflite is NULL) || (inputImageBuffer is NULL) || (outputProbabilityBuffer is NULL)");
             final ArrayList<Recognition> recognitions = new ArrayList<>();
             return recognitions;
         }
 
-        LOGGER.i("+++ NEW: classify2()    with model '" + modelConfig.getName() + "'");
+//        LOGGER.i("+++ NEW: classify()    with model '" + modelConfig.getName() + "'");
 
         // load image into new TensorImage
         Trace.beginSection("loadImage");

@@ -255,7 +255,7 @@ public class CameraRoll extends AppCompatActivity {
         final long startTime = SystemClock.uptimeMillis();
 
         // run inference on image
-        final List<Recognition> results = NewStaticClassifier.recognizeImage(bitmap);
+        final List<Recognition> results = Classifier.recognizeImage(bitmap);
 
 //        LOGGER.i("RESULT 0: " + results.get(0));
 //        LOGGER.i("RESULT 1: " + results.get(1));

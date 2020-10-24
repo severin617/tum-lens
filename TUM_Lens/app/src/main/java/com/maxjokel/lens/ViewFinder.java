@@ -47,7 +47,6 @@ import com.maxjokel.lens.fragments.PredictionsFragment;
 import com.maxjokel.lens.fragments.ProcessingUnitSelectorFragment;
 import com.maxjokel.lens.fragments.SmoothedPredictionsFragment;
 import com.maxjokel.lens.fragments.ThreadNumberFragment;
-import com.maxjokel.lens.helpers.App;
 import com.maxjokel.lens.helpers.CameraEvents;
 import com.maxjokel.lens.helpers.FreezeAnalyzer;
 import com.maxjokel.lens.helpers.FreezeCallback;
@@ -355,7 +354,7 @@ public class ViewFinder extends AppCompatActivity
                 final long startTime = SystemClock.uptimeMillis();
 
                 // run inference on image
-                final List<Recognition> results = NewStaticClassifier.recognizeImage(rgbBitmap);
+                final List<Recognition> results = Classifier.recognizeImage(rgbBitmap);
 
                 startTimestamp = SystemClock.uptimeMillis() - startTime;
 

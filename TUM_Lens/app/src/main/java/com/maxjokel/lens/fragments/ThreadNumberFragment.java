@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.maxjokel.lens.NewStaticClassifier;
+import com.maxjokel.lens.Classifier;
 import com.maxjokel.lens.R;
 
 import java.util.Objects;
@@ -120,7 +120,7 @@ public class ThreadNumberFragment extends Fragment {
                     updateThreadCounter();
 
                     // trigger classifier update
-                    NewStaticClassifier.onConfigChanged();
+                    Classifier.onConfigChanged();
 
                 }
 
@@ -142,7 +142,7 @@ public class ThreadNumberFragment extends Fragment {
                     updateThreadCounter();
 
                     // trigger classifier update
-                    NewStaticClassifier.onConfigChanged();
+                    Classifier.onConfigChanged();
 
                 }
                 

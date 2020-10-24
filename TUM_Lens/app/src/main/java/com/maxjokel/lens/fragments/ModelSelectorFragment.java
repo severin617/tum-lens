@@ -19,9 +19,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.maxjokel.lens.Classifier;
 import com.maxjokel.lens.ListSingleton;
 import com.maxjokel.lens.helpers.ModelConfig;
-import com.maxjokel.lens.NewStaticClassifier;
 import com.maxjokel.lens.R;
 
 import java.util.List;
@@ -60,9 +60,9 @@ public class ModelSelectorFragment extends Fragment {
     List<ModelConfig> MODEL_LIST = listSingletonInstance.getList();
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // related to 'NewStaticClassifier'
+    // related to 'Classifier'
 
-    NewStaticClassifier newStaticClassifier = NewStaticClassifier.getInstance();
+    Classifier newStaticClassifier = Classifier.getInstance();
     // NOTE: we need this line in order to initialize the classifier!
 
 
@@ -151,7 +151,8 @@ public class ModelSelectorFragment extends Fragment {
             // create the 'info' TextView
             TextView textView = new TextView(view.getContext());
 
-            textView.setText("Top 5 accuracy: " + m.getTop5accuracy());
+//            textView.setText("Top 5 accuracy: " + m.getTop5accuracy());
+            textView.setText("" + m.getTop5accuracy());
 
             // set appearance
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -217,7 +218,7 @@ public class ModelSelectorFragment extends Fragment {
 
 
                 // trigger classifier update
-                NewStaticClassifier.onConfigChanged();
+                Classifier.onConfigChanged();
 
             }
         });

@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.maxjokel.lens.NewStaticClassifier;
+import com.maxjokel.lens.Classifier;
 import com.maxjokel.lens.R;
 import com.maxjokel.lens.helpers.ProcessingUnit;
 
@@ -135,7 +135,7 @@ public class ProcessingUnitSelectorFragment extends Fragment {
 
 
                 // trigger classifier update
-                NewStaticClassifier.onConfigChanged();
+                Classifier.onConfigChanged();
 
             }
         });
