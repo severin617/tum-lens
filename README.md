@@ -1,7 +1,8 @@
 # Performance Branch
 
 This branch is based around a `static` implementation of the TF-Lite classifier.
-Note that this version is still in development and contains bugs `:(`
+It offers significantly better performance than the other implementation.
+All major bugs are now fixed, please let me know if you find any other `:)`
 
 ---
 
