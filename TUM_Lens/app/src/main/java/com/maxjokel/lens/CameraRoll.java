@@ -112,27 +112,6 @@ public class CameraRoll extends AppCompatActivity {
         fragmentTransaction.commit();
 
 
-        // TODO: delete?!
-        // add StaticClassifier to list of event listeners
-        //      please note that it is absolutely critical that this happens before all the other
-        //      listeners are added to the list;
-        //      otherwise the classifier will get notified too late and run the old model on the image!
-//        StaticClassifier sc = null;
-//        try {
-//            sc = new StaticClassifier();
-//            msf.addListener(sc);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-
-        // for transmitting events back from the fragment to this class
-//        msf.addListener(this);
-
-
-
-
-
     // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
     // +                SET UP EVENT LISTENERS                 +
     // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -272,13 +251,14 @@ public class CameraRoll extends AppCompatActivity {
 
         final long startTime = SystemClock.uptimeMillis();
 
+        // run inference on image
         final List<Recognition> results = NewStaticClassifier.recognizeImage(bitmap);
 
-        LOGGER.i("RESULT 0: " + results.get(0));
-        LOGGER.i("RESULT 1: " + results.get(1));
-        LOGGER.i("RESULT 2: " + results.get(2));
-        LOGGER.i("RESULT 3: " + results.get(3));
-        LOGGER.i("RESULT 4: " + results.get(4));
+//        LOGGER.i("RESULT 0: " + results.get(0));
+//        LOGGER.i("RESULT 1: " + results.get(1));
+//        LOGGER.i("RESULT 2: " + results.get(2));
+//        LOGGER.i("RESULT 3: " + results.get(3));
+//        LOGGER.i("RESULT 4: " + results.get(4));
 
         final long startTimestamp = SystemClock.uptimeMillis() - startTime;
 

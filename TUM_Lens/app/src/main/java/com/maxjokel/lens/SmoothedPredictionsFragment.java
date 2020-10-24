@@ -78,7 +78,7 @@ public class SmoothedPredictionsFragment extends Fragment {
             // IDEA:
             // while the counter is less than 10, add the first three most promising classification results to a list
 
-            if (results != null) { // if there are results, add them to the list
+            if (results != null && results.size() > 0) { // if there are results, add them to the list
 
                 Recognition recognition0 = results.get(0);
                 if ((recognition0 != null) && (recognition0.getTitle() != null) && (recognition0.getConfidence() != null))  {
