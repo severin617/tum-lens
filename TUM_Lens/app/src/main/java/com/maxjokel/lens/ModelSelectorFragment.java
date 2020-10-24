@@ -61,6 +61,7 @@ public class ModelSelectorFragment extends Fragment {
     // related to 'NewStaticClassifier'
 
     NewStaticClassifier newStaticClassifier = NewStaticClassifier.getInstance();
+    // NOTE: we need this line in order to initialize the classifier!
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

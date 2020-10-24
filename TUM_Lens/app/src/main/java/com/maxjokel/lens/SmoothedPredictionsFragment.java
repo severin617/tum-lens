@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.UiThread;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -27,6 +29,14 @@ import java.util.Map;
 
 
 public class SmoothedPredictionsFragment extends Fragment {
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // layout elements
+
+    private LinearLayout placeholder, actual_result;
+    private TextView desc0, desc1, desc2, desc3, desc4;
+    private TextView conf0, conf1, conf2, conf3, conf4;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -53,8 +63,29 @@ public class SmoothedPredictionsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_smoothed_predictions, container, false);
+        View view = inflater.inflate(R.layout.fragment_smoothed_predictions, container, false);
+
+        // set up all layout elements here as we will run into NullPointerExceptions when we use
+        // the dynamic 'getView()...' approach;
+
+        placeholder = view.findViewById(R.id.placeholder);
+        actual_result = view.findViewById(R.id.actual_result);
+
+        desc0 = view.findViewById(R.id.smooth_description0);
+        desc1 = view.findViewById(R.id.smooth_description1);
+        desc2 = view.findViewById(R.id.smooth_description2);
+        desc3 = view.findViewById(R.id.smooth_description3);
+        desc4 = view.findViewById(R.id.smooth_description4);
+
+        conf0 = view.findViewById(R.id.smooth_confidence0);
+        conf1 = view.findViewById(R.id.smooth_confidence1);
+        conf2 = view.findViewById(R.id.smooth_confidence2);
+        conf3 = view.findViewById(R.id.smooth_confidence3);
+        conf4 = view.findViewById(R.id.smooth_confidence4);
+
+        return view;
     }
 
 
@@ -165,37 +196,27 @@ public class SmoothedPredictionsFragment extends Fragment {
             if(list.size() >= 5){
 
                 // hide placeholder and show actual results
-                getView().findViewById(R.id.placeholder).setVisibility(View.GONE);
-                getView().findViewById(R.id.actual_result).setVisibility(View.VISIBLE);
+                placeholder.setVisibility(View.GONE);
+                actual_result.setVisibility(View.VISIBLE);
 
 
                 ResultItem r0 = (ResultItem) list.get(0);
-                final TextView desc0 = getView().findViewById(R.id.smooth_description0);
-                final TextView conf0 = getView().findViewById(R.id.smooth_confidence0);
                 desc0.setText(r0.getTitle() + " (" + r0.getOccurrences() + "x)");
                 conf0.setText(String.format("%.1f", (100 * r0.getConfidence() / r0.getOccurrences())) + "%");
 
                 ResultItem r1 = (ResultItem) list.get(1);
-                final TextView desc1 = getView().findViewById(R.id.smooth_description1);
-                final TextView conf1 = getView().findViewById(R.id.smooth_confidence1);
                 desc1.setText(r1.getTitle() + " (" + r1.getOccurrences() + "x)");
                 conf1.setText(String.format("%.1f", (100 * r1.getConfidence() / r1.getOccurrences())) + "%");
 
                 ResultItem r2 = (ResultItem) list.get(2);
-                final TextView desc2 = getView().findViewById(R.id.smooth_description2);
-                final TextView conf2 = getView().findViewById(R.id.smooth_confidence2);
                 desc2.setText(r2.getTitle() + " (" + r2.getOccurrences() + "x)");
                 conf2.setText(String.format("%.1f", (100 * r2.getConfidence() / r2.getOccurrences())) + "%");
 
                 ResultItem r3 = (ResultItem) list.get(3);
-                final TextView desc3 = getView().findViewById(R.id.smooth_description3);
-                final TextView conf3 = getView().findViewById(R.id.smooth_confidence3);
                 desc3.setText(r3.getTitle() + " (" + r3.getOccurrences() + "x)");
                 conf3.setText(String.format("%.1f", (100 * r3.getConfidence() / r3.getOccurrences())) + "%");
 
                 ResultItem r4 = (ResultItem) list.get(4);
-                final TextView desc4 = getView().findViewById(R.id.smooth_description4);
-                final TextView conf4 = getView().findViewById(R.id.smooth_confidence4);
                 desc4.setText(r4.getTitle() + " (" + r4.getOccurrences() + "x)");
                 conf4.setText(String.format("%.1f", (100 * r4.getConfidence() / r4.getOccurrences())) + "%");
 

@@ -7,49 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".SmoothedPredictionsFragment">
 
-    <!--  placeholder  -->
-    <LinearLayout
-        android:id="@+id/placeholder"
-        android:layout_width="match_parent"
-        android:layout_height="132dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="visible">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:textAlignment="center"
-            android:text="@string/initializing"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:textSize="14sp"/>
-
-    </LinearLayout>
-    <!--  end of placeholder  -->
 
 
     <!--  actual results list  -->
@@ -286,6 +244,51 @@
 
     </LinearLayout>
     <!--  end of actual results list  -->
+
+
+    <!--  placeholder  -->
+    <LinearLayout
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="132dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:textAlignment="center"
+            android:text="@string/initializing"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+    <!--  end of placeholder  -->
 
 
 </LinearLayout>

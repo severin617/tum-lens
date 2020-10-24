@@ -56,7 +56,7 @@ public class PredictionsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_predictions, container, false);
+        View view = inflater.inflate(R.layout.fragment_predictions, container, false);
 
         // set up all layout elements here as we will run into NullPointerExceptions when we use
         // the dynamic 'getView()...' approach;

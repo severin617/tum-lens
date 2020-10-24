@@ -22,30 +22,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
  *
  * Fragment that controls the frame number selector in the BottomSheet of the ViewFinder activity
  *
  * + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
-
-
 public class ThreadNumberFragment extends Fragment {
 
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // layout elements
+    private TextView tv;
+
+    private ImageButton btn_plus;
+    private ImageButton btn_minus;
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // instantiate new SharedPreferences object
     SharedPreferences prefs = null;
     SharedPreferences.Editor prefEditor = null;
 
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // other global variables
+
     private int THREADNUMBER = 3; // default is 3
 
-    public ThreadNumberFragment() {
-        // Required empty public constructor
-    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // empty public constructor
+
+    public ThreadNumberFragment() { }
 
     public static ThreadNumberFragment newInstance() {
         return new ThreadNumberFragment();
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,8 +73,18 @@ public class ThreadNumberFragment extends Fragment {
         // load sharedPreferences object and set up editor
         prefs = Objects.requireNonNull(this.getActivity()).getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE);
 
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_thread_number, container, false);
+        View view = inflater.inflate(R.layout.fragment_thread_number, container, false);
+
+        // set up all layout elements here as we will run into NullPointerExceptions when we use
+        // the dynamic 'getView()...' approach;
+        tv = (TextView) view.findViewById(R.id.tv_threads);
+
+        btn_minus = (ImageButton) view.findViewById(R.id.btn_threads_minus);
+        btn_plus = (ImageButton) view.findViewById(R.id.btn_threads_plus);
+
+        return view;
     }
 
     @Override
@@ -83,8 +107,7 @@ public class ThreadNumberFragment extends Fragment {
 
 
         // decrease number of threads
-        ImageButton btn_minus = (ImageButton) getView().findViewById(R.id.btn_threads_minus);
-        getView().findViewById(R.id.btn_threads_minus).setOnClickListener(new View.OnClickListener() {
+        btn_minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -106,7 +129,6 @@ public class ThreadNumberFragment extends Fragment {
         });
 
         // increase number of threads
-        ImageButton btn_plus = (ImageButton) getView().findViewById(R.id.btn_threads_plus);
         btn_plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,6 +159,7 @@ public class ThreadNumberFragment extends Fragment {
     //   - updates component in BottomSheet accordingly
     //   - saves number of threads to SharedPreferences object
 
+    @SuppressLint("SetTextI18n")
     protected void updateThreadCounter(){
 
         // save number of threads to sharedPreferences
@@ -144,10 +167,8 @@ public class ThreadNumberFragment extends Fragment {
         prefEditor.apply();
 
         // update UI
-        TextView tv = (TextView) getView().findViewById(R.id.tv_threads);
-        if(tv != null) {
-            tv.setText("" + THREADNUMBER);
-        }
+        tv.setText("" + THREADNUMBER);
+
     }
 
 }

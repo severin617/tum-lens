@@ -27,7 +27,6 @@ enum ProcessingUnit {
     NNAPI
 }
 
-
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
  *
  * This fragment controls the processing unit selector in the BottomSheet of the ViewFinder activity;
@@ -35,19 +34,23 @@ enum ProcessingUnit {
  *
  * + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
-
-
-
 public class ProcessingUnitSelectorFragment extends Fragment {
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // layout elements
+
+    private ChipGroup chipGroup;
+
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // instantiate new SharedPreferences object
 
     SharedPreferences prefs = null;
     SharedPreferences.Editor prefEditor = null;
 
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     private ProcessingUnit PROCESSINGUNIT = ProcessingUnit.CPU; // CPU is default
 
@@ -58,6 +61,7 @@ public class ProcessingUnitSelectorFragment extends Fragment {
     public static ProcessingUnitSelectorFragment newInstance() {
         return new ProcessingUnitSelectorFragment();
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +76,14 @@ public class ProcessingUnitSelectorFragment extends Fragment {
         prefs = Objects.requireNonNull(this.getActivity()).getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE);
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_device_selector, container, false);
+        View view = inflater.inflate(R.layout.fragment_device_selector, container, false);
+
+        // set up all layout elements here as we will run into NullPointerExceptions when we use
+        // the dynamic 'getView()...' approach;
+
+        chipGroup = view.findViewById(R.id.chipGroup_processing_unit);
+
+        return view;
     }
 
 
@@ -95,7 +106,7 @@ public class ProcessingUnitSelectorFragment extends Fragment {
         // set initial selection
         String cName = "chip_" + PROCESSINGUNIT.name();
         int cId = getResources().getIdentifier(cName, "id", getActivity().getPackageName());
-        Chip c = getView().findViewById(cId);
+        Chip c = view.findViewById(cId);
         c.setChecked(true);
 
 
@@ -104,7 +115,6 @@ public class ProcessingUnitSelectorFragment extends Fragment {
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
         // init chip group and event listener
-        ChipGroup chipGroup = getView().findViewById(R.id.chipGroup_processing_unit);
         chipGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(ChipGroup group, int checkedId) {
