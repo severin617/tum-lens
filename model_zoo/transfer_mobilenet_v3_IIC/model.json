@@ -1,0 +1,15 @@
+{
+    "name": "MobileNet V3 Intel Image Classification",
+    "comment": "transfer learning use case",
+    "version": 0.1,
+
+    "image_mean": 127.5,
+    "image_std": 127.5,
+    "probability_mean": 0.0,
+    "probability_std": 1.0,
+
+    "filename": "transfer_mobilenet_v3_IIC.tflite",
+    "labels": "IIC_labels.txt",
+
+    "top5accuracy": "100% ;)"
+}

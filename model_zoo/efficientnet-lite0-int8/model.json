@@ -1,0 +1,13 @@
+{
+    "name": "Quantized EfficientNet (int8)",
+
+    "image_mean": 0.0,
+    "image_std": 1.0,
+    "probability_mean": 0.0,
+    "probability_std": 255.0,
+
+    "filename": "efficientnet-lite0-int8.tflite",
+    "labels": "labels_without_background.txt",
+
+    "top5accuracy": "?"
+}

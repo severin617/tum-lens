@@ -1,0 +1,15 @@
+{
+    "name": "Quantized MobileNet V1",
+    "comment": "",
+    "version": 1.0,
+
+    "image_mean": 0.0,
+    "image_std": 1.0,
+    "probability_mean": 0.0,
+    "probability_std": 255.0,
+
+    "filename": "mobilenet_v1_224_quant.tflite",
+    "labels": "labels.txt",
+
+    "top5accuracy": "89.0%"
+}
