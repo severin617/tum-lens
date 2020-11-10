@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import helpers.ImageUtils;
-import helpers.Logger;
+import com.maxjokel.lens.helpers.ImageUtils;
+import com.maxjokel.lens.helpers.Logger;
 
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +

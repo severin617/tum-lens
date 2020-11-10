@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.concurrent.CountDownLatch;
 
-import helpers.Logger;
+import com.maxjokel.lens.helpers.Logger;
 
 
 /**

@@ -58,8 +58,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import helpers.ImageUtils;
-import helpers.Logger;
+import com.maxjokel.lens.helpers.ImageUtils;
+import com.maxjokel.lens.helpers.Logger;
 
 public class ViewFinder extends AppCompatActivity
             implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener,

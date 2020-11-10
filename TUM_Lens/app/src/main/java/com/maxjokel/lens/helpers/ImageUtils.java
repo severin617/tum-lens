@@ -1,4 +1,4 @@
-package helpers;
+package com.maxjokel.lens.helpers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -6,7 +6,6 @@ import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
-import android.media.ExifInterface;
 import android.media.Image;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;

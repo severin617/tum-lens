@@ -15,7 +15,7 @@ limitations under the License.
 
 /* SOURCE: https://github.com/tensorflow/examples/tree/master/lite/examples/image_classification/android*/
 
-package helpers;
+package com.maxjokel.lens.helpers;
 
 import android.util.Log;
 

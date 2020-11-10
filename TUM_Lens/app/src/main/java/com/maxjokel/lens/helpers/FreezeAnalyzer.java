@@ -8,11 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 
-import com.maxjokel.lens.helpers.FreezeCallback;
-
-import helpers.ImageUtils;
-import helpers.Logger;
-
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
     13.09.2020, 19:45
