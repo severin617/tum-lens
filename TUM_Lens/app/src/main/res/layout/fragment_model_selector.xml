@@ -20,7 +20,7 @@
         <RadioButton
             android:id="@+id/radioButton_FloatMobileNet"
             android:buttonTint="@color/colorPrimary"
-            android:text="Float MobileNet"
+            android:text="Float MobileNet V1"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:layout_width="match_parent"

@@ -1,6 +1,6 @@
 # TUM Lens
 
-> TUM Lens is a front end for running image classification models on Android smartphones for evaluation and showcasing purposes.
+> TUM Lens is a front end application that runs image classification models on Android smartphones for evaluation and showcasing purposes.
 
 ### Screenshots
 ![](./img/Mockup1.png)
