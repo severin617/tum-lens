@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Lens.iml" filepath="$PROJECT_DIR$/.idea/modules/Lens.iml" group="Lens" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="Lens/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Lens.iml" filepath="$PROJECT_DIR$/.idea/modules/Lens.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Lens.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Lens.app.iml" />
     </modules>
   </component>
 </project>

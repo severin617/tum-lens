@@ -3,6 +3,7 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/201ac1f6c1f580e9996b973a27b5b68c/jetified-camera-lifecycle-1.0.0-beta08/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/201ac1f6c1f580e9996b973a27b5b68c/jetified-camera-lifecycle-1.0.0-beta08/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/201ac1f6c1f580e9996b973a27b5b68c/jetified-camera-lifecycle-1.0.0-beta08/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
