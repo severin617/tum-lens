@@ -21,24 +21,24 @@ import java.util.*
    around the models specified in 'nets.json'
 
 + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-class ListSingleton  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+class ListSingleton
+
 // private constructor, that can't be accessed from outside
 private constructor() {
-    // ---------------------------------------------------------------------------------------------
-    // GETTERS
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     // data
     val list = newListFromJSON()
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    private fun newListFromJSON(): List<ModelConfig> {
-        val l: MutableList<ModelConfig> = ArrayList()
 
+    private fun newListFromJSON(): List<ModelConfig> {
         // IDEA
         //  - parse 'nets.json'
         //  - for each model specified in 'nets' array:
         //      - set up new 'ModelConfig' object
         //      - save to list
+
+        val l: MutableList<ModelConfig> = ArrayList()
 
         // read in 'nets.json' file
         val jsonString = readJSON()
@@ -60,7 +60,7 @@ private constructor() {
         // load the 'nets' array
         var netsArray: JSONArray? = null
         netsArray = try {
-            jsonObject.getJSONArray("nets")
+            jsonObject!!.getJSONArray("nets")
         } catch (e: JSONException) {
             LOGGER.e("Error in 'ModelConfig' constructor while parsing the nets array.")
             e.printStackTrace()
@@ -68,12 +68,12 @@ private constructor() {
         }
 
         // iterate over array to find net with matching 'filename'
-        for (i in 0 until netsArray.length()) {
+        for (i in 0 until netsArray!!.length()) {
             try {
 
                 // load JSON info
                 var obj: JSONObject? = JSONObject()
-                obj = netsArray.getJSONObject(i)
+                obj = netsArray!!.getJSONObject(i)
 
                 // create new 'ModelConfig' object from JSON object
                 val m = ModelConfig(obj)
@@ -88,8 +88,7 @@ private constructor() {
         return l
     }
 
-    // ---------------------------------------------------------------------------------------------
-    // HELPERS
+
     // read in 'nets.json' from '/assets' and return its contents as String
     private fun readJSON(): String? {
         var jsonString: String? = null
@@ -115,12 +114,12 @@ private constructor() {
     }
 
     companion object {
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
         // set up new LOGGER
         private val LOGGER = Logger()
 
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // instance
+        @JvmStatic
         val instance = ListSingleton()
     }
 }
