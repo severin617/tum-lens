@@ -43,11 +43,9 @@ import com.maxjokel.lens.helpers.Logger;
  *
  * By exposing the 'classifier' as static class it can be accessed very efficiently from both
  * both activities, resulting in a much improved user experience;
- *
  * */
 
 public class Classifier {
-
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
