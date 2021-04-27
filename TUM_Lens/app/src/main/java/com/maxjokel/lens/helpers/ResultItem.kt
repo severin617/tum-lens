@@ -23,7 +23,7 @@ class ResultItem(var title: String, c: Float) : Comparable<ResultItem?> {
         occurrences++
     }
 
-    override fun compareTo(o: ResultItem?): Int {
+    override fun compareTo(other: ResultItem?): Int {
         return 0
     }
 

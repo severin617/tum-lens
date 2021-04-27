@@ -44,7 +44,7 @@ class Logger @JvmOverloads constructor(private val tag: String = DEFAULT_TAG,
          * @return caller's simple name
          */
         private val callerSimpleName: String
-            private get() {
+            get() {
                 // Get the current callstack so we can pull the class of the caller off of it.
                 val stackTrace = Thread.currentThread().stackTrace
                 for (elem in stackTrace) {

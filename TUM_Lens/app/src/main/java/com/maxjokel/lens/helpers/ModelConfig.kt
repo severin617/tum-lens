@@ -194,8 +194,7 @@ class ModelConfig {
     // read in 'nets.json' from '/assets' and return its contents as String
     // note: we need the activity context to access the '/assets' folder
     private fun readJSON(activity: Activity): String? {
-        var jsonString: String? = null
-        jsonString = try {
+        var jsonString = try {
             val input = activity.assets.open("nets.json")
             val size = input.available()
             val buffer = ByteArray(size)
