@@ -254,11 +254,12 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
 
 
             // make sure that the bitmap is not null
-            if (rgbBitmap == null) {
-                LOGGER.i("*** ViewFinder: closing as Bitmap == NULL ***")
-                image.close() // close the image in order to clear the pipeline
-                return@Analyzer
-            }
+            // TODO: Delete if not necessary
+//            if (rgbBitmap == null) {
+//                LOGGER.i("*** ViewFinder: closing as Bitmap == NULL ***")
+//                image.close() // close the image in order to clear the pipeline
+//                return@Analyzer
+//            }
             val startTime = SystemClock.uptimeMillis()
 
             // run inference on image
