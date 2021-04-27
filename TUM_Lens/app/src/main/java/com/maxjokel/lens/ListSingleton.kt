@@ -48,8 +48,7 @@ private constructor() {
         }
 
         // now, process the files info
-        var jsonObject: JSONObject? = null
-        jsonObject = try {
+        var jsonObject = try {
             JSONObject(jsonString)
         } catch (e: JSONException) {
             LOGGER.e("Error in 'ModelConfig' constructor while parsing JSON file.")
@@ -58,9 +57,8 @@ private constructor() {
         }
 
         // load the 'nets' array
-        var netsArray: JSONArray? = null
-        netsArray = try {
-            jsonObject!!.getJSONArray("nets")
+        var netsArray = try {
+            jsonObject.getJSONArray("nets")
         } catch (e: JSONException) {
             LOGGER.e("Error in 'ModelConfig' constructor while parsing the nets array.")
             e.printStackTrace()
@@ -72,8 +70,7 @@ private constructor() {
             try {
 
                 // load JSON info
-                var obj: JSONObject? = JSONObject()
-                obj = netsArray!!.getJSONObject(i)
+                var obj = netsArray.getJSONObject(i)
 
                 // create new 'ModelConfig' object from JSON object
                 val m = ModelConfig(obj)
@@ -91,9 +88,8 @@ private constructor() {
 
     // read in 'nets.json' from '/assets' and return its contents as String
     private fun readJSON(): String? {
-        var jsonString: String? = null
         val file = "assets/nets.json"
-        jsonString = try {
+        var jsonString = try {
             // circumvent Activity/ Context object by using .getClassLoader()
             val input = this.javaClass.classLoader!!.getResourceAsStream(file)
             if (input == null) {

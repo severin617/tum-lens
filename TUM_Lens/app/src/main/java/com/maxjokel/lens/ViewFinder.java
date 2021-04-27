@@ -61,18 +61,11 @@ import java.util.concurrent.TimeUnit;
 import com.maxjokel.lens.helpers.ImageUtils;
 import com.maxjokel.lens.helpers.Logger;
 
-public class ViewFinder extends AppCompatActivity
-            implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener,
-        FreezeCallback,
-        CameraEvents {
-
+public class ViewFinder extends AppCompatActivity implements GestureDetector.OnGestureListener,
+        GestureDetector.OnDoubleTapListener, FreezeCallback, CameraEvents {
 
     // init new Logger instance
     private static final Logger LOGGER = new Logger();
-
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 
     // CameraX related:   [source: https://developer.android.com/training/camerax/preview#java]
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture = null;
@@ -95,15 +88,10 @@ public class ViewFinder extends AppCompatActivity
     private PreviewView _viewFinder;
     private ImageView _frozenPreviewWindow;
 
-
     private FreezeAnalyzer _freezeAnalyzer = null;
     private ImageAnalysis _freezeImageAnalysis = null;
 
-
     int lens_front_back = 0; // [0 = back, 1 = front]
-
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // TF-Lite related to CLASSIFICATION:   [source: TF-Lite example app]
     protected int previewDimX = 960;
@@ -114,35 +102,17 @@ public class ViewFinder extends AppCompatActivity
     private boolean isCurrentlyClassifying = false;
     private boolean isClassificationPaused = false;
 
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
     // 'double tap' gesture
     private GestureDetectorCompat mGestureDetector;
-
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 
     // instantiate new SharedPreferences object
     SharedPreferences prefs = null;
     SharedPreferences.Editor prefEditor = null;
 
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
     PredictionsFragment predictionsFragment = null;
     SmoothedPredictionsFragment smoothedPredictionsFragment = null;
 
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
     // please note: the static classifier class is instantiated in 'ModelSelectorFragment'
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,30 +124,22 @@ public class ViewFinder extends AppCompatActivity
         // load sharedPreferences object and set up editor
         prefs = getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE);
 
-
         // prevent display from being dimmed down
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // set status bar background to black
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.black));
 
-
         // set corresponding layout
         setContentView(R.layout.activity_view_finder);
-
 
         // set up gesture detection   [source: https://developer.android.com/training/gestures/detector#java]
         // Instantiate the gesture detector with the application context
         mGestureDetector = new GestureDetectorCompat(this,this);
 
-
-
-
-
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         // +             SETUP BOTTOM SHEET FRAGMENTS              +
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-
 
         // init new Fragment Instances
         ModelSelectorFragment msf = ModelSelectorFragment.newInstance();
@@ -186,7 +148,6 @@ public class ViewFinder extends AppCompatActivity
         CameraSettingsFragment cameraSettingsFragment = new CameraSettingsFragment();
         ThreadNumberFragment threadNumberFragment = new ThreadNumberFragment();
         ProcessingUnitSelectorFragment processingUnitSelectorFragment = new ProcessingUnitSelectorFragment();
-
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -201,13 +162,9 @@ public class ViewFinder extends AppCompatActivity
         fragmentTransaction.add(R.id.processing_unit_container, processingUnitSelectorFragment, "processingUnitSelectorFragment");
         fragmentTransaction.commit();
 
-
         // add ViewFinder to list of event listeners in cameraSettingsFragment, in order to get
         // notified when the user toggles the camera or flash
         cameraSettingsFragment.addListener(this);
-
-
-
 
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         // +           SET UP USER INTERFACE COMPONENTS            +
@@ -217,7 +174,6 @@ public class ViewFinder extends AppCompatActivity
         _viewFinder = findViewById(R.id.viewFinder);
         _frozenPreviewWindow = findViewById(R.id.frozen_preview);
 
-
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         // +                  INIT CORE FEATURES                   +
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -226,7 +182,6 @@ public class ViewFinder extends AppCompatActivity
         lens_front_back = prefs.getInt("lens", 0);
 
         initCameraX();
-
 
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         // +                SET UP EVENT LISTENERS                 +
@@ -273,7 +228,6 @@ public class ViewFinder extends AppCompatActivity
     }
     // END OF 'onCreate()' METHOD
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

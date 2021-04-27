@@ -160,7 +160,7 @@ class CameraRoll : AppCompatActivity() {
 //        LOGGER.i("RESULT 4: " + results.get(4));
         val startTimestamp = SystemClock.uptimeMillis() - startTime
         runOnUiThread { // pass list to fragment, that renders the recognition results to UI
-            predictionsFragment!!.showRecognitionResults(results, startTimestamp)
+            predictionsFragment.showRecognitionResults(results, startTimestamp)
         }
     }
 

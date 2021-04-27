@@ -161,10 +161,9 @@ object ImageUtils {
         // calc offsets for cropping
         val offShortSide = (0.5 * (Math.min(bitmap.width, bitmap.height) - cropSize)).toInt()
         val offLongSide = (0.5 * (Math.max(bitmap.width, bitmap.height) - cropSize)).toInt()
-        var temp1: Bitmap? = null
 
         // crop to square
-        temp1 = if (bitmap.width < bitmap.height) {
+        var temp1 = if (bitmap.width < bitmap.height) {
             // PORTRAIT
             Bitmap.createBitmap(
                 bitmap,
