@@ -1,0 +1,12 @@
+# LaTeX auxiliary stuff
+*.aux
+*.bbl
+*.blg
+*.lof
+*.log
+*.lot
+*.synctex.gz
+*.toc
+
+# We don't want pdfs by default
+*.pdf
