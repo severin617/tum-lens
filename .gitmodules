@@ -1,0 +1,3 @@
+[submodule "backup/studentstarterclues"]
+	path = backup/studentstarterclues
+	url = https://gitlab.lrz.de/tum-i05/public/studentstarterclues.git
