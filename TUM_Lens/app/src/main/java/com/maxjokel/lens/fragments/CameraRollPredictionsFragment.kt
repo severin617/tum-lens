@@ -13,132 +13,59 @@ import androidx.fragment.app.Fragment
 import com.maxjokel.lens.R
 import com.maxjokel.lens.helpers.Recognition
 
-class CameraRollPredictionsFragment  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// Required empty public constructor
-    : Fragment() {
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // layout elements
-    private var row0: ConstraintLayout? = null
-    private var row1: ConstraintLayout? = null
-    private var row2: ConstraintLayout? = null
-    private var row3: ConstraintLayout? = null
-    private var row4: ConstraintLayout? = null
-    private var description0: TextView? = null
-    private var description1: TextView? = null
-    private var description2: TextView? = null
-    private var description3: TextView? = null
-    private var description4: TextView? = null
-    private var confidence0: TextView? = null
-    private var confidence1: TextView? = null
-    private var confidence2: TextView? = null
-    private var confidence3: TextView? = null
-    private var confidence4: TextView? = null
+class CameraRollPredictionsFragment : Fragment() {
+
+    private val maxResults = 5
+    private val rows: MutableList<ConstraintLayout?> = mutableListOf()
+    private val descriptions: MutableList<TextView?> = mutableListOf()
+    private val confidences: MutableList<TextView?> = mutableListOf()
     private var latency: TextView? = null
     private var placeholder: LinearLayout? = null
-    private var actual_result: LinearLayout? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var actualResult: LinearLayout? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_camera_roll_predictions, container, false)
 
-        // set up all layout elements here as we will run into NullPointerExceptions when we use
-        // the dynamic 'getView()...' approach;
-        row0 = view.findViewById(R.id.row0)
-        row1 = view.findViewById(R.id.row1)
-        row2 = view.findViewById(R.id.row2)
-        row3 = view.findViewById(R.id.row3)
-        row4 = view.findViewById(R.id.row4)
-        description0 = view.findViewById(R.id.description0)
-        description1 = view.findViewById(R.id.description1)
-        description2 = view.findViewById(R.id.description2)
-        description3 = view.findViewById(R.id.description3)
-        description4 = view.findViewById(R.id.description4)
-        confidence0 = view.findViewById(R.id.confidence0)
-        confidence1 = view.findViewById(R.id.confidence1)
-        confidence2 = view.findViewById(R.id.confidence2)
-        confidence3 = view.findViewById(R.id.confidence3)
-        confidence4 = view.findViewById(R.id.confidence4)
+        val packageName = view.context.packageName
+        for (id in 0 until maxResults) {
+            val rowId = resources.getIdentifier("row"+id, "id", packageName)
+            val descId = resources.getIdentifier("description"+id, "id", packageName)
+            val confId = resources.getIdentifier("confidence"+id, "id", packageName)
+            rows.add(view.findViewById(rowId))
+            descriptions.add(view.findViewById(descId))
+            confidences.add(view.findViewById(confId))
+        }
         latency = view.findViewById(R.id.time)
         placeholder = view.findViewById(R.id.placeholder)
-        actual_result = view.findViewById(R.id.actual_result)
+        actualResult = view.findViewById(R.id.actual_result)
         return view
     }
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // showRecognitionResults()
-    //
-    // runs in UI Thread
-    // displays the classification statistics to the user
+    // Function runs in UI Thread and displays the classification statistics to the user
     @UiThread
     @SuppressLint("DefaultLocale", "SetTextI18n")
     fun showRecognitionResults(results: List<Recognition?>?, time: Long) {
-
         // this is called right after 'onCreateView()'
         if (results != null) {
             placeholder!!.visibility = View.GONE
-            actual_result!!.visibility = View.VISIBLE
-
-            // get list length
-            val resultsLength = results.size
-
-            // hide result rows, if there are not enough classes
-            if (resultsLength < 5) row4!!.visibility = View.GONE
-            if (resultsLength < 4) row3!!.visibility = View.GONE
-            if (resultsLength < 3) row2!!.visibility = View.GONE
-            if (resultsLength < 2) row1!!.visibility = View.GONE
-            if (resultsLength < 1) row0!!.visibility = View.GONE // hide all
-
-
-            // result at index 0
-            val recognition0 = results[0]
-            if (recognition0 != null && recognition0.title != null && recognition0.confidence != null) {
-                description0!!.text = recognition0.title
-                confidence0!!.text = String.format("%.1f", 100 * recognition0.confidence) + "%"
-            }
-
-            // result at index 1
-            val recognition1 = results[1]
-            if (recognition1 != null && recognition1.title != null && recognition1.confidence != null) {
-                description1!!.text = recognition1.title
-                confidence1!!.text = String.format("%.1f", 100 * recognition1.confidence) + "%"
-            }
-
-            // result at index 2
-            val recognition2 = results[2]
-            if (recognition2 != null && recognition2.title != null && recognition2.confidence != null) {
-                description2!!.text = recognition2.title
-                confidence2!!.text = String.format("%.1f", 100 * recognition2.confidence) + "%"
-            }
-
-            // result at index 3
-            val recognition3 = results[3]
-            if (recognition3 != null && recognition3.title != null && recognition3.confidence != null) {
-                description3!!.text = recognition3.title
-                confidence3!!.text = String.format("%.1f", 100 * recognition3.confidence) + "%"
-            }
-
-            // result at index 4
-            val recognition4 = results[4]
-            if (recognition4 != null && recognition4.title != null && recognition4.confidence != null) {
-                description4!!.text = recognition4.title
-                confidence4!!.text = String.format("%.1f", 100 * recognition4.confidence) + "%"
-            }
-
-            // set time
+            actualResult!!.visibility = View.VISIBLE
             latency!!.text = "classifying this frame took $time ms"
+
+            // hide result rows if too few classes are detected
+            for (id in results.size until maxResults) {
+                rows[id]?.visibility = View.GONE
+            }
+
+            for (id in 0 until maxResults) {
+                descriptions[id]?.text = results[id]?.title
+                confidences[id]?.text = String.format("%.1f", 100 * results[id]?.confidence!!) + "%"
+            }
+
         } else { // hide all result rows
-            row4!!.visibility = View.GONE
-            row3!!.visibility = View.GONE
-            row2!!.visibility = View.GONE
-            row1!!.visibility = View.GONE
-            row0!!.visibility = View.GONE
+            for (id in 0 until maxResults) {
+                rows[id]?.visibility = View.GONE
+            }
         }
     }
 
