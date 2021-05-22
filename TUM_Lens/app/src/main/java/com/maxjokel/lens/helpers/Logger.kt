@@ -73,7 +73,7 @@ class Logger @JvmOverloads constructor(private val tag: String = DEFAULT_TAG,
 
     // Creates a Logger using the class name as the message prefix.
     // @param clazz the simple name of this class is used as the message prefix.
-    constructor(clazz: Class<*>) : this(clazz.simpleName) {}
+    constructor(clazz: Class<*>) : this(clazz.simpleName)
 
     // Creates a Logger using the caller's class name as the message prefix.
     constructor(minLogLevel: Int) : this(DEFAULT_TAG, null) {

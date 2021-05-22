@@ -37,9 +37,6 @@ class PredictionsFragment  // - - - - - - - - - - - - - - - - - - - - - - - - - 
     private var pf_confidence3: TextView? = null
     private var pf_confidence4: TextView? = null
     private var latency: TextView? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

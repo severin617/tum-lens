@@ -42,9 +42,6 @@ class SmoothedPredictionsFragment  // - - - - - - - - - - - - - - - - - - - - - 
     private var _counter = 0
     var _map: Map<String, ResultItem> = HashMap()
     var _collection: MutableList<Recognition> = LinkedList()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

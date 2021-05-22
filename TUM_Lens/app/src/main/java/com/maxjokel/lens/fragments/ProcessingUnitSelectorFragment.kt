@@ -34,9 +34,6 @@ class ProcessingUnitSelectorFragment  // Required empty public constructor
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     private var PROCESSINGUNIT = ProcessingUnit.CPU // CPU is default
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
