@@ -1,177 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="#000"
-android:orientation="vertical"
-tools:context=".ViewFinder">
 
-
-<!--    TODO: 23.09.2020, abends -->
-
-
-
-
-
-<!--
-    the structure of this layout is fairly complex;
-
-    the basic idea is that we have multiple layers that are stacked on top of each other;
-    I couldn't think of a more simple structured approach, so here we are ...
-
-    the very first 'linear layout' block is the background layer; it contains:
-      - menu bar and arrow button
-      - camera feed preview window
-      - spacer at the bottom with the same height as the bottom sheet
-
-    the bottom sheet within the 'coordinate layout' is the second layer
-
-    the foremost layer is another 'constraint layout' that contains the settings overlay
-  -->
-
-<LinearLayout
-    android:id="@+id/layer1"
-    android:orientation="vertical"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_finder_root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent">
+    tools:context=".ViewFinder">
 
-    <!--  middle wrapper  -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/middle_wrapper"
+    <!--  OUTPUT of LIVE Camera Feed  -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/camera_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:layout_weight="1"
-        android:gravity="center_horizontal">
+        android:layout_height="match_parent" />
 
-        <!--  OUTPUT of LIVE Camera Feed  -->
-        <androidx.camera.view.PreviewView
-            android:id="@+id/viewFinder"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#000"
+    <!--  displays last frame when classification is halted  -->
+    <ImageView
+        android:id="@+id/frozen_preview"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <!--  for toning down the view finder as it has no 'alpha' property  -->
+    <RelativeLayout
+        android:id="@+id/camera_dimmed_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:background="#000"
+        android:alpha="0" />
 
-        <!--  displays last frame when classification is halted  -->
+    <!--  CONTAINER FOR FOCUS CIRCLE AND PLAY ICON  -->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center">
+
+        <!--  focus circle  -->
         <ImageView
-            android:id="@+id/frozen_preview"
-            android:visibility="invisible"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!--  for toning down the view finder as it has no 'alpha' property  -->
-        <LinearLayout
-            android:id="@+id/view_finder_shadow"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#000"
+            android:id="@+id/focus_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
-            android:alpha="0" />
+            android:alpha="0.5"
+            android:src="@drawable/focus_circle"
+            tools:ignore="ContentDescription"/>
 
-        <!--  FOCUS CIRCLE  -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="102dp"
-            android:layout_height="102dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        <!--  play icon  -->
+        <!--  FIXME: play button is slightly off center when fade-in starts -->
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.75"
+            android:gravity="center"
+            android:tint="#fff"
+            android:visibility="gone"
+            android:src="@drawable/ic_baseline_play_arrow_80"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
 
-            <!--  focus circle  -->
-            <ImageView
-                android:id="@+id/focus_circle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:animateLayoutChanges="true"
-                android:alpha="0.5"
-                android:src="@drawable/focus_circle"
-                tools:ignore="ContentDescription" />
+    </FrameLayout>
+    <!--  END OF LAYER 1  -->
 
-            <!--  play icon  -->
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btn_play"
-                android:layout_gravity="center"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/ic_baseline_play_arrow_80"
-                android:tint="#fff"
-                android:visibility="gone"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <!--  this is a spacer for aligning the view finder  -->
-    <LinearLayout
-        android:id="@+id/bottom_spacer"
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:gravity="bottom"
-        android:layout_height="130dp"
-        android:minHeight="130dp"
-        android:background="#000">
-    </LinearLayout>
-
-</LinearLayout>
-<!--  END OF LAYER 1  -->
-
-
-
-
-<!--  BOTTOM SHEET aka LAYER 2  -->
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <!--  shadow -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="12dp"
-        app:layout_anchor="@id/bottom_sheet"
-        android:layout_marginBottom="-10dp"
-        android:background="@drawable/shadow"/>
-
-
-
-
-
-<!--  BOTTOM SHEET  -->
-    <androidx.core.widget.NestedScrollView
+    <!--  BOTTOM SHEET aka LAYER 2  -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@id/bottom_sheet_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bottom_sheet"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_hideable="false"
-        app:behavior_peekHeight="140dp">
-        <include layout="@layout/view_finder_classifier_bottom_sheet"/>
-    </androidx.core.widget.NestedScrollView>
-<!--  END of BOTTOM SHEET  -->
+        android:layout_alignBottom="@id/view_finder_root_layout">
 
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottom_sheet"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            app:behavior_hideable="false"
+            app:behavior_peekHeight="140dp"
+            android:alpha="0.75"
+            android:background="@drawable/rounded_corners">
+            <include layout="@layout/view_finder_bottom_sheet"/>
+        </androidx.core.widget.NestedScrollView>
 
-
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <!--  END of BOTTOM SHEET  -->
+</RelativeLayout>

@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import com.google.common.util.concurrent.ListenableFuture
@@ -85,9 +86,13 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
 
         // set corresponding layout
         setContentView(R.layout.activity_view_finder)
+        // Clip view to background in order to round the upper edges
+        val layout: CoordinatorLayout = findViewById(R.id.bottom_sheet_layout)
+        layout.outlineProvider = ViewOutlineProvider.BACKGROUND
+        layout.clipToOutline = true
 
-        // set up gesture detection   [source: https://developer.android.com/training/gestures/detector#java]
-        // Instantiate the gesture detector with the application context
+        // [source: https://developer.android.com/training/gestures/detector#java]
+        // Set up and instantiate the gesture detector with the application context
         mGestureDetector = GestureDetectorCompat(this, this)
 
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -105,29 +110,19 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.add(R.id.modelselector_container, msf, "msf")
-        fragmentTransaction.add(
-            R.id.perframe_results_container,
-            predictionsFragment!!,
+        fragmentTransaction.add(R.id.perframe_results_container, predictionsFragment!!,
             "predictionsFragment"
         )
-        fragmentTransaction.add(
-            R.id.smoothed_results_container,
-            smoothedPredictionsFragment!!,
+        fragmentTransaction.add(R.id.smoothed_results_container, smoothedPredictionsFragment!!,
             "smoothedPredictionsFragment"
         )
-        fragmentTransaction.add(
-            R.id.camera_settings_container,
-            cameraSettingsFragment,
+        fragmentTransaction.add(R.id.camera_settings_container, cameraSettingsFragment,
             "cameraSettingsFragment"
         )
-        fragmentTransaction.add(
-            R.id.thread_number_container,
-            threadNumberFragment,
+        fragmentTransaction.add(R.id.thread_number_container, threadNumberFragment,
             "threadNumberFragment"
         )
-        fragmentTransaction.add(
-            R.id.processing_unit_container,
-            processingUnitSelectorFragment,
+        fragmentTransaction.add(R.id.processing_unit_container, processingUnitSelectorFragment,
             "processingUnitSelectorFragment"
         )
         fragmentTransaction.commit()
@@ -141,7 +136,7 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
         // init view finder that displays the camera output
-        _viewFinder = findViewById(R.id.viewFinder)
+        _viewFinder = findViewById(R.id.camera_view)
         _frozenPreviewWindow = findViewById(R.id.frozen_preview)
 
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -171,7 +166,7 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
             focusCircle.visibility = View.VISIBLE
             findViewById<View>(R.id.btn_play).startAnimation(fade_out)
             findViewById<View>(R.id.btn_play).visibility = View.GONE
-            findViewById<View>(R.id.view_finder_shadow).animate().alpha(0f).setDuration(150)
+            findViewById<View>(R.id.camera_dimmed_layout).animate().alpha(0f).setDuration(150)
                 .setListener(null)
 
             // re-init live camera preview feed
@@ -410,7 +405,7 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
             focusCircle.visibility = View.VISIBLE
             findViewById<View>(R.id.btn_play).startAnimation(fadeOut)
             findViewById<View>(R.id.btn_play).visibility = View.GONE
-            findViewById<View>(R.id.view_finder_shadow).animate().alpha(0f).setDuration(150)
+            findViewById<View>(R.id.camera_dimmed_layout).animate().alpha(0f).setDuration(150)
                 .setListener(null)
         } else { // pause classification: adjust UI
 
@@ -421,7 +416,7 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
             focusCircle.visibility = View.GONE
             findViewById<View>(R.id.btn_play).startAnimation(fadeIn)
             findViewById<View>(R.id.btn_play).visibility = View.VISIBLE
-            findViewById<View>(R.id.view_finder_shadow).animate().alpha(0.5f).setDuration(150)
+            findViewById<View>(R.id.camera_dimmed_layout).animate().alpha(0.5f).setDuration(150)
                 .setListener(null)
         }
 

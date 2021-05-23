@@ -9,7 +9,7 @@
 
 <!--  LAYER 1: allows user to choose image from camera roll; then shows the selected image  -->
     <LinearLayout
-        android:id="@+id/layer1"
+        android:id="@+id/view_finder_root_layout"
         android:orientation="vertical"
         android:background="@color/very_light_grey"
         android:layout_width="match_parent"

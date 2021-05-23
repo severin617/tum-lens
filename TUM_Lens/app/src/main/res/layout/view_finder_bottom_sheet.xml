@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/bottom_sheet_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -11,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="16dp"
-        android:background="@drawable/rounded_corners">
+        android:paddingVertical="16dp">
 
         <!--  DRAG INDICATOR of bottom sheet  -->
         <ImageView
@@ -126,8 +127,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-
-
         <!--  horizontal separator  -->
         <View
             android:layout_width="match_parent"
@@ -145,4 +144,4 @@
 
 
     </LinearLayout>
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
