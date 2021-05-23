@@ -33,11 +33,24 @@
         android:alpha="0" />
 
     <!--  CONTAINER FOR FOCUS CIRCLE AND PLAY ICON  -->
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_gravity="center">
+
+        <!--  play icon  -->
+        <!--  FIXME: play button is slightly off center when fade-in starts -->
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_play"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:visibility="gone"
+            android:alpha="0.75"
+            android:layout_centerInParent="true"
+            android:tint="#fff"
+            android:src="@drawable/ic_baseline_play_arrow_80"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
 
         <!--  focus circle  -->
         <ImageView
@@ -49,39 +62,26 @@
             android:src="@drawable/focus_circle"
             tools:ignore="ContentDescription"/>
 
-        <!--  play icon  -->
-        <!--  FIXME: play button is slightly off center when fade-in starts -->
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:alpha="0.75"
-            android:gravity="center"
-            android:tint="#fff"
-            android:visibility="gone"
-            android:src="@drawable/ic_baseline_play_arrow_80"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-    </FrameLayout>
+    </RelativeLayout>
     <!--  END OF LAYER 1  -->
 
     <!--  BOTTOM SHEET aka LAYER 2  -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@id/bottom_sheet_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/view_finder_root_layout">
+        android:layout_height="match_parent">
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/bottom_sheet"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            android:alpha="0.85"
+            android:background="@drawable/rounded_corners"
             app:behavior_hideable="false"
             app:behavior_peekHeight="140dp"
-            android:alpha="0.75"
-            android:background="@drawable/rounded_corners">
-            <include layout="@layout/view_finder_bottom_sheet"/>
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+            <include layout="@layout/view_finder_bottom_sheet" />
         </androidx.core.widget.NestedScrollView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
