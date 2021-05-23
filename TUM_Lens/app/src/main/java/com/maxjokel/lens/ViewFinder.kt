@@ -156,12 +156,10 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
             val focusCircle = findViewById<ImageView>(R.id.focus_circle)
 
             // load 150ms animations
-            val fade_in =
-                AnimationUtils.loadAnimation(this@ViewFinder, R.anim.basic_fade_in_150) as Animation
-            val fade_out = AnimationUtils.loadAnimation(
-                this@ViewFinder,
-                R.anim.basic_fade_out_150
-            ) as Animation
+            val fade_in = AnimationUtils.loadAnimation(this@ViewFinder,
+                R.anim.basic_fade_in) as Animation
+            val fade_out = AnimationUtils.loadAnimation(this@ViewFinder,
+                R.anim.basic_fade_out) as Animation
             focusCircle.startAnimation(fade_in)
             focusCircle.visibility = View.VISIBLE
             findViewById<View>(R.id.btn_play).startAnimation(fade_out)
@@ -391,9 +389,9 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
 
         // load 150ms animations
         val fadeIn =
-            AnimationUtils.loadAnimation(this@ViewFinder, R.anim.basic_fade_in_150) as Animation
+            AnimationUtils.loadAnimation(this@ViewFinder, R.anim.basic_fade_in) as Animation
         val fadeOut =
-            AnimationUtils.loadAnimation(this@ViewFinder, R.anim.basic_fade_out_150) as Animation
+            AnimationUtils.loadAnimation(this@ViewFinder, R.anim.basic_fade_out) as Animation
         if (isClassificationPaused) { // resume classification: adjust UI
 
             // !!! IMPORTANT !!!
