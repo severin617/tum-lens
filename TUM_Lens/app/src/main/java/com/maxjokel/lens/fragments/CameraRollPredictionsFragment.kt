@@ -43,10 +43,10 @@ class CameraRollPredictionsFragment : Fragment() {
     }
 
     // Function runs in UI Thread and displays the classification statistics to the user
+    // and is called right after 'onCreateView()'
     @UiThread
     @SuppressLint("DefaultLocale", "SetTextI18n")
     fun showRecognitionResults(results: List<Recognition?>?, time: Long) {
-        // this is called right after 'onCreateView()'
         if (results != null) {
             placeholder!!.visibility = View.GONE
             actualResult!!.visibility = View.VISIBLE
