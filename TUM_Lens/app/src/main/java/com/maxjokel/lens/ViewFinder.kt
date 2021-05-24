@@ -226,39 +226,19 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
         _analysis!!.setAnalyzer(_cameraExecutorForAnalysis!!, ImageAnalysis.Analyzer { image ->
             // Logs this method so that it can be analyzed with systrace.
             Trace.beginSection("analyzing")
-            //                LOGGER.i("*** ViewFinder: analyze() START *** ");
-
-
             // close image if classification is halted or already running
             if (isCurrentlyClassifying || isClassificationPaused) {
                 LOGGER.i("*** ViewFinder: closing as (isCurrentlyClassifying || isClassificationPaused) == true ***")
                 image.close() // close the image in order to clear the pipeline
                 return@Analyzer
             }
+            isCurrentlyClassifying = true // block image pipeline while running a classification
 
-
-            // update the flag in order to block the image pipeline for the duration of the active classification
-            isCurrentlyClassifying = true
-
-
-            // convert Image to Bitmap
             @ExperimentalGetImage val img = image.image
             val rgbBitmap = toCroppedBitmap(img!!, image.imageInfo.rotationDegrees)
-
-
-            // make sure that the bitmap is not null
-            // TODO: Delete if not necessary
-//            if (rgbBitmap == null) {
-//                LOGGER.i("*** ViewFinder: closing as Bitmap == NULL ***")
-//                image.close() // close the image in order to clear the pipeline
-//                return@Analyzer
-//            }
             val startTime = SystemClock.uptimeMillis()
-
-            // run inference on image
-            val results = recognizeImage(rgbBitmap)
+            val results = recognizeImage(rgbBitmap) // run inference on image
             startTimestamp = SystemClock.uptimeMillis() - startTime
-
 
             // pass list of results to fragments that render the recognition results to UI
             runOnUiThread {
@@ -266,29 +246,18 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
                 smoothedPredictionsFragment!!.showSmoothedRecognitionResults(results)
             }
             Trace.endSection()
-
             // close image no matter what to clear the pipeline
             Trace.beginSection("closing image")
             image.close()
             Trace.endSection()
-
-            // now that the classification is done, reset the flag
-            isCurrentlyClassifying = false
-
-//                LOGGER.i("*** ViewFinder: analyze() ENDE; received " + results.size() + "  results *** \n");
-        } // END of analyze(@NonNull ImageProxy image) - - - - - - - - - - - - - - - - - - - - -
-        ) // END of _analysis.setAnalyzer ...  - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+            isCurrentlyClassifying = false // reset flag as classification is done
+        })
         // bind analysis use case to CameraX lifecycle
         if (_cameraSelector != null) _camera =
             _cameraProvider!!.bindToLifecycle(this, _cameraSelector!!, _analysis)
     }
 
-    // buildFreezeUseCase()
-    //
-    // freeze last frame when classification is halted;
-    // based on: https://stackoverflow.com/a/59674075
-    //
+    // freeze last frame when classification is halted (https://stackoverflow.com/a/59674075)
     private fun buildFreezeUseCase() {
         LOGGER.i("ViewFinder: building freeze use case.")
 
@@ -311,11 +280,7 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
             _cameraProvider!!.bindToLifecycle(this, _cameraSelector!!, _freezeImageAnalysis)
     }
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // initCameraX()
-    //
     // initializes a new 'CameraX' instance, including preview and two analysis use cases
-    //
     private fun initCameraX() {
         LOGGER.i("ViewFinder: initializing CameraX.")
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -323,41 +288,28 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
             try {
                 // init new camera provider
                 _cameraProvider = cameraProviderFuture!!.get()
-
-
                 // select lens by initializing a new camera selector
                 _cameraSelector = if (lensFrontBack == 1) { // FRONT FACING
                     CameraSelector.Builder()
-                        .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
-                        .build()
+                        .requireLensFacing(CameraSelector.LENS_FACING_FRONT).build()
                 } else { // BACK FACING
                     CameraSelector.Builder()
-                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                        .build()
+                        .requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
                 }
-
-
                 // init preview use case that holds the camera live feed
                 buildPreviewUseCase()
-
                 // init analysis use case that converts each frame to bitmap and passes it on for inference
                 buildAnalyzerUseCase()
-
                 // init use case for 'freezing' the last frame when classification is halted
                 buildFreezeUseCase()
 
-
-                // set up auto focus   [source: https://developer.android.com/training/camerax/configuration#java]
+                // set up auto focus [source: https://developer.android.com/training/camerax/configuration#java]
                 // (we just want the view finder center to be in focus)
                 val cameraControl = _camera!!.cameraControl
                 val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
-                    previewDimX.toFloat(),
-                    previewDimY.toFloat()
-                )
+                    previewDimX.toFloat(), previewDimY.toFloat() )
                 val point: MeteringPoint = factory.createPoint(
-                    (0.5 * previewDimX).toInt().toFloat(),
-                    (0.5 * previewDimY).toInt().toFloat()
-                )
+                    (0.5 * previewDimX).toInt().toFloat(), (0.5 * previewDimY).toInt().toFloat() )
                 val focusMeteringAction =
                     FocusMeteringAction.Builder(point, FocusMeteringAction.FLAG_AF)
                         .setAutoCancelDuration(2, TimeUnit.SECONDS) //auto-focus every x seconds
@@ -370,11 +322,8 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
                 LOGGER.e("Error occurred while setting up CameraX: $exception")
             }
         }, ContextCompat.getMainExecutor(this))
-    } // END of initCameraX()  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    }
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // START of TOUCH and GESTURE HANDLER section
-    //
     // we use Android's GestureDetector class to detect common gestures such as swiping down
     // this function acts as a 'gateway' that passes the MotionEvent on to where it can be processed
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -388,15 +337,12 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
         val focusCircle = findViewById<ImageView>(R.id.focus_circle)
 
         // load 150ms animations
-        val fadeIn =
-            AnimationUtils.loadAnimation(this@ViewFinder, R.anim.basic_fade_in) as Animation
-        val fadeOut =
-            AnimationUtils.loadAnimation(this@ViewFinder, R.anim.basic_fade_out) as Animation
+        val fadeIn = AnimationUtils
+            .loadAnimation(this@ViewFinder, R.anim.basic_fade_in) as Animation
+        val fadeOut = AnimationUtils
+            .loadAnimation(this@ViewFinder, R.anim.basic_fade_out) as Animation
         if (isClassificationPaused) { // resume classification: adjust UI
-
-            // !!! IMPORTANT !!!
-            // see 'btn_pause event listener' as well!
-
+            // !!! IMPORTANT !!! see 'btn_pause event listener' as well!
             // re-init live camera preview feed
             resetFrozenViewFinder()
             focusCircle.startAnimation(fadeIn)

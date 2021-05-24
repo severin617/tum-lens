@@ -22,61 +22,32 @@ import com.maxjokel.lens.ListSingleton.Companion.instance
 import com.maxjokel.lens.R
 import java.util.*
 
-/*
-*  FRAGMENT FOR 'MODEL SELECTOR' ELEMENT IN BOTTOM SHEET
-*
-* -> we use a fragment here, because we reuse this component in
-*    'ViewFinder' as well as in
-*    'CameraRoll'
-*
-* -> additionally, the actual selector UI is created dynamically based on the nets.json file
-*    in the /assets directory that this fragment obtains via the ListSingleton instance
-*
-*
-* -> should be the most elegant solution to this
-*
-*
-* */
-class ModelSelectorFragment  // NOTE: we need this line in order to initialize the classifier!
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// empty constructor
-    : Fragment() {
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* FRAGMENT FOR 'MODEL SELECTOR' ELEMENT IN BOTTOM SHEET
+*  we use a fragment here, because we reuse this component in ViewFinder and CameraRoll
+*  additionally, the actual selector UI is created dynamically based on the nets.json file
+*  in the /assets directory that this fragment obtains via the ListSingleton instance
+*/
+class ModelSelectorFragment: Fragment() {
     // instantiate new SharedPreferences object
     var prefs: SharedPreferences? = null
     var prefEditor: SharedPreferences.Editor? = null
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // related to 'ListSingleton'
     var listSingletonInstance = instance
     var MODEL_LIST = listSingletonInstance.list
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // related to 'Classifier'
     var newStaticClassifier = getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        // Please note the execution pipeline
-        //   1. onCreate()
-        //   2. onCreateView()   -> layout gets inflated
-        //   3. onViewCreated()  -> we can now access the layout components
-        //
-        //
-        // we dynamically create the RadioButtons in onViewCreated() for that reason
-
-
         // load sharedPreferences object and set up editor
         prefs = Objects.requireNonNull(this.activity)!!
             .getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_model_selector, container, false)
     }
@@ -98,11 +69,8 @@ class ModelSelectorFragment  // NOTE: we need this line in order to initialize t
         // init RadioGroup
         val radioGroup = view.findViewById<RadioGroup>(R.id.modelSelector_RadioGroup)
 
-
         // iterate over list of models and create RadioButtons
-        for (i in MODEL_LIST.indices) {
-            val m = MODEL_LIST[i]
-
+        for (m in MODEL_LIST) {
             // create new RadioButton
             val radioButton = RadioButton(view.context)
 
@@ -120,15 +88,12 @@ class ModelSelectorFragment  // NOTE: we need this line in order to initialize t
             ) // [source: https://stackoverflow.com/a/12728484]
             paramsButton.setMargins(0, (8 * dpRatio).toInt(), 0, 0) // dp
             radioButton.layoutParams = paramsButton
-            CompoundButtonCompat.setButtonTintList(
-                radioButton,
+            CompoundButtonCompat.setButtonTintList(radioButton,
                 ColorStateList.valueOf(ContextCompat.getColor(view.context, R.color.colorPrimary))
             )
 
             // create the 'info' TextView
             val textView = TextView(view.context)
-
-//            textView.setText("Top 5 accuracy: " + m.getTop5accuracy());
             textView.text = "" + m.top5accuracy
 
             // set appearance
@@ -172,35 +137,19 @@ class ModelSelectorFragment  // NOTE: we need this line in order to initialize t
         // init RadioGroup event listener
         radioGroup.setOnCheckedChangeListener { group, checkedId -> // perform haptic feedback
             group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
-            var modelId: Int
-
-            // check if it is the default RadioButton
-            modelId = if (checkedId == R.id.radioButton_FloatMobileNet) {
-                0
-            } else {
-                view.findViewById<View>(checkedId).id
-            }
-
+            var modelId = 0
             // save selection to SharedPreferences
             prefEditor?.run {
-
                 // check if it is the default RadioButton
-                modelId = if (checkedId == R.id.radioButton_FloatMobileNet) {
-                    0
-                } else {
-                    view.findViewById<View>(checkedId).id
+                if (checkedId != R.id.radioButton_FloatMobileNet) {
+                    modelId = view.findViewById<View>(checkedId).id
                 }
-
-                // save selection to SharedPreferences
-                putInt("model", modelId)
+                putInt("model", modelId) // save selection to SharedPreferences
                 apply()
             }
-
-
-            // trigger classifier update
-            onConfigChanged()
+            onConfigChanged() // trigger classifier update
         }
-    } // END of onViewCreated(...) - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    }
 
     companion object {
         fun newInstance(): ModelSelectorFragment {

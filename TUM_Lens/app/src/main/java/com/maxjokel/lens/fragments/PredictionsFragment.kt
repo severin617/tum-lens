@@ -12,14 +12,8 @@ import androidx.fragment.app.Fragment
 import com.maxjokel.lens.R
 import com.maxjokel.lens.helpers.Recognition
 
-/* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-*
-* Fragment for displaying the classification results (per frame)
-*
-* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-class PredictionsFragment  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    : Fragment() {
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Fragment for displaying the classification results (per frame)
+class PredictionsFragment: Fragment() {
     // layout elements
     private var pf_row0: ConstraintLayout? = null
     private var pf_row1: ConstraintLayout? = null
@@ -38,11 +32,8 @@ class PredictionsFragment  // - - - - - - - - - - - - - - - - - - - - - - - - - 
     private var pf_confidence4: TextView? = null
     private var latency: TextView? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_predictions, container, false)
 
@@ -67,15 +58,7 @@ class PredictionsFragment  // - - - - - - - - - - - - - - - - - - - - - - - - - 
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // this is called right after 'onCreateView()'
-    }
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // showRecognitionResults()
-    //
-    // runs in UI Thread
-    // displays the classification statistics to the user
+    // runs in UI Thread and displays the classification statistics to the user
     @UiThread
     @SuppressLint("DefaultLocale", "SetTextI18n")
     fun showRecognitionResults(results: List<Recognition?>?, time: Long) {
