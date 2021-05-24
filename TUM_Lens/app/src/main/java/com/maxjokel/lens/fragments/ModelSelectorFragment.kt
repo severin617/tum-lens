@@ -34,7 +34,7 @@ class ModelSelectorFragment: Fragment() {
 
     // related to 'ListSingleton'
     var listSingletonInstance = instance
-    var MODEL_LIST = listSingletonInstance.list
+    var MODEL_LIST = listSingletonInstance.modelConfigs
 
     // related to 'Classifier'
     var newStaticClassifier = getInstance()
