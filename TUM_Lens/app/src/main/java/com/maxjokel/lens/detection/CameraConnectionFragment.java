@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.maxjokel.lens.obj_detection;
+package com.maxjokel.lens.detection;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
