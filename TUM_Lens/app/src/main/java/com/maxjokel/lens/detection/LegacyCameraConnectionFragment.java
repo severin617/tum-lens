@@ -1,4 +1,4 @@
-package com.maxjokel.lens.obj_detection;
+package com.maxjokel.lens.detection;
 
 /*
  * Copyright 2019 The TensorFlow Authors. All Rights Reserved.
@@ -31,9 +31,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.Nullable;
-
-import com.maxjokel.lens.obj_detection.AutoFitTextureView;
 import com.maxjokel.lens.R;
 import com.maxjokel.lens.helpers.ImageUtils;
 import com.maxjokel.lens.helpers.Logger;

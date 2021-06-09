@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.maxjokel.lens.obj_detection;
+package com.maxjokel.lens.detection;
 
 import android.Manifest;
 import android.app.Fragment;
@@ -45,10 +45,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 

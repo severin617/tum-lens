@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maxjokel.lens.obj_detection
+package com.maxjokel.lens.detection
 
+import android.content.Intent
 import android.graphics.*
 import android.media.ImageReader
 import android.os.SystemClock
@@ -28,12 +29,13 @@ import com.maxjokel.lens.helpers.Logger
 import java.io.IOException
 import java.util.*
 import com.maxjokel.lens.R
+import com.maxjokel.lens.classification.ClassificationActivity
 
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.
  */
-class DetectorActivity : CameraActivity(), ImageReader.OnImageAvailableListener, OverlayView.DrawCallback {
+class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener, OverlayView.DrawCallback {
     private var trackingOverlay: OverlayView? = null
     private var sensorOrientation: Int? = null
     private var detector: Detector? = null
@@ -133,13 +135,15 @@ class DetectorActivity : CameraActivity(), ImageReader.OnImageAvailableListener,
                 DetectorMode.TF_OD_API -> MINIMUM_CONFIDENCE_TF_OD_API
             }
             val mappedRecognitions: MutableList<Detector.Recognition> = ArrayList()
-            for (result in results) {
-                val location = result.location
-                if (location != null && result.confidence >= minimumConfidence) {
-                    canvas?.drawRect(location, paint)
-                    cropToFrameTransform!!.mapRect(location)
-                    result.location = location
-                    mappedRecognitions.add(result)
+            if (results != null) {
+                for (result in results) {
+                    val location = result?.location
+                    if (location != null && result.confidence!! >= minimumConfidence) {
+                        canvas?.drawRect(location, paint)
+                        cropToFrameTransform!!.mapRect(location)
+                        result.location = location
+                        mappedRecognitions.add(result)
+                    }
                 }
             }
             tracker!!.trackResults(mappedRecognitions, currTimestamp)
@@ -185,10 +189,16 @@ class DetectorActivity : CameraActivity(), ImageReader.OnImageAvailableListener,
     }
 
     override fun drawCallback(canvas: Canvas?) {
-        tracker!!.draw(canvas)
+        tracker!!.draw(canvas!!)
         if (isDebug) {
-            tracker!!.drawDebug(canvas)
+            tracker!!.drawDebug(canvas!!)
         }
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent(this@DetectionActivity, ClassificationActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(intent)
     }
 
     companion object {
