@@ -16,9 +16,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.CompoundButtonCompat
 import androidx.fragment.app.Fragment
-import com.maxjokel.lens.Classifier.Companion.getInstance
-import com.maxjokel.lens.Classifier.Companion.onConfigChanged
-import com.maxjokel.lens.ListSingleton.Companion.instance
+import com.maxjokel.lens.classification.Classifier.Companion.getInstance
+import com.maxjokel.lens.classification.Classifier.Companion.onConfigChanged
+import com.maxjokel.lens.classification.ListSingleton.Companion.instance
 import com.maxjokel.lens.R
 import java.util.*
 

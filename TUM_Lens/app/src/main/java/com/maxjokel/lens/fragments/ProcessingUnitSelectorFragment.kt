@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.maxjokel.lens.Classifier.Companion.onConfigChanged
+import com.maxjokel.lens.classification.Classifier.Companion.onConfigChanged
 import com.maxjokel.lens.R
 import com.maxjokel.lens.helpers.ProcessingUnit
 import java.util.*

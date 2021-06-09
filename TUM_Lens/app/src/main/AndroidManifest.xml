@@ -41,19 +41,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".CameraRoll"
+            android:name=".classification.CameraRollActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".PermissionDenied"
+            android:name=".PermissionDeniedActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ViewFinder"
+            android:name=".classification.ClassificationActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".obj_detection.DetectorActivity"
+            android:name=".detection.DetectionActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".StartScreen"
+            android:name=".StartScreenActivity"
             android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
