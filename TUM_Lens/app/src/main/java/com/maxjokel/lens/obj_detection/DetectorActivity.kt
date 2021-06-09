@@ -33,7 +33,7 @@ import com.maxjokel.lens.R
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.
  */
-class DetectorActivity : CameraActivity(), ImageReader.OnImageAvailableListener {
+class DetectorActivity : CameraActivity(), ImageReader.OnImageAvailableListener, OverlayView.DrawCallback {
     private var trackingOverlay: OverlayView? = null
     private var sensorOrientation: Int? = null
     private var detector: Detector? = null
@@ -88,12 +88,7 @@ class DetectorActivity : CameraActivity(), ImageReader.OnImageAvailableListener 
         cropToFrameTransform = Matrix()
         frameToCropTransform!!.invert(cropToFrameTransform)
         trackingOverlay = findViewById<View>(R.id.tracking_overlay) as OverlayView
-        trackingOverlay!!.addCallback { canvas ->
-            tracker!!.draw(canvas)
-            if (isDebug) {
-                tracker!!.drawDebug(canvas)
-            }
-        }
+        trackingOverlay!!.addCallback(this)
         tracker!!.setFrameConfiguration(previewWidth, previewHeight, sensorOrientation!!)
     }
 
@@ -123,9 +118,9 @@ class DetectorActivity : CameraActivity(), ImageReader.OnImageAvailableListener 
             val results = detector!!.recognizeImage(croppedBitmap)
             lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap!!)
-            val tmp_bitmap = cropCopyBitmap
-            val canvas = if (tmp_bitmap != null) {
-                Canvas(tmp_bitmap)
+            val tmpBitmap = cropCopyBitmap
+            val canvas = if (tmpBitmap != null) {
+                Canvas(tmpBitmap)
             } else {
                 null
             }
@@ -153,7 +148,7 @@ class DetectorActivity : CameraActivity(), ImageReader.OnImageAvailableListener 
             runOnUiThread {
                 showFrameInfo(previewWidth.toString() + "x" + previewHeight)
                 if (canvas != null) {
-                    showCropInfo(canvas?.width.toString() + "x" + canvas.height)
+                    showCropInfo(canvas.width.toString() + "x" + canvas.height)
                 }
                 showInference(lastProcessingTimeMs.toString() + "ms")
             }
@@ -187,6 +182,13 @@ class DetectorActivity : CameraActivity(), ImageReader.OnImageAvailableListener 
 
     override fun setNumThreads(numThreads: Int) {
         runInBackground { detector!!.setNumThreads(numThreads) }
+    }
+
+    override fun drawCallback(canvas: Canvas?) {
+        tracker!!.draw(canvas)
+        if (isDebug) {
+            tracker!!.drawDebug(canvas)
+        }
     }
 
     companion object {
