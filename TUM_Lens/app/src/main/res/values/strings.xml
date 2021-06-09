@@ -23,4 +23,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="camera_settings">Camera settings</string>
     <string name="open_camera_roll_classifier">open camera roll classifier</string>
+    <string name="image_classification">Classifier</string>
+    <string name="object_detection">Detector</string>
+    <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
 </resources>
