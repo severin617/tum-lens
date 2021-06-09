@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.maxjokel.lens.Classifier.Companion.onConfigChanged
+import com.maxjokel.lens.classification.Classifier.Companion.onConfigChanged
 import com.maxjokel.lens.R
 import java.util.*
 
