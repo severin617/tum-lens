@@ -2,12 +2,20 @@
 <resources>
     <color name="colorPrimary">#3070b3</color>
     <color name="colorPrimaryDark">#004583</color>
+    <color name="colorPrimaryHalfTransparent">#503070b3</color>
     <color name="colorAccent">#699ee5</color>
     <color name="black">#000</color>
     <color name="white">#fff</color>
+    <color name="whiteSlightlyTransparent">#99ffffff</color>
     <color name="red">#f00</color>
     <color name="green">#0f0</color>
     <color name="blue">#00f</color>
     <color name="light_grey">#ccc</color>
     <color name="very_light_grey">#fafafa</color>
+
+    <!-- tf colors -->
+    <color name="tfe_color_primary">#ffa800</color>
+    <color name="tfe_color_primary_dark">#ff6f00</color>
+    <color name="tfe_color_accent">#425066</color>
+    <color name="tfe_semi_transparent">#66000000</color>
 </resources>
