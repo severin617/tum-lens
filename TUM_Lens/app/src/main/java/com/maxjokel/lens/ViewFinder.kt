@@ -12,8 +12,10 @@ import android.view.*
 import android.view.GestureDetector.OnDoubleTapListener
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -21,6 +23,8 @@ import androidx.camera.view.PreviewView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.common.util.concurrent.ListenableFuture
 import com.maxjokel.lens.Classifier.Companion.recognizeImage
 import com.maxjokel.lens.fragments.*
@@ -29,10 +33,12 @@ import com.maxjokel.lens.helpers.FreezeAnalyzer
 import com.maxjokel.lens.helpers.FreezeCallback
 import com.maxjokel.lens.helpers.ImageUtils.toCroppedBitmap
 import com.maxjokel.lens.helpers.Logger
+import com.maxjokel.lens.obj_detection.DetectorActivity
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+
 
 class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDoubleTapListener,
     FreezeCallback, CameraEvents {
@@ -151,6 +157,28 @@ class ViewFinder : AppCompatActivity(), GestureDetector.OnGestureListener, OnDou
         // +                SET UP EVENT LISTENERS                 +
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
+
+        val btnDetectionModeToggle = findViewById<MaterialButtonToggleGroup>(R.id.detectionModeToggleButton)
+        val btnClassification = findViewById<Button>(R.id.btn_classification)
+        val btnDetection = findViewById<Button>(R.id.btn_detection)
+        btnDetectionModeToggle.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+
+            when (checkedId) {
+                btnClassification.id -> {
+                    Toast.makeText(this, "Pressed Classifier Btn", Toast.LENGTH_SHORT).show()
+                }
+                btnDetection.id -> {
+                    group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
+                    val intent = Intent(this@ViewFinder, DetectorActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+                else -> return@addOnButtonCheckedListener
+            }
+
+        }
         // restart paused classification
         findViewById<View>(R.id.btn_play).setOnClickListener {
             val focusCircle = findViewById<ImageView>(R.id.focus_circle)
