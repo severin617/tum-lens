@@ -10,7 +10,7 @@ android {
         minSdkVersion 28
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,15 +42,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
 
-    // +++
     // Material Design  -  25.07.2020
-    // +++
     implementation 'com.google.android.material:material:1.2.0-rc01'
 
-
-    // +++
     // CameraX core library  -  13.09.2020
-    // +++
     def camerax_version = "1.0.0-beta08"
 
     // The following line is optional, as the core library is included indirectly by camera-camera2
@@ -63,16 +58,16 @@ dependencies {
     // If you want to additionally use the CameraX Extensions library
     implementation "androidx.camera:camera-extensions:1.0.0-alpha15"
 
-
-    // +++
-    // TensorFlow Lite  -  08.07.2020, 15:35
-    // +++
-    implementation 'org.tensorflow:tensorflow-lite:2.2.0'
+    // TensorFlow Lite
+    implementation 'org.tensorflow:tensorflow-lite:2.4.0'
     implementation 'org.tensorflow:tensorflow-lite-gpu:2.2.0'
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
 
     // Build off of nightly TensorFlow Lite
-    implementation('org.tensorflow:tensorflow-lite:2.2.0') { changing = true }
+    implementation('org.tensorflow:tensorflow-lite:0.0.0-nightly') { changing = true }
     implementation('org.tensorflow:tensorflow-lite-support:0.0.0-nightly') { changing = true }
+    implementation('org.tensorflow:tensorflow-lite-metadata:0.0.0-nightly') { changing = true }
+
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
