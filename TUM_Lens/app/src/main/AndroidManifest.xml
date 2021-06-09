@@ -50,6 +50,9 @@
             android:name=".ViewFinder"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".obj_detection.DetectorActivity"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".StartScreen"
             android:theme="@style/AppTheme.Launcher">
             <intent-filter>
