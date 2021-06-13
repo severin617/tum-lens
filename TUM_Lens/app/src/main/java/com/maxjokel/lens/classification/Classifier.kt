@@ -36,9 +36,32 @@ import java.util.concurrent.CountDownLatch
  */
 class Classifier private constructor() {
 
+    // private constructor that can't be accessed from outside
+    init {
+        Trace.beginSection("private NewSingletonClassifier()")
+        // LOGGER.i("+++ NEW: trying to exec constructor NewSingletonClassifier()");
+        try {
+            // wait for a running classification to finnish
+            latchThatBlocksINITIALIZATION.await()
+
+            // block any classification until the initialization is done
+            latchThatBlocksCLASSIFICATiON = CountDownLatch(1)
+            LOGGER.i("+++ NEW: latchThatBlocksCLASSIFICATiON = new CountDownLatch(1); in constructor for NewSingletonClassifier() -> setup init")
+
+            // initialize classifier object, uses extra thread!!
+            initialize()
+            latchThatBlocksCLASSIFICATiON!!.countDown()
+            LOGGER.i("+++ NEW: latchThatBlocksCLASSIFICATiON.countdown(); in constructor for NewSingletonClassifier() -> init complete")
+        } catch (e: InterruptedException) {
+            LOGGER.i("+++ NEW: InterruptedException in NewSingletonClassifier()  -> latch")
+            e.printStackTrace()
+        }
+        Trace.endSection()
+    }
+
     companion object {
         private val LOGGER = Logger()
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
         /** SharedPreferences for user configuration  */
         private var prefs: SharedPreferences? = null
 
@@ -243,7 +266,7 @@ class Classifier private constructor() {
                 Trace.endSection()
 
                 LOGGER.i("+++ NEW, initialize(): successfully created a TensorFlow" +
-                        " Lite Image Classifier with model '" + modelConfig!!.name + "'")
+                        " Lite Image Classifier with model '" + modelConfig!!.modelName + "'")
             }.start()
         }
 
@@ -336,34 +359,11 @@ class Classifier private constructor() {
             get() {
                 val id = prefs!!.getInt("model", 0)
                 for (modelConfig in MODEL_LIST) {
-                    if (modelConfig.id == id) {
+                    if (modelConfig.modelId == id) {
                         return modelConfig
                     }
                 }
                 return ModelConfig()
             }
-    }
-
-    // private constructor that can't be accessed from outside
-    init {
-        Trace.beginSection("private NewSingletonClassifier()")
-        // LOGGER.i("+++ NEW: trying to exec constructor NewSingletonClassifier()");
-        try {
-            // wait for a running classification to finnish
-            latchThatBlocksINITIALIZATION.await()
-
-            // block any classification until the initialization is done
-            latchThatBlocksCLASSIFICATiON = CountDownLatch(1)
-            LOGGER.i("+++ NEW: latchThatBlocksCLASSIFICATiON = new CountDownLatch(1); in constructor for NewSingletonClassifier() -> setup init")
-
-            // initialize classifier object, uses extra thread!!
-            initialize()
-            latchThatBlocksCLASSIFICATiON!!.countDown()
-            LOGGER.i("+++ NEW: latchThatBlocksCLASSIFICATiON.countdown(); in constructor for NewSingletonClassifier() -> init complete")
-        } catch (e: InterruptedException) {
-            LOGGER.i("+++ NEW: InterruptedException in NewSingletonClassifier()  -> latch")
-            e.printStackTrace()
-        }
-        Trace.endSection()
     }
 }
