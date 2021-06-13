@@ -1,5 +1,6 @@
 package com.maxjokel.lens.classification
 
+import com.maxjokel.lens.helpers.App.Companion.context
 import com.maxjokel.lens.helpers.Logger
 import com.maxjokel.lens.helpers.ModelConfig
 import org.json.JSONException
@@ -22,20 +23,19 @@ import java.util.*
 class ListSingleton
 
 private constructor() {
+
+    private val CONFIG_FILEPATH = "assets/nets.json"
+    private val RECOGNITION_ARRAY = "recognitionNets"
+
     val modelConfigs = modelConfigListFromJSON()
 
     private fun modelConfigListFromJSON(): List<ModelConfig> {
+
         val list: MutableList<ModelConfig> = ArrayList()
 
-        // read in 'nets.json' file
-        val jsonString = readJSON()
-        if (jsonString == null) {
-            LOGGER.e("Error in 'ModelConfig' constructor while reading JSON file. String is null!")
-            return list
-        }
+        val jsonString = readJSON(CONFIG_FILEPATH)
 
-        // now, process the files info
-        var jsonObject = try {
+        val jsonObject = try {
             JSONObject(jsonString)
         } catch (e: JSONException) {
             LOGGER.e("Error in 'ModelConfig' constructor while parsing JSON file.")
@@ -43,54 +43,30 @@ private constructor() {
             return list
         }
 
-        // load the 'nets' array
-        var netsArray = try {
-            jsonObject.getJSONArray("nets")
+        val netsArray = try {
+            jsonObject.getJSONArray(RECOGNITION_ARRAY)
         } catch (e: JSONException) {
-            LOGGER.e("Error in 'ModelConfig' constructor while parsing the nets array.")
+            LOGGER.e("Error in 'ModelConfig' constructor while parsing the $RECOGNITION_ARRAY array.")
             e.printStackTrace()
             return list
         }
 
-        // iterate over array to find net with matching 'filename'
         for (i in 0 until netsArray.length()) {
             try {
-                // load JSON info
-                var obj = netsArray.getJSONObject(i)
-
-                // create new 'ModelConfig' object from JSON object
-                val m = ModelConfig(obj)
-
-                list.add(m)
+                val obj = netsArray.getJSONObject(i)
+                list.add(ModelConfig(obj))
             } catch (e: JSONException) {
-                LOGGER.e("Error while creating ModelConfig list")
+                LOGGER.e("Error while parsing jsonObject at postition $i in $netsArray. " +
+                        "Object wasn't added to list of ModelConfigs.")
                 e.printStackTrace()
             }
         }
         return list
     }
 
-    // read in 'nets.json' from '/assets' and return its contents as String
-    private fun readJSON(): String? {
-        val file = "assets/nets.json"
-        var jsonString = try {
-            // circumvent Activity/Context object by using .getClassLoader()
-            val input = this.javaClass.classLoader!!.getResourceAsStream(file)
-            if (input == null) {
-                LOGGER.e("# # # # # # # # # #")
-                LOGGER.e("Error in readJSON(). could not find 'nets.json' file.")
-                return null
-            }
-            val size = input.available()
-            val buffer = ByteArray(size)
-            input.read(buffer)
-            input.close()
-            String(buffer, StandardCharsets.UTF_8)
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return null
-        }
-        return jsonString
+    private fun readJSON(filePath: String): String {
+        val inputStream = javaClass.classLoader!!.getResourceAsStream(filePath)
+        return inputStream.bufferedReader().use { it.readText() }
     }
 
     companion object {

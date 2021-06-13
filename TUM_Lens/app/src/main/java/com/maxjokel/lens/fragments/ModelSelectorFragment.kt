@@ -75,8 +75,8 @@ class ModelSelectorFragment: Fragment() {
             val radioButton = RadioButton(view.context)
 
             // set ModelConfig attributes
-            radioButton.id = m.id
-            radioButton.text = m.name
+            radioButton.id = m.modelId
+            radioButton.text = m.modelName
             radioButton.tag = m.modelFilename
 
             // set appearance

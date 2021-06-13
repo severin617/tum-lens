@@ -191,7 +191,7 @@ class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener
     override fun drawCallback(canvas: Canvas?) {
         tracker!!.draw(canvas!!)
         if (isDebug) {
-            tracker!!.drawDebug(canvas!!)
+            tracker!!.drawDebug(canvas)
         }
     }
 
