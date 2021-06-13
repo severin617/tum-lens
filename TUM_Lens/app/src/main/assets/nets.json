@@ -2,7 +2,7 @@
     "timestamp": "2020-10-24T21:50:00.000Z",
     "comment": "",
 
-    "nets": [
+    "recognitionNets": [
 
         {
             "name": "Quantized MobileNet V1",
