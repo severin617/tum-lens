@@ -176,13 +176,13 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
                     group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
                     val intent = Intent(this, DetectionActivity::class.java)
                     val options = ActivityOptions
-                        .makeSceneTransitionAnimation(this@ClassificationActivity, cameraView, "camera")
+                        .makeSceneTransitionAnimation(this, cameraView, "camera")
                     startActivity(intent, options.toBundle())
                 }
                 else -> return@addOnButtonCheckedListener
             }
-
         }
+
         // restart paused classification
         findViewById<View>(R.id.btn_play).setOnClickListener {
             val focusCircle = findViewById<ImageView>(R.id.focus_circle)
