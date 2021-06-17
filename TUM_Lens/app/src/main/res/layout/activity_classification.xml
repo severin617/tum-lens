@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/view_finder_root_layout"
+    android:id="@+id/activity_classification_root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".classification.ClassificationActivity">
@@ -13,7 +12,8 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/camera_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:transitionName="camera" />
 
     <!--  displays last frame when classification is halted  -->
     <ImageView
@@ -33,38 +33,7 @@
         android:alpha="0" />
 
     <!--  TOGGLE TO SWITCH DETECTION MODES  -->
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/detectionModeToggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="12dp"
-        app:checkedButton = "@+id/btn_classification"
-        app:singleSelection="true"
-        app:selectionRequired="true"
-        >
-        <Button
-            android:id="@+id/btn_classification"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:textSize="10sp"
-            android:text="@string/image_classification"
-            style="?attr/materialButtonOutlinedStyle"
-            app:strokeWidth="0dp"
-            app:shapeAppearance="@style/Rounded"
-            android:backgroundTint="@color/whiteSlightlyTransparent"
-            android:fontFamily="sans-serif-light"
-
-        />
-        <Button
-            android:id="@+id/btn_detection"
-            android:text="@string/object_detection"
-            style="@style/MaterialButtonToggleGroupStyle"
-            app:strokeWidth="0dp"
-            app:shapeAppearance="@style/Rounded"
-            />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
+    <include layout="@layout/btn_detection_mode" />
 
     <!--  CONTAINER FOR DETECTION FOCUS CIRCLE AND PLAY ICON  -->
     <RelativeLayout
@@ -97,9 +66,8 @@
             tools:ignore="ContentDescription"/>
 
     </RelativeLayout>
-    <!--  END OF LAYER 1  -->
 
-    <!--  BOTTOM SHEET aka LAYER 2  -->
+    <!--  BOTTOM SHEET  -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@id/bottom_sheet_layout"
         android:layout_width="match_parent"
@@ -115,9 +83,9 @@
             app:behavior_peekHeight="140dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-            <include layout="@layout/view_finder_bottom_sheet" />
+            <include layout="@layout/activity_classification_bottom_sheet" />
         </androidx.core.widget.NestedScrollView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-    <!--  END of BOTTOM SHEET  -->
+
 </RelativeLayout>

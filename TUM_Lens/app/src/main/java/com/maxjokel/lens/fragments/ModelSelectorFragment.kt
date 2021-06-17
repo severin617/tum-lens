@@ -103,7 +103,7 @@ class ModelSelectorFragment: Fragment() {
             )
             params.setMargins((33 * dpRatio).toInt(), (-4 * dpRatio).toInt(), 0, 0) // dp
             textView.layoutParams = params
-            textView.setTextColor(ContextCompat.getColor(view.context, R.color.light_grey))
+            textView.setTextColor(ContextCompat.getColor(view.context, R.color.black))
             textView.textSize = 12.0f
 
             // add both elements to the RadioGroup

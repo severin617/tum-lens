@@ -14,6 +14,7 @@ import java.util.*
 * This fragment controls the camera settings in the BottomSheet in the 'ViewFinder' activity
 * + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 class CameraSettingsFragment : Fragment() {
+
     private val listeners: MutableList<CameraEvents> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -21,7 +22,6 @@ class CameraSettingsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_camera_settings, container, false)
     }
 
-    // this is called right after 'onCreateView()'
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // set up button for rotating camera
         getView()!!.findViewById<View>(R.id.btn_rotate).setOnClickListener { v ->

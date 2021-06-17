@@ -1,6 +1,7 @@
 package com.maxjokel.lens.classification
 
 import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
@@ -54,7 +55,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
     private var isFlashEnabled = false
 
     // Layout element
-    private var _viewFinder: PreviewView? = null
+    private var cameraView: PreviewView? = null
     private var _frozenPreviewWindow: ImageView? = null
     private var _freezeAnalyzer: FreezeAnalyzer? = null
     private var _freezeImageAnalysis: ImageAnalysis? = null
@@ -72,7 +73,6 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
 
     // instantiate new SharedPreferences object
     var prefs: SharedPreferences? = null
-    var prefEditor: SharedPreferences.Editor? = null
     var predictionsFragment: PredictionsFragment? = null
     var smoothedPredictionsFragment: SmoothedPredictionsFragment? = null
 
@@ -147,7 +147,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
         // init view finder that displays the camera output
-        _viewFinder = findViewById(R.id.camera_view)
+        cameraView = findViewById(R.id.camera_view)
         _frozenPreviewWindow = findViewById(R.id.frozen_preview)
 
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -161,8 +161,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         // +                SET UP EVENT LISTENERS                 +
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-
-
+        
         val btnDetectionModeToggle = findViewById<MaterialButtonToggleGroup>(R.id.detectionModeToggleButton)
         val btnClassification = findViewById<Button>(R.id.btn_classification)
         val btnDetection = findViewById<Button>(R.id.btn_detection)
@@ -175,9 +174,10 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
                 }
                 btnDetection.id -> {
                     group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
-                    val intent = Intent(this@ClassificationActivity, DetectionActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                    startActivity(intent)
+                    val intent = Intent(this, DetectionActivity::class.java)
+                    val options = ActivityOptions
+                        .makeSceneTransitionAnimation(this@ClassificationActivity, cameraView, "camera")
+                    startActivity(intent, options.toBundle())
                 }
                 else -> return@addOnButtonCheckedListener
             }
@@ -188,15 +188,15 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             val focusCircle = findViewById<ImageView>(R.id.focus_circle)
 
             // load 150ms animations
-            val fade_in = AnimationUtils.loadAnimation(this@ClassificationActivity,
+            val fadeIn = AnimationUtils.loadAnimation(this@ClassificationActivity,
                 R.anim.basic_fade_in
             ) as Animation
-            val fade_out = AnimationUtils.loadAnimation(this@ClassificationActivity,
+            val fadeOut = AnimationUtils.loadAnimation(this@ClassificationActivity,
                 R.anim.basic_fade_out
             ) as Animation
-            focusCircle.startAnimation(fade_in)
+            focusCircle.startAnimation(fadeIn)
             focusCircle.visibility = View.VISIBLE
-            findViewById<View>(R.id.btn_play).startAnimation(fade_out)
+            findViewById<View>(R.id.btn_play).startAnimation(fadeOut)
             findViewById<View>(R.id.btn_play).visibility = View.GONE
             findViewById<View>(R.id.camera_dimmed_layout).animate().alpha(0f).setDuration(150)
                 .setListener(null)
@@ -227,7 +227,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             .build()
 
         // bind and init camera feed to the corresponding object in our layout
-        _preview!!.setSurfaceProvider(_viewFinder!!.createSurfaceProvider())
+        _preview!!.setSurfaceProvider(cameraView!!.createSurfaceProvider())
 
         // bind preview use case to CameraX lifecycle
         if (_cameraSelector != null) _cameraProvider!!.bindToLifecycle(
@@ -361,7 +361,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         } else super.onTouchEvent(event)
     }
 
-    // onDoubleTap   -> pauses the classification
+    // double tap pauses the classification
     override fun onDoubleTap(e: MotionEvent): Boolean {
         val focusCircle = findViewById<ImageView>(R.id.focus_circle)
 
@@ -378,101 +378,74 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             focusCircle.visibility = View.VISIBLE
             findViewById<View>(R.id.btn_play).startAnimation(fadeOut)
             findViewById<View>(R.id.btn_play).visibility = View.GONE
-            findViewById<View>(R.id.camera_dimmed_layout).animate().alpha(0f).setDuration(150)
-                .setListener(null)
+            findViewById<View>(R.id.camera_dimmed_layout).animate().alpha(0f)
+                .setDuration(150).setListener(null)
         } else { // pause classification: adjust UI
-
-
-            // trigger the UI change
             _freezeAnalyzer!!.freeze(lensFrontBack)
             focusCircle.startAnimation(fadeOut)
             focusCircle.visibility = View.GONE
             findViewById<View>(R.id.btn_play).startAnimation(fadeIn)
             findViewById<View>(R.id.btn_play).visibility = View.VISIBLE
-            findViewById<View>(R.id.camera_dimmed_layout).animate().alpha(0.5f).setDuration(150)
-                .setListener(null)
+            findViewById<View>(R.id.camera_dimmed_layout).animate().alpha(0.5f)
+                .setDuration(150).setListener(null)
         }
-
-        // toggle variable
         isClassificationPaused = !isClassificationPaused
         return false
     }
 
-    // END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     // 'Freeze Callback' Interface
-    //
-    // onFrozenBitmap() Method
-    //
-    // [Part 2] of freezing the camera feed when the user pauses the classification
-    // [Part 1] -> see 'FreezeAnalyzer.java'
-    //
-    // this method hides the camera feed preview layout object
-    // and instead shows an ImageView, that displays the last active frame, before the classifcation was paused
+
+    // hide the camera feed preview layout object and instead show an ImageView
+    // that displays the last active frame from before the classification was paused
     override fun onFrozenBitmap(b: Bitmap?) {
         runOnUiThread {
             _frozenPreviewWindow!!.setImageBitmap(b)
             _frozenPreviewWindow!!.visibility = View.VISIBLE
-            _viewFinder!!.visibility = View.GONE
+            cameraView!!.visibility = View.GONE
         }
     }
 
-    // resetFrozenViewFinder() method
     // counterpart to the method above to restore the default
-    fun resetFrozenViewFinder() {
+    private fun resetFrozenViewFinder() {
         runOnUiThread {
             _frozenPreviewWindow!!.visibility = View.INVISIBLE
-            _viewFinder!!.visibility = View.VISIBLE
+            cameraView!!.visibility = View.VISIBLE
         }
     }
 
-    // END - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // 'Camera Events' Interface
+    // 'Camera Events' interface
+
     override fun onRotateToggled() {
-
         // switch lens by changing global variable
-        lensFrontBack = if (lensFrontBack == 0) {
-            1
-        } else {
-            0
-        }
-
-        // unbind all use cases
-        _cameraProvider!!.unbindAll()
-
-        // re-init CameraX
-        initCameraX()
-
-        // init Editor and save to SharedPreferences
-        prefEditor = prefs!!.edit()
-        prefEditor!!.putInt("lens", lensFrontBack)
-        prefEditor!!.apply()
+        lensFrontBack = if (lensFrontBack == 0) 1 else 0
+        _cameraProvider!!.unbindAll() // unbind all use cases
+        initCameraX() // re-init CameraX
+        prefs!!.edit().putInt("lens", lensFrontBack).apply() // save to SharedPreferences
     }
 
     override fun onFlashToggled() {
-
         // turn camera flash on or off, if there is one
         if (_camera!!.cameraInfo.hasFlashUnit()) {
             val btn = findViewById<ImageButton>(R.id.btn_flash)
-
-            // perform haptic feedback
             btn.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
-            if (isFlashEnabled) {
-                _camera!!.cameraControl.enableTorch(false)
-                btn.setColorFilter(ContextCompat.getColor(this@ClassificationActivity,
-                    R.color.colorPrimary
-                ))
-            } else {
-                btn.setColorFilter(ContextCompat.getColor(this@ClassificationActivity,
-                    R.color.colorAccent
-                ))
-                _camera!!.cameraControl.enableTorch(true)
-            }
+            _camera!!.cameraControl.enableTorch(!isFlashEnabled) // toggles flash
+            val newColor = if (isFlashEnabled) R.color.colorPrimary else R.color.colorAccent
+            btn.setColorFilter(ContextCompat.getColor(this@ClassificationActivity, newColor))
             isFlashEnabled = !isFlashEnabled
         }
     }
 
+    // 'GestureDetector.OnGestureListener' interface (unimplemented methods)
+
+    override fun onFling(e1: MotionEvent, e2: MotionEvent, veloX: Float, veloY: Float) = true
+    override fun onDown(event: MotionEvent) = true
+    override fun onLongPress(event: MotionEvent) {}
+    override fun onScroll(e1: MotionEvent, e2: MotionEvent, distX: Float, distY: Float) = true
+    override fun onShowPress(event: MotionEvent) {}
+    override fun onSingleTapUp(event: MotionEvent) = true
+    override fun onSingleTapConfirmed(e: MotionEvent) = false
+    override fun onDoubleTapEvent(e: MotionEvent) = false
 
     override fun onResume() {
         super.onResume()
@@ -502,46 +475,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         _cameraExecutorForFreezing!!.shutdownNow()
     }
 
-    // UNIMPLEMENTED GESTURE METHODS
-    override fun onFling(
-        event1: MotionEvent,
-        event2: MotionEvent,
-        velocityX: Float,
-        velocityY: Float
-    ): Boolean {
-        return true
-    }
-
-    override fun onDown(event: MotionEvent): Boolean {
-        return true
-    }
-
-    override fun onLongPress(event: MotionEvent) {}
-    override fun onScroll(
-        event1: MotionEvent,
-        event2: MotionEvent,
-        distanceX: Float,
-        distanceY: Float
-    ): Boolean {
-        return true
-    }
-
-    override fun onShowPress(event: MotionEvent) {}
-    override fun onSingleTapUp(event: MotionEvent): Boolean {
-        return true
-    }
-
-    override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-        return false
-    }
-
-    override fun onDoubleTapEvent(e: MotionEvent): Boolean {
-        return false
-    }
-    // END OF UNIMPLEMENTED GESTURE METHODS - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
     companion object {
-        // init new Logger instance
         private val LOGGER = Logger()
     }
 }

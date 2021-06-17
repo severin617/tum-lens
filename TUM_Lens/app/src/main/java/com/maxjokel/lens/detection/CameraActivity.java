@@ -35,6 +35,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
 import android.util.Size;
+import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -66,24 +67,21 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
   private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
   protected int previewWidth = 0;
   protected int previewHeight = 0;
-  private boolean debug = false;
   private Handler handler;
   private HandlerThread handlerThread;
   private boolean useCamera2API;
   private boolean isProcessingFrame = false;
-  private byte[][] yuvBytes = new byte[3][];
+  private final byte[][] yuvBytes = new byte[3][];
   private int[] rgbBytes = null;
   private int yRowStride;
   private Runnable postInferenceCallback;
   private Runnable imageConverter;
 
-  private LinearLayout bottomSheetLayout;
   private LinearLayout gestureLayout;
   private BottomSheetBehavior<LinearLayout> sheetBehavior;
 
   protected TextView frameValueTextView, cropValueTextView, inferenceTimeTextView;
   protected ImageView bottomSheetArrowImageView;
-  private ImageView plusImageView, minusImageView;
   private SwitchCompat apiSwitchCompat;
   private TextView threadsTextView;
 
@@ -102,29 +100,21 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
     }
 
     threadsTextView = findViewById(R.id.threads);
-    plusImageView = findViewById(R.id.plus);
-    minusImageView = findViewById(R.id.minus);
+    ImageView plusImageView = findViewById(R.id.plus);
+    ImageView minusImageView = findViewById(R.id.minus);
     apiSwitchCompat = findViewById(R.id.api_info_switch);
-    bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
+    LinearLayout bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
     gestureLayout = findViewById(R.id.gesture_layout);
     sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
 
     ViewTreeObserver vto = gestureLayout.getViewTreeObserver();
-    vto.addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-              gestureLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            } else {
-              gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-            //                int width = bottomSheetLayout.getMeasuredWidth();
-            int height = gestureLayout.getMeasuredHeight();
-
-            sheetBehavior.setPeekHeight(height);
-          }
-        });
+    vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+      @Override
+      public void onGlobalLayout() {
+        gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        sheetBehavior.setPeekHeight(gestureLayout.getMeasuredHeight());
+      }
+    });
     sheetBehavior.setHideable(false);
 
     frameValueTextView = findViewById(R.id.frame_info);
@@ -140,14 +130,6 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
   protected int[] getRgbBytes() {
     imageConverter.run();
     return rgbBytes;
-  }
-
-  protected int getLuminanceStride() {
-    return yRowStride;
-  }
-
-  protected byte[] getLuminance() {
-    return yuvBytes[0];
   }
 
   /** Callback for android.hardware.Camera API */
@@ -176,22 +158,19 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
     yuvBytes[0] = bytes;
     yRowStride = previewWidth;
 
-    imageConverter =
-        new Runnable() {
-          @Override
-          public void run() {
-            ImageUtils.convertYUV420SPToARGB8888(bytes, previewWidth, previewHeight, rgbBytes);
-          }
-        };
-
-    postInferenceCallback =
-        new Runnable() {
-          @Override
-          public void run() {
-            camera.addCallbackBuffer(bytes);
-            isProcessingFrame = false;
-          }
-        };
+    imageConverter = new Runnable() {
+      @Override
+      public void run() {
+        ImageUtils.convertYUV420SPToARGB8888(bytes, previewWidth, previewHeight, rgbBytes);
+      }
+    };
+    postInferenceCallback = new Runnable() {
+      @Override
+      public void run() {
+        camera.addCallbackBuffer(bytes);
+        isProcessingFrame = false;
+      }
+    };
     processImage();
   }
 
@@ -208,9 +187,7 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
     try {
       final Image image = reader.acquireLatestImage();
 
-      if (image == null) {
-        return;
-      }
+      if (image == null) return;
 
       if (isProcessingFrame) {
         image.close();
@@ -224,11 +201,10 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
       final int uvRowStride = planes[1].getRowStride();
       final int uvPixelStride = planes[1].getPixelStride();
 
-      imageConverter =
-          new Runnable() {
-            @Override
-            public void run() {
-              ImageUtils.convertYUV420ToARGB8888(
+      imageConverter = new Runnable() {
+        @Override
+        public void run() {
+          ImageUtils.convertYUV420ToARGB8888(
                   yuvBytes[0],
                   yuvBytes[1],
                   yuvBytes[2],
@@ -238,18 +214,15 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
                   uvRowStride,
                   uvPixelStride,
                   rgbBytes);
-            }
-          };
-
-      postInferenceCallback =
-          new Runnable() {
-            @Override
-            public void run() {
-              image.close();
-              isProcessingFrame = false;
-            }
-          };
-
+        }
+      };
+      postInferenceCallback = new Runnable() {
+        @Override
+        public void run() {
+          image.close();
+          isProcessingFrame = false;
+        }
+      };
       processImage();
     } catch (final Exception e) {
       LOGGER.e(e, "Exception!");
@@ -287,7 +260,6 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
     } catch (final InterruptedException e) {
       LOGGER.e(e, "Exception!");
     }
-
     super.onPause();
   }
 
@@ -311,7 +283,7 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
 
   @Override
   public void onRequestPermissionsResult(
-      final int requestCode, final String[] permissions, final int[] grantResults) {
+          final int requestCode, final String[] permissions, final int[] grantResults) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     if (requestCode == PERMISSIONS_REQUEST) {
       if (allPermissionsGranted(grantResults)) {
@@ -332,29 +304,23 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
   }
 
   private boolean hasPermission() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED;
-    } else {
-      return true;
-    }
+    return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED;
   }
 
   private void requestPermission() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
-        Toast.makeText(
-                CameraActivity.this,
-                "Camera permission is required for this demo",
-                Toast.LENGTH_LONG)
-            .show();
-      }
-      requestPermissions(new String[] {PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
+    if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
+      Toast.makeText(
+              CameraActivity.this,
+              "Camera permission is required for this demo",
+              Toast.LENGTH_LONG)
+              .show();
     }
+    requestPermissions(new String[] {PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
   }
 
   // Returns true if the device supports the required hardware level, or better.
   private boolean isHardwareLevelSupported(
-      CameraCharacteristics characteristics, int requiredLevel) {
+          CameraCharacteristics characteristics, int requiredLevel) {
     int deviceLevel = characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
     if (deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY) {
       return requiredLevel == deviceLevel;
@@ -376,7 +342,7 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
         }
 
         final StreamConfigurationMap map =
-            characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+                characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
         if (map == null) {
           continue;
@@ -386,9 +352,9 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
         // This should help with legacy situations where using the camera2 API causes
         // distorted or otherwise broken previews.
         useCamera2API =
-            (facing == CameraCharacteristics.LENS_FACING_EXTERNAL)
-                || isHardwareLevelSupported(
-                    characteristics, CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
+                (facing == CameraCharacteristics.LENS_FACING_EXTERNAL)
+                        || isHardwareLevelSupported(
+                        characteristics, CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
         LOGGER.i("Camera API lv2?: %s", useCamera2API);
         return cameraId;
       }
@@ -405,18 +371,18 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
     Fragment fragment;
     if (useCamera2API) {
       CameraConnectionFragment camera2Fragment =
-          CameraConnectionFragment.newInstance(
-              new CameraConnectionFragment.ConnectionCallback() {
-                @Override
-                public void onPreviewSizeChosen(final Size size, final int rotation) {
-                  previewHeight = size.getHeight();
-                  previewWidth = size.getWidth();
-                  CameraActivity.this.onPreviewSizeChosen(size, rotation);
-                }
-              },
-              this,
-              getLayoutId(),
-              getDesiredPreviewFrameSize());
+              CameraConnectionFragment.newInstance(
+                      new CameraConnectionFragment.ConnectionCallback() {
+                        @Override
+                        public void onPreviewSizeChosen(final Size size, final int rotation) {
+                          previewHeight = size.getHeight();
+                          previewWidth = size.getWidth();
+                          CameraActivity.this.onPreviewSizeChosen(size, rotation);
+                        }
+                      },
+                      this,
+                      getLayoutId(),
+                      getDesiredPreviewFrameSize());
 
       camera2Fragment.setCamera(cameraId);
       fragment = camera2Fragment;
@@ -443,7 +409,18 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
     }
   }
 
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        supportFinishAfterTransition();
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
   public boolean isDebug() {
+    boolean debug = false;
     return debug;
   }
 

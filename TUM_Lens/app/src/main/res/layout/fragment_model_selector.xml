@@ -33,7 +33,7 @@
             android:layout_marginStart="33dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/light_grey"
+            android:textColor="@color/black"
             android:textSize="12sp"
             android:layout_marginTop="-10dp"
             android:text="Top-5 accuracy: 89.9%"/>
