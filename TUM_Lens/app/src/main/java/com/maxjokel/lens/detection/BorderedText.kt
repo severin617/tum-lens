@@ -30,7 +30,7 @@ class BorderedText(interiorColor: Int, exteriorColor: Int, textSize: Float) {
      *
      * @param textSize text size in pixels
      */
-    constructor(textSize: Float) : this(Color.WHITE, Color.BLACK, textSize) {}
+    constructor(textSize: Float) : this(Color.WHITE, Color.BLACK, textSize)
 
     fun setTypeface(typeface: Typeface?) {
         interiorPaint.typeface = typeface
@@ -42,9 +42,7 @@ class BorderedText(interiorColor: Int, exteriorColor: Int, textSize: Float) {
         canvas.drawText(text, posX, posY, interiorPaint)
     }
 
-    fun drawText(
-        canvas: Canvas, posX: Float, posY: Float, text: String?, bgPaint: Paint?
-    ) {
+    fun drawText(canvas: Canvas, posX: Float, posY: Float, text: String?, bgPaint: Paint?) {
         val width = exteriorPaint.measureText(text)
         val textSize = exteriorPaint.textSize
         val paint = Paint(bgPaint)
@@ -75,9 +73,7 @@ class BorderedText(interiorColor: Int, exteriorColor: Int, textSize: Float) {
         exteriorPaint.alpha = alpha
     }
 
-    fun getTextBounds(
-        line: String?, index: Int, count: Int, lineBounds: Rect?
-    ) {
+    fun getTextBounds(line: String?, index: Int, count: Int, lineBounds: Rect?) {
         interiorPaint.getTextBounds(line, index, count, lineBounds)
     }
 

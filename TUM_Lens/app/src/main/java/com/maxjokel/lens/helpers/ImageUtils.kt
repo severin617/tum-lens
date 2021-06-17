@@ -58,13 +58,13 @@ object ImageUtils {
     //  - converts YUV image to RGB bitmap:
     //
     @JvmStatic
-    fun toBitmap(image: Image, lens_front_back: Int, rotation: Int): Bitmap {
+    fun toBitmap(image: Image, lensFrontBack: Int, rotation: Int): Bitmap {
         val temp = converter(image, 100, false, rotation)
 
         // WORKAROUND
         // on Pixel 3a it is necessary to mirror the image when using the front facing camera...
         val matrix = Matrix()
-        if (lens_front_back != 0) {
+        if (lensFrontBack != 0) {
             matrix.preScale(-1.0f, 1.0f)
         }
         return Bitmap.createBitmap(temp, 0, 0, temp.width, temp.height, matrix, true)

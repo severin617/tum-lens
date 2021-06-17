@@ -56,7 +56,7 @@ private constructor() {
                 val obj = netsArray.getJSONObject(i)
                 list.add(ModelConfig(obj))
             } catch (e: JSONException) {
-                LOGGER.e("Error while parsing jsonObject at postition $i in $netsArray. " +
+                LOGGER.e("Error while parsing jsonObject at position $i in $netsArray. " +
                         "Object wasn't added to list of ModelConfigs.")
                 e.printStackTrace()
             }
