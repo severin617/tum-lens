@@ -78,7 +78,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
 
     // please note: the static classifier class is instantiated in 'ModelSelectorFragment'
     override fun onCreate(savedInstanceState: Bundle?) {
-        LOGGER.i("+++ Hello from ViewFinder.java +++")
+        LOGGER.i("+++ Hello from ClassificationActivity.kt +++")
         super.onCreate(savedInstanceState)
 
         // load sharedPreferences object and set up editor
@@ -163,23 +163,14 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         
         val btnDetectionModeToggle = findViewById<MaterialButtonToggleGroup>(R.id.detectionModeToggleButton)
-        val btnClassification = findViewById<Button>(R.id.btn_classification)
         val btnDetection = findViewById<Button>(R.id.btn_detection)
-        btnDetectionModeToggle.addOnButtonCheckedListener { group, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-
-            when (checkedId) {
-                btnClassification.id -> {
-                    Toast.makeText(this, "Pressed Classifier Btn", Toast.LENGTH_SHORT).show()
-                }
-                btnDetection.id -> {
-                    group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
-                    val intent = Intent(this, DetectionActivity::class.java)
-                    val options = ActivityOptions
-                        .makeSceneTransitionAnimation(this, cameraView, "camera")
-                    startActivity(intent, options.toBundle())
-                }
-                else -> return@addOnButtonCheckedListener
+        btnDetectionModeToggle.addOnButtonCheckedListener { group, checkedId, _ ->
+            if (checkedId == btnDetection.id) {
+                group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
+                val intent = Intent(this, DetectionActivity::class.java)
+                val options = ActivityOptions
+                    .makeSceneTransitionAnimation(this, cameraView, "camera")
+                startActivity(intent, options.toBundle())
             }
         }
 

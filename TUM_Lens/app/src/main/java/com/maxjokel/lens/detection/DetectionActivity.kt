@@ -15,14 +15,19 @@
  */
 package com.maxjokel.lens.detection
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.*
 import android.media.ImageReader
+import android.os.Bundle
 import android.os.SystemClock
 import android.util.Size
 import android.util.TypedValue
+import android.view.HapticFeedbackConstants
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.maxjokel.lens.helpers.ImageUtils.getTransformationMatrix
 import com.maxjokel.lens.helpers.ImageUtils.saveBitmap
 import com.maxjokel.lens.helpers.Logger
@@ -49,6 +54,7 @@ class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener
     private var cropToFrameTransform: Matrix? = null
     private var tracker: MultiBoxTracker? = null
     private var borderedText: BorderedText? = null
+
     public override fun onPreviewSizeChosen(size: Size, rotation: Int) {
         val textSizePx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, resources.displayMetrics
@@ -160,7 +166,7 @@ class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener
     }
 
     override fun getLayoutId(): Int {
-        return R.layout.tfe_od_camera_connection_fragment_tracking
+        return R.layout.activity_detection_cam_fragment_tracking
     }
 
     override fun getDesiredPreviewFrameSize(): Size {
@@ -200,6 +206,21 @@ class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val btnDetectionModeToggle = findViewById<MaterialButtonToggleGroup>(R.id.detectionModeToggleButton)
+        val btnClassification = findViewById<Button>(R.id.btn_classification)
+        btnDetectionModeToggle.addOnButtonCheckedListener { group, checkedId, _ ->
+            if (checkedId == btnClassification.id) {
+                group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
+                val intent = Intent(this, ClassificationActivity::class.java)
+                // TODO: add AcitivtyOptions (see same fun in ClassificationActivity) for smooth transition
+                startActivity(intent)
+            }
+        }
+    }
+
 
     companion object {
         private val LOGGER = Logger()

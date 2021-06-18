@@ -12,6 +12,7 @@
     <string name="per_frame_classification_results">Per frame classification results</string>
     <string name="not_available">not available</string>
     <string name="suggestions">Suggestions</string>
+    <string name="specs">Specifications</string>
     <string name="version">Version 0.1</string>
     <string name="other_settings">Other settings</string>
     <string name="model">Model</string>
