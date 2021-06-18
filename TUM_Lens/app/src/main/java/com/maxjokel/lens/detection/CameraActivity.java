@@ -29,7 +29,6 @@ import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -91,7 +90,7 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
     super.onCreate(null);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-    setContentView(R.layout.tfe_od_activity_camera);
+    setContentView(R.layout.activity_detection);
 
     if (hasPermission()) {
       setFragment();
@@ -103,20 +102,6 @@ public abstract class CameraActivity extends AppCompatActivity  implements OnIma
     ImageView plusImageView = findViewById(R.id.plus);
     ImageView minusImageView = findViewById(R.id.minus);
     apiSwitchCompat = findViewById(R.id.api_info_switch);
-    LinearLayout bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
-    gestureLayout = findViewById(R.id.gesture_layout);
-    sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
-
-    ViewTreeObserver vto = gestureLayout.getViewTreeObserver();
-    vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-      @Override
-      public void onGlobalLayout() {
-        gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-        sheetBehavior.setPeekHeight(gestureLayout.getMeasuredHeight());
-      }
-    });
-    sheetBehavior.setHideable(false);
-
     frameValueTextView = findViewById(R.id.frame_info);
     cropValueTextView = findViewById(R.id.crop_info);
     inferenceTimeTextView = findViewById(R.id.inference_info);

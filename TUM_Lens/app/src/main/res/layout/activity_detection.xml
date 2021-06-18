@@ -16,28 +16,35 @@
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00000000">
+    android:background="@android:color/black">
 
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
-        android:orientation="vertical">
+        android:transitionName="camera"
+        tools:context="com.maxjokel.lens.detection.CameraActivity" />
 
-        <FrameLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:transitionName="camera"
-            tools:context="com.maxjokel.lens.detection.CameraActivity" />
-
-    </RelativeLayout>
-
+    <!--  TOGGLE TO SWITCH DETECTION MODES  -->
     <include
-        android:id="@+id/bottom_sheet_layout"
-        layout="@layout/tfe_od_layout_bottom_sheet" />
+        app:checkedButton="@+id/btn_detection"
+        layout="@layout/btn_detection_mode" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/activity_detection_bottom_sheet_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="0.85"
+        android:background="@drawable/rounded_corners"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="140dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" >
+
+        <include layout="@layout/activity_detection_bottom_sheet" />
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

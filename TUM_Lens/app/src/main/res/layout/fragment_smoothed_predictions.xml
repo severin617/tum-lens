@@ -7,9 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".fragments.SmoothedPredictionsFragment">
 
-
-
-
     <!--  actual results list  -->
     <LinearLayout
         android:id="@+id/actual_result"
