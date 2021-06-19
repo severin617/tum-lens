@@ -55,7 +55,10 @@ class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener
     private var tracker: MultiBoxTracker? = null
     private var borderedText: BorderedText? = null
 
-    public override fun onPreviewSizeChosen(size: Size, rotation: Int) {
+    override val layoutId = R.layout.activity_detection_cam_fragment_tracking
+    override val desiredPreviewFrameSize = DESIRED_PREVIEW_SIZE
+
+    public override fun onPreviewSizeChosen(size: Size?, rotation: Int) {
         val textSizePx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, resources.displayMetrics
         )
@@ -64,13 +67,8 @@ class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener
         tracker = MultiBoxTracker(this)
         var cropSize = TF_OD_API_INPUT_SIZE
         try {
-            detector = TFLiteObjectDetectionAPIModel.create(
-                this,
-                TF_OD_API_MODEL_FILE,
-                TF_OD_API_LABELS_FILE,
-                TF_OD_API_INPUT_SIZE,
-                TF_OD_API_IS_QUANTIZED
-            )
+            detector = TFLiteObjectDetectionAPIModel.create(this, TF_OD_API_MODEL_FILE,
+                TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE, TF_OD_API_IS_QUANTIZED)
             cropSize = TF_OD_API_INPUT_SIZE
         } catch (e: IOException) {
             e.printStackTrace()
@@ -81,8 +79,10 @@ class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener
             toast.show()
             finish()
         }
-        previewWidth = size.width
-        previewHeight = size.height
+        if (size != null) {
+            previewWidth = size.width
+            previewHeight = size.height
+        }
         sensorOrientation = rotation - screenOrientation
         LOGGER.i("Camera orientation relative to screen canvas: %d", sensorOrientation)
         LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight)
@@ -165,19 +165,8 @@ class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener
         }
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_detection_cam_fragment_tracking
-    }
-
-    override fun getDesiredPreviewFrameSize(): Size {
-        return DESIRED_PREVIEW_SIZE
-    }
-
-    // Which detection model to use: by default uses Tensorflow Object Detection API frozen
-    // checkpoints.
-    private enum class DetectorMode {
-        TF_OD_API
-    }
+    // Which detection model to use: by default uses TF Object Detection API frozen checkpoints.
+    private enum class DetectorMode { TF_OD_API }
 
     override fun setUseNNAPI(isChecked: Boolean) {
         runInBackground {
