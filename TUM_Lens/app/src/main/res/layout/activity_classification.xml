@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -24,68 +24,51 @@
         android:scaleType="centerCrop" />
 
     <!--  for toning down the view finder as it has no 'alpha' property  -->
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/camera_dimmed_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
-        android:background="#000"
+        android:background="@color/black"
         android:alpha="0" />
 
     <!--  TOGGLE TO SWITCH DETECTION MODES  -->
     <include layout="@layout/btn_detection_mode" />
 
-    <!--  CONTAINER FOR DETECTION FOCUS CIRCLE AND PLAY ICON  -->
-    <RelativeLayout
+    <!--  focus circle  -->
+    <ImageView
+        android:id="@+id/focus_circle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:alpha="0.5"
+        android:src="@drawable/focus_circle"
+        tools:ignore="ContentDescription"/>
 
-        <!--  play icon  -->
-        <!--  FIXME: play button is slightly off center when fade-in starts -->
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_play"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:visibility="gone"
-            android:alpha="0.75"
-            android:layout_centerInParent="true"
-            android:tint="#fff"
-            android:src="@drawable/ic_baseline_play_arrow_80"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-        <!--  focus circle  -->
-        <ImageView
-            android:id="@+id/focus_circle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
-            android:alpha="0.5"
-            android:src="@drawable/focus_circle"
-            tools:ignore="ContentDescription"/>
-
-    </RelativeLayout>
+    <!--  play icon  -->
+    <!--  FIXME: play button is slightly off center when fade-in starts -->
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="invisible"
+        android:alpha="0.75"
+        android:src="@drawable/ic_baseline_play_arrow_80"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 
     <!--  BOTTOM SHEET  -->
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/bottom_sheet_layout"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/activity_classification_bottom_sheet_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:alpha="0.85"
+        android:background="@drawable/rounded_corners"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="140dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/activity_classification_bottom_sheet_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:alpha="0.85"
-            android:background="@drawable/rounded_corners"
-            app:behavior_hideable="false"
-            app:behavior_peekHeight="140dp"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        <include layout="@layout/activity_classification_bottom_sheet" />
+    </androidx.core.widget.NestedScrollView>
 
-            <include layout="@layout/activity_classification_bottom_sheet" />
-        </androidx.core.widget.NestedScrollView>
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
