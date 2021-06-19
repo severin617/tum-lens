@@ -92,10 +92,6 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
 
         // set corresponding layout
         setContentView(R.layout.activity_classification)
-        // Clip view to background in order to round the upper edges
-        val layout: CoordinatorLayout = findViewById(R.id.bottom_sheet_layout)
-        layout.outlineProvider = ViewOutlineProvider.BACKGROUND
-        layout.clipToOutline = true
 
         // [source: https://developer.android.com/training/gestures/detector#java]
         // Set up and instantiate the gesture detector with the application context
