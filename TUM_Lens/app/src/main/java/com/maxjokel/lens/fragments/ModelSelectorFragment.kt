@@ -18,8 +18,8 @@ import androidx.core.widget.CompoundButtonCompat
 import androidx.fragment.app.Fragment
 import com.maxjokel.lens.classification.Classifier.Companion.getInstance
 import com.maxjokel.lens.classification.Classifier.Companion.onConfigChanged
-import com.maxjokel.lens.classification.ListSingleton.Companion.instance
 import com.maxjokel.lens.R
+import com.maxjokel.lens.classification.ListSingleton
 import java.util.*
 
 /* FRAGMENT FOR 'MODEL SELECTOR' ELEMENT IN BOTTOM SHEET
@@ -33,8 +33,7 @@ class ModelSelectorFragment: Fragment() {
     var prefEditor: SharedPreferences.Editor? = null
 
     // related to 'ListSingleton'
-    var listSingletonInstance = instance
-    var MODEL_LIST = listSingletonInstance.modelConfigs
+    private var MODEL_LIST = ListSingleton.modelConfigs
 
     // related to 'Classifier'
     var newStaticClassifier = getInstance()

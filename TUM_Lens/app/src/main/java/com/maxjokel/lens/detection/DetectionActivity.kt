@@ -15,7 +15,6 @@
  */
 package com.maxjokel.lens.detection
 
-import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.*
 import android.media.ImageReader

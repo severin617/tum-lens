@@ -20,12 +20,12 @@ import java.util.*
    around the models specified in 'nets.json'
 + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
 
-class ListSingleton
+object ListSingleton {
 
-private constructor() {
+    private val LOGGER = Logger()
 
-    private val CONFIG_FILEPATH = "assets/nets.json"
-    private val RECOGNITION_ARRAY = "recognitionNets"
+    private const val CONFIG_FILEPATH = "assets/nets.json"
+    private const val RECOGNITION_ARRAY = "recognitionNets"
 
     val modelConfigs = modelConfigListFromJSON()
 
@@ -56,8 +56,10 @@ private constructor() {
                 val obj = netsArray.getJSONObject(i)
                 list.add(ModelConfig(obj))
             } catch (e: JSONException) {
-                LOGGER.e("Error while parsing jsonObject at position $i in $netsArray. " +
-                        "Object wasn't added to list of ModelConfigs.")
+                LOGGER.e(
+                    "Error while parsing jsonObject at position $i in $netsArray. " +
+                        "Object wasn't added to list of ModelConfigs."
+                )
                 e.printStackTrace()
             }
         }
@@ -67,11 +69,5 @@ private constructor() {
     private fun readJSON(filePath: String): String {
         val inputStream = javaClass.classLoader!!.getResourceAsStream(filePath)
         return inputStream.bufferedReader().use { it.readText() }
-    }
-
-    companion object {
-        private val LOGGER = Logger()
-        @JvmStatic
-        val instance = ListSingleton()
     }
 }
