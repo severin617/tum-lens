@@ -16,12 +16,10 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import com.google.android.material.button.MaterialButtonToggleGroup
@@ -59,7 +57,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
     private var _frozenPreviewWindow: ImageView? = null
     private var _freezeAnalyzer: FreezeAnalyzer? = null
     private var _freezeImageAnalysis: ImageAnalysis? = null
-    var lensFrontBack = 0 // [0 = back, 1 = front]
+    private var lensFrontBack = 0 // [0 = back, 1 = front]
 
     // TF-Lite related to CLASSIFICATION:   [source: TF-Lite example app]
     private var previewDimX = 960
@@ -72,9 +70,9 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
     private var mGestureDetector: GestureDetectorCompat? = null
 
     // instantiate new SharedPreferences object
-    var prefs: SharedPreferences? = null
-    var predictionsFragment: PredictionsFragment? = null
-    var smoothedPredictionsFragment: SmoothedPredictionsFragment? = null
+    private var prefs: SharedPreferences? = null
+    private var predictionsFragment: PredictionsFragment? = null
+    private var smoothedPredictionsFragment: SmoothedPredictionsFragment? = null
 
     // please note: the static classifier class is instantiated in 'ModelSelectorFragment'
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,7 +109,10 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.add(R.id.modelselector_container, msf, "msf")
+        fragmentTransaction.add(
+            R.id.modelselector_container,
+            msf,
+            "msf")
         fragmentTransaction.add(
             R.id.perframe_results_container, predictionsFragment!!,
             "predictionsFragment"
@@ -134,7 +135,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         )
         fragmentTransaction.commit()
 
-        // add ViewFinder to list of event listeners in cameraSettingsFragment, in order to get
+        // add this activity to list of event listeners in cameraSettingsFragment, in order to get
         // notified when the user toggles the camera or flash
         cameraSettingsFragment.addListener(this)
 
@@ -202,7 +203,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         }
     }
 
-    // inits preview object that holds the camera live feed
+    // initialises preview object that holds the camera live feed
     // [based around: https://stackoverflow.com/q/59661727]
     private fun buildPreviewUseCase() {
         LOGGER.i("ViewFinder: building preview use case.")

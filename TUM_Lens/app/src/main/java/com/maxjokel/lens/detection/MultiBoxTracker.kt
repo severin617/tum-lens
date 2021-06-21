@@ -27,8 +27,9 @@ import java.util.*
 
 /** A tracker that handles non-max suppression and matches existing objects to new detections.  */
 class MultiBoxTracker(context: Context) {
-    val screenRects: MutableList<Pair<Float, RectF>> = LinkedList()
+
     private val logger = Logger()
+    private val screenRects: MutableList<Pair<Float, RectF>> = LinkedList()
     private val availableColors: Queue<Int> = LinkedList()
     private val trackedObjects: MutableList<TrackedRecognition> = LinkedList()
     private val boxPaint = Paint()
@@ -38,10 +39,9 @@ class MultiBoxTracker(context: Context) {
     private var frameWidth = 0
     private var frameHeight = 0
     private var sensorOrientation = 0
+
     @Synchronized
-    fun setFrameConfiguration(
-        width: Int, height: Int, sensorOrientation: Int
-    ) {
+    fun setFrameConfiguration(width: Int, height: Int, sensorOrientation: Int) {
         frameWidth = width
         frameHeight = height
         this.sensorOrientation = sensorOrientation
@@ -73,10 +73,10 @@ class MultiBoxTracker(context: Context) {
     @Synchronized
     fun draw(canvas: Canvas) {
         val rotated = sensorOrientation % 180 == 90
-        val multiplier = Math.min(
-            canvas.height / (if (rotated) frameWidth else frameHeight).toFloat(),
-            canvas.width / (if (rotated) frameHeight else frameWidth).toFloat()
-        )
+        val multiplier =
+            (canvas.height / (if (rotated) frameWidth else frameHeight).toFloat()).coerceAtMost(
+                canvas.width / (if (rotated) frameHeight else frameWidth).toFloat()
+            )
         frameToCanvasMatrix = getTransformationMatrix(
             frameWidth,
             frameHeight,
@@ -89,7 +89,7 @@ class MultiBoxTracker(context: Context) {
             val trackedPos = RectF(recognition.location)
             frameToCanvasMatrix!!.mapRect(trackedPos)
             boxPaint.color = recognition.color
-            val cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f
+            val cornerSize = trackedPos.width().coerceAtMost(trackedPos.height()) / 8.0f
             canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint)
             val labelString = if (!TextUtils.isEmpty(recognition.title)) String.format(
                 "%s %.2f",

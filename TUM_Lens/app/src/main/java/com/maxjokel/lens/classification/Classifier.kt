@@ -102,8 +102,7 @@ class Classifier private constructor() {
         private var nnApiDelegate: NnApiDelegate? = null
 
         // everything related to 'ListSingleton'
-        private val listSingletonInstance = ListSingleton.instance
-        private val MODEL_LIST = listSingletonInstance.modelConfigs
+        private val MODEL_LIST = ListSingleton.modelConfigs
 
         // set up initial 'ModelConfig' object and related helper functions
         private var modelConfig: ModelConfig? = null
