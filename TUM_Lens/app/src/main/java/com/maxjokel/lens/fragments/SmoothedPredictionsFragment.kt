@@ -20,12 +20,10 @@ import java.util.*
 * Fragment for displaying the classification smoothed results
 *
 * + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-class SmoothedPredictionsFragment  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    : Fragment() {
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // layout elements
+class SmoothedPredictionsFragment: Fragment() {
+
     private var placeholder: LinearLayout? = null
-    private var actual_result: LinearLayout? = null
+    private var actualResult: LinearLayout? = null
     private var desc0: TextView? = null
     private var desc1: TextView? = null
     private var desc2: TextView? = null
@@ -54,7 +52,7 @@ class SmoothedPredictionsFragment  // - - - - - - - - - - - - - - - - - - - - - 
         // set up all layout elements here as we will run into NullPointerExceptions when we use
         // the dynamic 'getView()...' approach;
         placeholder = view.findViewById(R.id.placeholder)
-        actual_result = view.findViewById(R.id.actual_result)
+        actualResult = view.findViewById(R.id.actual_result)
         desc0 = view.findViewById(R.id.smooth_description0)
         desc1 = view.findViewById(R.id.smooth_description1)
         desc2 = view.findViewById(R.id.smooth_description2)
@@ -161,7 +159,7 @@ class SmoothedPredictionsFragment  // - - - - - - - - - - - - - - - - - - - - - 
 
                 // hide placeholder and show actual results
                 placeholder!!.visibility = View.GONE
-                actual_result!!.visibility = View.VISIBLE
+                actualResult!!.visibility = View.VISIBLE
                 val r0 = list[0]
                 desc0!!.text = r0.title + " (" + r0.occurrences + "x)"
                 conf0!!.text = String.format("%.1f", 100 * r0.confidence / r0.occurrences) + "%"
