@@ -86,6 +86,11 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
         minusImageView.setOnClickListener(this)
     }
 
+    protected fun getConvertedRgbBytes(): IntArray? {
+        imageConverter!!.run()
+        return rgbBytes
+    }
+
     /** Callback for android.hardware.Camera API  */
     override fun onPreviewFrame(bytes: ByteArray, camera: Camera) {
         if (isProcessingFrame) {
@@ -108,8 +113,10 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
         isProcessingFrame = true
         yuvBytes[0] = bytes
         yRowStride = previewWidth
+
         imageConverter =
             Runnable { convertYUV420SPToARGB8888(bytes, previewWidth, previewHeight, rgbBytes!!) }
+
         postInferenceCallback = Runnable {
             camera.addCallbackBuffer(bytes)
             isProcessingFrame = false
@@ -137,6 +144,7 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
             yRowStride = planes[0].rowStride
             val uvRowStride = planes[1].rowStride
             val uvPixelStride = planes[1].pixelStride
+
             imageConverter = Runnable {
                 convertYUV420ToARGB8888(
                     yuvBytes[0]!!, yuvBytes[1]!!, yuvBytes[2]!!,
@@ -145,6 +153,7 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
                     rgbBytes!!
                 )
             }
+
             postInferenceCallback = Runnable {
                 image.close()
                 isProcessingFrame = false
@@ -256,8 +265,6 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
                 if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
                     continue
                 }
-                val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                    ?: continue
 
                 // Fallback to camera1 API for internal cameras that don't have full support.
                 // This should help with legacy situations where using the camera2 API causes
@@ -275,7 +282,7 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
         return null
     }
 
-    protected fun setFragment() {
+    private fun setFragment() {
         val cameraId = chooseCamera()
         val fragment: Fragment
         if (useCamera2API) {
@@ -309,7 +316,7 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
                 LOGGER.d("Initializing buffer %d at size %d", i, buffer.capacity())
                 yuvBytes[i] = ByteArray(buffer.capacity())
             }
-            buffer[yuvBytes[i]]
+            buffer.get(yuvBytes[i]!!)
         }
     }
 
@@ -343,23 +350,17 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
     }
 
     override fun onClick(v: View) {
+        val threads = threadsTextView.text.toString().trim { it <= ' ' }
+        var numThreads = threads.toInt()
         if (v.id == R.id.plus) {
-            val threads = threadsTextView.text.toString().trim { it <= ' ' }
-            var numThreads = threads.toInt()
             if (numThreads >= 9) return
             numThreads++
-            threadsTextView.text = numThreads.toString()
-            setNumThreads(numThreads)
         } else if (v.id == R.id.minus) {
-            val threads = threadsTextView.text.toString().trim { it <= ' ' }
-            var numThreads = threads.toInt()
-            if (numThreads == 1) {
-                return
-            }
+            if (numThreads == 1) return
             numThreads--
-            threadsTextView.text = numThreads.toString()
-            setNumThreads(numThreads)
         }
+        threadsTextView.text = numThreads.toString()
+        setNumThreads(numThreads)
     }
 
     protected fun showFrameInfo(frameInfo: String?) {
