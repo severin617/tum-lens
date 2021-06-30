@@ -1,6 +1,6 @@
 package com.maxjokel.lens
 
-import android.Manifest
+import android.Manifest.permission
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,101 +10,60 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.maxjokel.lens.classification.ClassificationActivity
+import com.maxjokel.lens.helpers.Logger
 
 // This is the first activity that is shown to the user. Asks for permissions (camera, etc.) and
 // states reasons why they are necessary.
 class StartScreenActivity : AppCompatActivity() {
-    // init global permission related variables
-    private val ALL_PERMISSIONS = 101
-    private val permissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
+
+    private val permissions = arrayOf(permission.CAMERA, permission.READ_EXTERNAL_STORAGE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        // switch back to default theme [source: https://android.jlelse.eu/the-complete-android-splash-screen-guide-c7db82bce565]
+        // we only jump into this activity when permissions are still missing
+        if (areAllPermissionsGranted()) launchWithoutHistory(ClassificationActivity::class.java)
+        // replace splash screen placeholder with app theme once this activity is fully loaded
+        // (source: https://android.jlelse.eu/the-complete-android-splash-screen-guide-c7db82bce565)
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
 
-        // prevent display from being dimmed down
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-        // set status bar background to black
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-
-        // set corresponding layout
         setContentView(R.layout.activity_start_screen)
 
-        // check if permissions are already granted
-        // if so, then launch directly into the 'ViewFinder' activity
-        checkForPermissions()
-
-        // no permission, show the corresponding view...
-
-        // UI elements of view
-        val btn_requestPermission = findViewById<Button>(R.id.button)
-
-        // set on-click-listener for button to request permission
-        btn_requestPermission.setOnClickListener {
-            // check permissions status:
-            if (ContextCompat.checkSelfPermission(this@StartScreenActivity,
-                    Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                &&
-                ContextCompat.checkSelfPermission(this@StartScreenActivity,
-                    Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-
-                // permissions granted -> open 'ViewFinder' activity
-                val intent = Intent(this@StartScreenActivity, ClassificationActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                startActivity(intent)
-            } else {
-                // request permissions as they haven't been granted yet
-                ActivityCompat.requestPermissions(this@StartScreenActivity, permissions, ALL_PERMISSIONS)
-            }
-        }
-    }
-
-    // this function checks if the necessary permissions are already granted
-    // if so, it then launches the view-finder activity
-    private fun checkForPermissions() {
-        // check permissions status:
-        if (ContextCompat.checkSelfPermission(this@StartScreenActivity,
-                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-            &&
-            ContextCompat.checkSelfPermission(this@StartScreenActivity,
-                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-
-            // permissions granted -> open 'ViewFinder' activity
-            val intent = Intent(this@StartScreenActivity, ClassificationActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-            startActivity(intent)
-            finish()
+        findViewById<Button>(R.id.givePermissionBtn).setOnClickListener {
+            ActivityCompat.requestPermissions(this, permissions, ALL_PERMISSIONS)
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == ALL_PERMISSIONS) {
             // now verify if both permissions were granted:
-            var isGrantedForAll = true
-            if (grantResults.size > 0 && permissions.size == grantResults.size) {
-                for (i in permissions.indices) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        isGrantedForAll = false
-                        break
-                    }
+            if (grantResults.isNotEmpty() && permissions.size == grantResults.size) {
+                if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    launchWithoutHistory(ClassificationActivity::class.java)
+                } else { // switch to view that explains again and offers a redirect to settings
+                    launchWithoutHistory(PermissionDeniedActivity::class.java)
                 }
             }
-            if (isGrantedForAll) {
-                // permissions granted -> open 'ViewFinder' activity
-                val intent = Intent(this@StartScreenActivity, ClassificationActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                startActivity(intent)
-                finish()
-            } else { // permissions denied
-                // switch to view that explains again and offers a redirect to settings
-                val intent = Intent(this@StartScreenActivity, PermissionDeniedActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                startActivity(intent)
-                finish()
-            }
         }
+    }
+
+    private fun launchWithoutHistory(activity:	Class<*>) {
+        val intent = Intent(this@StartScreenActivity, activity)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun areAllPermissionsGranted(): Boolean {
+        return isGranted(permission.CAMERA) && isGranted(permission.READ_EXTERNAL_STORAGE)
+    }
+
+    private fun isGranted(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(this@StartScreenActivity, permission) ==
+            PackageManager.PERMISSION_GRANTED
+    }
+
+    companion object {
+        private const val ALL_PERMISSIONS = 101
     }
 }
