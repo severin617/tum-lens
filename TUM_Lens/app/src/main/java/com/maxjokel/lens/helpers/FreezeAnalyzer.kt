@@ -39,8 +39,4 @@ class FreezeAnalyzer(private val callback: FreezeCallback) : ImageAnalysis.Analy
         isFrozen = true
         lensFrontBack = lens
     }
-
-    companion object {
-        private val LOGGER = Logger()
-    }
 }
