@@ -15,9 +15,7 @@
  */
 package com.maxjokel.lens.detection
 
-import android.Manifest
 import android.app.Fragment
-import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.hardware.Camera.PreviewCallback
 import android.hardware.camera2.CameraAccessException
@@ -68,11 +66,8 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
         super.onCreate(null)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.activity_detection)
-        if (hasPermission()) {
-            setFragment()
-        } else {
-            requestPermission()
-        }
+        setFragment()
+
         frameValueTextView = findViewById(R.id.frame_info)
         cropValueTextView = findViewById(R.id.crop_info)
         inferenceTimeTextView = findViewById(R.id.inference_info)
@@ -114,8 +109,9 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
         yuvBytes[0] = bytes
         yRowStride = previewWidth
 
-        imageConverter =
-            Runnable { convertYUV420SPToARGB8888(bytes, previewWidth, previewHeight, rgbBytes!!) }
+        imageConverter = Runnable {
+            convertYUV420SPToARGB8888(bytes, previewWidth, previewHeight, rgbBytes!!)
+        }
 
         postInferenceCallback = Runnable {
             camera.addCallbackBuffer(bytes)
@@ -215,35 +211,6 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSIONS_REQUEST) {
-            if (allPermissionsGranted(grantResults)) {
-                setFragment()
-            } else {
-                requestPermission()
-            }
-        }
-    }
-
-    private fun hasPermission(): Boolean {
-        return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestPermission() {
-        if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
-            Toast.makeText(
-                this@CameraActivity,
-                "Camera permission is required for this demo",
-                Toast.LENGTH_LONG
-            )
-                .show()
-        }
-        requestPermissions(arrayOf(PERMISSION_CAMERA), PERMISSIONS_REQUEST)
-    }
-
     // Returns true if the device supports the required hardware level, or better.
     private fun isHardwareLevelSupported(characteristics: CameraCharacteristics,
                                          requiredLevel: Int): Boolean {
@@ -330,8 +297,6 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
         return super.onOptionsItemSelected(item)
     }
 
-    val isDebug = false
-
     protected fun readyForNextImage() {
         if (postInferenceCallback != null) postInferenceCallback!!.run()
     }
@@ -384,16 +349,6 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
 
     companion object {
         private val LOGGER = Logger()
-        private const val PERMISSIONS_REQUEST = 1
-        private const val PERMISSION_CAMERA = Manifest.permission.CAMERA
-
-        private fun allPermissionsGranted(grantResults: IntArray): Boolean {
-            for (result in grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    return false
-                }
-            }
-            return true
-        }
+        const val isDebug = false
     }
 }
