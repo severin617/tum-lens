@@ -221,7 +221,7 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
             )).use { br ->
                 var line: String?
                 while (br.readLine().also { line = it } != null) {
-                    Log.w(TAG, line)
+                    Log.w(TAG, line!!)
                     d.labels.add(line!!)
                 }
             }
