@@ -18,8 +18,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import com.google.android.material.button.MaterialButtonToggleGroup
@@ -190,7 +190,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
                 .setListener(null)
 
             // re-init live camera preview feed
-            resetFrozenViewFinder()
+            resetFrozenClassification()
             isClassificationPaused = !isClassificationPaused
         }
 
@@ -206,7 +206,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
     // initialises preview object that holds the camera live feed
     // [based around: https://stackoverflow.com/q/59661727]
     private fun buildPreviewUseCase() {
-        LOGGER.i("ViewFinder: building preview use case.")
+        LOGGER.i("ClassificationActivity: building preview use case.")
 
         // init preview object that holds the camera live feed
         _preview = Preview.Builder()
@@ -215,7 +215,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             .build()
 
         // bind and init camera feed to the corresponding object in our layout
-        _preview!!.setSurfaceProvider(cameraView!!.createSurfaceProvider())
+        _preview?.setSurfaceProvider(cameraView?.surfaceProvider)
 
         // bind preview use case to CameraX lifecycle
         if (_cameraSelector != null) _cameraProvider!!.bindToLifecycle(
@@ -361,7 +361,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         if (isClassificationPaused) { // resume classification: adjust UI
             // !!! IMPORTANT !!! see 'btn_pause event listener' as well!
             // re-init live camera preview feed
-            resetFrozenViewFinder()
+            resetFrozenClassification()
             focusCircle.startAnimation(fadeIn)
             focusCircle.visibility = View.VISIBLE
             findViewById<View>(R.id.btn_play).startAnimation(fadeOut)
@@ -395,7 +395,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
     }
 
     // counterpart to the method above to restore the default
-    private fun resetFrozenViewFinder() {
+    private fun resetFrozenClassification() {
         runOnUiThread {
             _frozenPreviewWindow!!.visibility = View.INVISIBLE
             cameraView!!.visibility = View.VISIBLE
