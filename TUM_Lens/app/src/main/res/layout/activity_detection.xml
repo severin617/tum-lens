@@ -15,9 +15,7 @@
         tools:context="com.maxjokel.lens.detection.CameraActivity" />
 
     <!--  TOGGLE TO SWITCH DETECTION MODES  -->
-    <include
-        app:checkedButton="@+id/btn_detection"
-        layout="@layout/btn_detection_mode" />
+    <include layout="@layout/btn_detection_mode" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/activity_detection_bottom_sheet_view"

@@ -9,7 +9,6 @@
 
 <!--  LAYER 1: allows user to choose image from camera roll; then shows the selected image  -->
     <LinearLayout
-        android:id="@+id/activity_classification_root_layout"
         android:orientation="vertical"
         android:background="@color/white"
         android:layout_width="match_parent"
@@ -50,7 +49,7 @@
                     android:layout_height="48dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_baseline_image_24"
-                    android:tint="@color/colorPrimary"
+                    app:tint="@color/colorPrimary"
                     tools:ignore="ContentDescription" />
                 <TextView
                     android:layout_marginTop="8dp"
