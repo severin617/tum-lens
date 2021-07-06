@@ -6,12 +6,11 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/detectionModeToggleButton"
+        android:id="@+id/analysisToggleGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_margin="12dp"
-        app:checkedButton = "@+id/btn_classification"
         app:singleSelection="true"
         app:selectionRequired="true">
         <Button
