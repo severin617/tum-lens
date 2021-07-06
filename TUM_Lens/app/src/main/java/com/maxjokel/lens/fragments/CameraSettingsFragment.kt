@@ -24,13 +24,13 @@ class CameraSettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // set up button for rotating camera
-        getView()!!.findViewById<View>(R.id.btn_rotate).setOnClickListener { v ->
+        requireView().findViewById<View>(R.id.btn_rotate).setOnClickListener { v ->
             v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
             // trigger classifier update   [source: https://stackoverflow.com/a/6270150]
             for (events in listeners) events.onRotateToggled()
         }
         // turn flash on or off
-        getView()!!.findViewById<View>(R.id.btn_flash).setOnClickListener {
+        requireView().findViewById<View>(R.id.btn_flash).setOnClickListener {
             for (events in listeners) events.onFlashToggled()
         }
     }

@@ -1,7 +1,6 @@
 package com.maxjokel.lens.classification
 
 import android.annotation.SuppressLint
-import android.app.ActivityOptions
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
@@ -52,12 +51,17 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
     private var _cameraExecutorForFreezing: ExecutorService? = null
     private var isFlashEnabled = false
 
-    // Layout element
+    // Layout elements
     private var cameraView: PreviewView? = null
     private var _frozenPreviewWindow: ImageView? = null
     private var _freezeAnalyzer: FreezeAnalyzer? = null
     private var _freezeImageAnalysis: ImageAnalysis? = null
     private var lensFrontBack = 0 // [0 = back, 1 = front]
+
+    // Buttons from toggle button group
+    private lateinit var analysisToggleGroup: MaterialButtonToggleGroup
+    private lateinit var btnDetection: Button
+    private lateinit var btnClassification: Button
 
     // TF-Lite related to CLASSIFICATION:   [source: TF-Lite example app]
     private var previewDimX = 960
@@ -91,6 +95,12 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         // set corresponding layout
         setContentView(R.layout.activity_classification)
 
+        analysisToggleGroup = findViewById(R.id.analysisToggleGroup)
+        btnDetection = findViewById(R.id.btn_detection)
+        btnClassification = findViewById(R.id.btn_classification)
+        analysisToggleGroup.check(R.id.btn_classification)
+        analysisToggleGroup.uncheck(R.id.btn_detection)
+
         // [source: https://developer.android.com/training/gestures/detector#java]
         // Set up and instantiate the gesture detector with the application context
         mGestureDetector = GestureDetectorCompat(this, this)
@@ -110,8 +120,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.add(
-            R.id.modelselector_container,
-            msf,
+            R.id.modelselector_container, msf,
             "msf")
         fragmentTransaction.add(
             R.id.perframe_results_container, predictionsFragment!!,
@@ -158,16 +167,12 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         // +                SET UP EVENT LISTENERS                 +
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-        
-        val btnDetectionModeToggle = findViewById<MaterialButtonToggleGroup>(R.id.detectionModeToggleButton)
-        val btnDetection = findViewById<Button>(R.id.btn_detection)
-        btnDetectionModeToggle.addOnButtonCheckedListener { group, checkedId, _ ->
+
+        analysisToggleGroup.addOnButtonCheckedListener { group, checkedId, _ ->
             if (checkedId == btnDetection.id) {
                 group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
                 val intent = Intent(this, DetectionActivity::class.java)
-                val options = ActivityOptions
-                    .makeSceneTransitionAnimation(this, cameraView, "camera")
-                startActivity(intent, options.toBundle())
+                startActivity(intent)
             }
         }
 
@@ -412,13 +417,13 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         prefs!!.edit().putInt("lens", lensFrontBack).apply() // save to SharedPreferences
     }
 
+    // turns camera flash on or off, if there is one
     override fun onFlashToggled() {
-        // turn camera flash on or off, if there is one
         if (_camera!!.cameraInfo.hasFlashUnit()) {
             val btn = findViewById<ImageButton>(R.id.btn_flash)
             btn.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
             _camera!!.cameraControl.enableTorch(!isFlashEnabled) // toggles flash
-            val newColor = if (isFlashEnabled) R.color.colorPrimary else R.color.colorAccent
+            val newColor = if (isFlashEnabled) R.color.colorPrimary else R.color.yellow
             btn.setColorFilter(ContextCompat.getColor(this@ClassificationActivity, newColor))
             isFlashEnabled = !isFlashEnabled
         }
