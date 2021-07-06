@@ -36,6 +36,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.maxjokel.lens.R
+import com.maxjokel.lens.detection.CameraConnectionFragment.ConnectionCallback
 import com.maxjokel.lens.helpers.ImageUtils.convertYUV420SPToARGB8888
 import com.maxjokel.lens.helpers.ImageUtils.convertYUV420ToARGB8888
 import com.maxjokel.lens.helpers.Logger
@@ -253,15 +254,16 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
         val cameraId = chooseCamera()
         val fragment: Fragment
         if (useCamera2API) {
+            val connectionCallback = ConnectionCallback { size, rotation ->
+                previewHeight = size.height
+                previewWidth = size.width
+                onPreviewSizeChosen(size, rotation)
+            }
             val camera2Fragment = CameraConnectionFragment.newInstance(
-                { size, rotation ->
-                    previewHeight = size.height
-                    previewWidth = size.width
-                    onPreviewSizeChosen(size, rotation)
-                },
+                connectionCallback,
                 this,
                 layoutId,
-                desiredPreviewFrameSize
+                desiredPreviewFrameSize!!
             )
             camera2Fragment.setCamera(cameraId)
             fragment = camera2Fragment
