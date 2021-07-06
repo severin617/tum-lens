@@ -39,7 +39,7 @@ import com.maxjokel.lens.classification.ClassificationActivity
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.
  */
-class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener, OverlayView.DrawCallback {
+class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
     private var trackingOverlay: OverlayView? = null
     private var sensorOrientation: Int? = null
     private var detector: Detector? = null
@@ -197,7 +197,7 @@ class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val btnDetectionModeToggle = findViewById<MaterialButtonToggleGroup>(R.id.detectionModeToggleButton)
+        val btnDetectionModeToggle = findViewById<MaterialButtonToggleGroup>(R.id.analysisToggleGroup)
         val btnClassification = findViewById<Button>(R.id.btn_classification)
         btnDetectionModeToggle.addOnButtonCheckedListener { group, checkedId, _ ->
             if (checkedId == btnClassification.id) {
@@ -222,8 +222,9 @@ class DetectionActivity : CameraActivity(), ImageReader.OnImageAvailableListener
 
         // Minimum detection confidence to track a detection.
         private const val MINIMUM_CONFIDENCE_TF_OD_API = 0.5f
+
         private const val MAINTAIN_ASPECT = false
-        private val DESIRED_PREVIEW_SIZE = Size(640, 480)
+        private val DESIRED_PREVIEW_SIZE = Size(640, 240)
         private const val SAVE_PREVIEW_BITMAP = false
         private const val TEXT_SIZE_DIP = 10f
     }
