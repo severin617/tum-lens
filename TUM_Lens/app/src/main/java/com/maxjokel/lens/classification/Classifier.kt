@@ -36,10 +36,8 @@ import java.util.concurrent.CountDownLatch
  */
 class Classifier private constructor() {
 
-    // private constructor that can't be accessed from outside
     init {
         Trace.beginSection("private NewSingletonClassifier()")
-        // LOGGER.i("+++ NEW: trying to exec constructor NewSingletonClassifier()");
         try {
             // wait for a running classification to finnish
             latchThatBlocksINITIALIZATION.await()
@@ -152,13 +150,11 @@ class Classifier private constructor() {
 
                 // block any initialization until the classification is done
                 latchThatBlocksINITIALIZATION = CountDownLatch(1)
-                // LOGGER.i("+++ NEW recognizeImage: latchThatBlocksINITIALIZATION = new CountDownLatch(1);");
 
                 if (bitmap == null) throw Exception()
 
                 val recognitions = classify(bitmap)
                 latchThatBlocksINITIALIZATION.countDown()
-                // LOGGER.i("+++ NEW recognizeImage: latchThatBlocksINITIALIZATION.countdown() && returning 0");
                 recognitions
             } catch (e: Exception) {
                 e.printStackTrace()
