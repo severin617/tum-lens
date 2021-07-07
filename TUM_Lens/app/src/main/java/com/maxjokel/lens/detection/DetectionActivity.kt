@@ -199,11 +199,13 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
         super.onCreate(savedInstanceState)
         val btnDetectionModeToggle = findViewById<MaterialButtonToggleGroup>(R.id.analysisToggleGroup)
         val btnClassification = findViewById<Button>(R.id.btn_classification)
+
         btnDetectionModeToggle.addOnButtonCheckedListener { group, checkedId, _ ->
             if (checkedId == btnClassification.id) {
                 group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
                 val intent = Intent(this, ClassificationActivity::class.java)
                 // TODO: add AcitivtyOptions (see same fun in ClassificationActivity) for smooth transition
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 startActivity(intent)
             }
         }

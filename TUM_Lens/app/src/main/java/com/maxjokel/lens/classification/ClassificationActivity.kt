@@ -172,6 +172,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             if (checkedId == btnDetection.id) {
                 group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
                 val intent = Intent(this, DetectionActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 startActivity(intent)
             }
         }
