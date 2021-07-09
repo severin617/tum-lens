@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.maxjokel.lens.classification.Classifier.Companion.onConfigChanged
 import com.maxjokel.lens.R
+import com.maxjokel.lens.classification.Classifier
 import com.maxjokel.lens.helpers.ProcessingUnit
 import java.util.*
 
@@ -41,7 +41,7 @@ class ProcessingUnitSelectorFragment  // Required empty public constructor
     ): View? {
 
         // load sharedPreferences object and set up editor
-        prefs = Objects.requireNonNull(this.activity)!!
+        prefs = this.requireActivity()
             .getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
 
         // Inflate the layout for this fragment
@@ -69,7 +69,7 @@ class ProcessingUnitSelectorFragment  // Required empty public constructor
 
         // set initial selection
         val cName = "chip_" + PROCESSINGUNIT.name
-        val cId = resources.getIdentifier(cName, "id", activity!!.packageName)
+        val cId = resources.getIdentifier(cName, "id", requireActivity().packageName)
         val c: Chip = view.findViewById(cId)
         c.isChecked = true
 
@@ -93,10 +93,7 @@ class ProcessingUnitSelectorFragment  // Required empty public constructor
                 putInt("processing_unit", PROCESSINGUNIT.hashCode())
                 apply()
             }
-
-
-            // trigger classifier update
-            onConfigChanged()
+            Classifier.onConfigChanged() // trigger classifier update
         }
     }
 

@@ -28,9 +28,9 @@ class CameraRollActivity : AppCompatActivity() {
     // holds the last image, so that when the model is changed we can re-run classification
     private var savedBitmap: Bitmap? = null
     // Fragment in BottomSheet that displays the classification results
-    lateinit var predictionsFragment: CameraRollPredictionsFragment
+    private lateinit var predictionsFragment: CameraRollPredictionsFragment
 
-    var prefs: SharedPreferences? = null
+    private var prefs: SharedPreferences? = null
     private var _isInitialCall = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,7 +102,7 @@ class CameraRollActivity : AppCompatActivity() {
             val selectedImageUri = data!!.data
 
             // load image as bitmap
-            var bmp: Bitmap? = selectedImageUri?.let { ImageUtils.loadFromUri(it, contentResolver) }
+            val bmp: Bitmap? = selectedImageUri?.let { ImageUtils.loadFromUri(it, contentResolver) }
 
             // display, then crop and classify
             if (bmp != null) {
@@ -148,7 +148,7 @@ class CameraRollActivity : AppCompatActivity() {
         val intent = Intent(this@CameraRollActivity, ClassificationActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
-        // TODO: Investigate back stack behaviour; seems like it's doing wird navigation
+        // TODO: Investigate back stack behaviour; seems like it's doing weird navigation
     }
 
     companion object {

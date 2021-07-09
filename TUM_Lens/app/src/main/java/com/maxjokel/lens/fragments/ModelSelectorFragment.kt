@@ -16,9 +16,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.CompoundButtonCompat
 import androidx.fragment.app.Fragment
-import com.maxjokel.lens.classification.Classifier.Companion.getInstance
-import com.maxjokel.lens.classification.Classifier.Companion.onConfigChanged
 import com.maxjokel.lens.R
+import com.maxjokel.lens.classification.Classifier
 import com.maxjokel.lens.classification.ListSingleton
 import java.util.*
 
@@ -28,39 +27,28 @@ import java.util.*
 *  in the /assets directory that this fragment obtains via the ListSingleton instance
 */
 class ModelSelectorFragment: Fragment() {
-    // instantiate new SharedPreferences object
-    var prefs: SharedPreferences? = null
-    var prefEditor: SharedPreferences.Editor? = null
 
-    // related to 'ListSingleton'
+    private lateinit var prefs: SharedPreferences
+    private lateinit var prefEditor: SharedPreferences.Editor
+
     private var MODEL_LIST = ListSingleton.modelConfigs
 
-    // related to 'Classifier'
-    var newStaticClassifier = getInstance()
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        Classifier.initialize()
         // load sharedPreferences object and set up editor
-        prefs = Objects.requireNonNull(this.activity)!!
+        prefs = this.requireActivity()
             .getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
+        prefEditor = prefs.edit()
         super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_model_selector, container, false)
     }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        // this is called right after 'onCreateView()'
-
-
-        // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-        // +          DYNAMICALLY SET UP RADIO BUTTONS             +
-        // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-
 
         // workaround for 'dp' instead of 'px' units
         val dpRatio = view.context.resources.displayMetrics.density
@@ -105,10 +93,10 @@ class ModelSelectorFragment: Fragment() {
             textView.setTextColor(ContextCompat.getColor(view.context, R.color.black))
             textView.textSize = 12.0f
 
-            // add both elements to the RadioGroup
+
             radioGroup.addView(radioButton)
             radioGroup.addView(textView)
-        } // END of FOR loop
+        }
 
 
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -116,7 +104,7 @@ class ModelSelectorFragment: Fragment() {
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
         // get saved model Id from SharedPreferences
-        val id = prefs!!.getInt("model", 0)
+        val id = prefs.getInt("model", 0)
         var r = view.findViewById<RadioButton>(id)
         if (id == 0 || r == null) {
             r = view.findViewById(R.id.radioButton_FloatMobileNet)
@@ -130,15 +118,11 @@ class ModelSelectorFragment: Fragment() {
         // +           NETWORK SELECTOR via RadioGroup             +
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
-        // init SharedPreferences Editor
-        prefEditor = prefs!!.edit()
-
-        // init RadioGroup event listener
         radioGroup.setOnCheckedChangeListener { group, checkedId -> // perform haptic feedback
             group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
             var modelId = 0
             // save selection to SharedPreferences
-            prefEditor?.run {
+            prefEditor.run {
                 // check if it is the default RadioButton
                 if (checkedId != R.id.radioButton_FloatMobileNet) {
                     modelId = view.findViewById<View>(checkedId).id
@@ -146,7 +130,7 @@ class ModelSelectorFragment: Fragment() {
                 putInt("model", modelId) // save selection to SharedPreferences
                 apply()
             }
-            onConfigChanged() // trigger classifier update
+            Classifier.onConfigChanged() // trigger classifier update
         }
     }
 

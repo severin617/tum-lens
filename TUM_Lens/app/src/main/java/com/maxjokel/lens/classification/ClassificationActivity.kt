@@ -24,7 +24,6 @@ import androidx.core.view.GestureDetectorCompat
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.common.util.concurrent.ListenableFuture
 import com.maxjokel.lens.R
-import com.maxjokel.lens.classification.Classifier.Companion.recognizeImage
 import com.maxjokel.lens.fragments.*
 import com.maxjokel.lens.helpers.CameraEvents
 import com.maxjokel.lens.helpers.FreezeAnalyzer
@@ -260,7 +259,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             @ExperimentalGetImage val img = image.image
             val rgbBitmap = toCroppedBitmap(img!!, image.imageInfo.rotationDegrees)
             val startTime = SystemClock.uptimeMillis()
-            val results = recognizeImage(rgbBitmap) // run inference on image
+            val results = Classifier.recognizeImage(rgbBitmap) // run inference on image
             startTimestamp = SystemClock.uptimeMillis() - startTime
 
             // pass list of results to fragments that render the recognition results to UI

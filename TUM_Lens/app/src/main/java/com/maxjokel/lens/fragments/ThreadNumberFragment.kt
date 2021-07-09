@@ -11,51 +11,32 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.maxjokel.lens.classification.Classifier.Companion.onConfigChanged
 import com.maxjokel.lens.R
-import java.util.*
+import com.maxjokel.lens.classification.Classifier
 
-/* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-*
-* Fragment that controls the frame number selector in the BottomSheet of the ViewFinder activity
-*
-* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + */
-class ThreadNumberFragment  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// empty public constructor
-    : Fragment() {
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // layout elements
-    private var tv: TextView? = null
-    private var btn_plus: ImageButton? = null
-    private var btn_minus: ImageButton? = null
+/* Fragment that controls the frame number selector in the BottomSheet of the ViewFinder activity */
+class ThreadNumberFragment : Fragment() {
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // instantiate new SharedPreferences object
+    private lateinit var tv: TextView
+    private lateinit var btnPlus: ImageButton
+    private lateinit var btnMinus: ImageButton
+
     var prefs: SharedPreferences? = null
     var prefEditor: SharedPreferences.Editor? = null
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // other global variables
-    private var THREADNUMBER = 3 // default is 3
+    private var threadNumber = 3
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         // load sharedPreferences object and set up editor
-        prefs = Objects.requireNonNull(this.activity)!!
+        prefs = this.requireActivity()
             .getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
 
-
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_thread_number, container, false)
 
-        // set up all layout elements here as we will run into NullPointerExceptions when we use
-        // the dynamic 'getView()...' approach;
-        tv = view.findViewById<View>(R.id.tv_threads) as TextView
-        btn_minus = view.findViewById<View>(R.id.btn_threads_minus) as ImageButton
-        btn_plus = view.findViewById<View>(R.id.btn_threads_plus) as ImageButton
+        tv = view.findViewById(R.id.tv_threads)
+        btnMinus = view.findViewById(R.id.btn_threads_minus)
+        btnPlus = view.findViewById(R.id.btn_threads_plus)
         return view
     }
 
@@ -67,38 +48,28 @@ class ThreadNumberFragment  // - - - - - - - - - - - - - - - - - - - - - - - - -
         prefEditor = prefs!!.edit()
 
         // load number of threads from SharedPreferences
-        val saved_numberOfThreads = prefs!!.getInt("threads", 0)
-        if (saved_numberOfThreads > 0 && saved_numberOfThreads <= 15) {
-            THREADNUMBER = saved_numberOfThreads // update if within accepted range
+        val savedNumberOfThreads = prefs!!.getInt("threads", 0)
+        if (savedNumberOfThreads > 0 && savedNumberOfThreads <= 15) {
+            threadNumber = savedNumberOfThreads // update if within accepted range
         }
         updateThreadCounter()
 
-
         // decrease number of threads
-        btn_minus!!.setOnClickListener { v ->
-            if (THREADNUMBER > 1) {
+        btnMinus.setOnClickListener { v ->
+            if (threadNumber > 1) {
                 v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
-                THREADNUMBER--
-
-                // update UI and save to SharedPreferences
-                updateThreadCounter()
-
-                // trigger classifier update
-                onConfigChanged()
+                threadNumber--
+                updateThreadCounter() // update UI and save to SharedPreferences
+                Classifier.onConfigChanged() // trigger classifier update
             }
         }
-
         // increase number of threads
-        btn_plus!!.setOnClickListener { v ->
-            if (THREADNUMBER < 15) {
+        btnPlus.setOnClickListener { v ->
+            if (threadNumber < 15) {
                 v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
-                THREADNUMBER++
-
-                // update UI and save to SharedPreferences
-                updateThreadCounter()
-
-                // trigger classifier update
-                onConfigChanged()
+                threadNumber++
+                updateThreadCounter() // update UI and save to SharedPreferences
+                Classifier.onConfigChanged() // trigger classifier update
             }
         }
     }
@@ -112,11 +83,11 @@ class ThreadNumberFragment  // - - - - - - - - - - - - - - - - - - - - - - - - -
     protected fun updateThreadCounter() {
 
         // save number of threads to sharedPreferences
-        prefEditor!!.putInt("threads", THREADNUMBER)
+        prefEditor!!.putInt("threads", threadNumber)
         prefEditor!!.apply()
 
         // update UI
-        tv!!.text = "" + THREADNUMBER
+        tv.text = "" + threadNumber
     }
 
     companion object {
