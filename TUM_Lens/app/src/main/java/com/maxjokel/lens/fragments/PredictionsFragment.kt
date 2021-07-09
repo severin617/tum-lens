@@ -37,8 +37,6 @@ class PredictionsFragment: Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_predictions, container, false)
 
-        // set up all layout elements here as we will run into NullPointerExceptions when we use
-        // the dynamic 'getView()...' approach;
         pf_row0 = view.findViewById(R.id.pf_row0)
         pf_row1 = view.findViewById(R.id.pf_row1)
         pf_row2 = view.findViewById(R.id.pf_row2)
