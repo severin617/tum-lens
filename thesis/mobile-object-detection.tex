@@ -15,6 +15,7 @@
 
 \include{settings}
 \usepackage{lipsum} % for filling pages with stuff
+\usepackage[nohyperlinks]{acronym} % for all the abbreviations we will use. TODO: Check with option "printonlyused" if all acronyms appear in the document.
 
 % -------------------------------------------------------------------------------
 % --------------------------------- Thesis Info ---------------------------------
@@ -38,7 +39,7 @@
 \begin{document}
 \frontmatter
 % -------------------------------------------------------------------------------
-% ---------------------------------- COVERPAGE ----------------------------------
+% ---------------------------------- COVERPAGE ------------------------------
 % -------------------------------------------------------------------------------
 
 % correct BCOR - undo at the end !!!
@@ -65,7 +66,7 @@
 \cleardoubleemptypage
 
 % -------------------------------------------------------------------------------
-% ---------------------------------- TITLEPAGE ----------------------------------
+% ---------------------------------- TITLEPAGE --------------------------------
 % -------------------------------------------------------------------------------
 
 \def\bcorcor{0.15cm}
@@ -97,7 +98,7 @@
 \newpage
 
 % -------------------------------------------------------------------------------
-% ---------------------------------- DISCLAIMER ---------------------------------
+% ---------------------------------- DISCLAIMER -------------------------------
 % -------------------------------------------------------------------------------
 
 \cleardoubleemptypage
@@ -113,23 +114,7 @@ Munich, \date \hspace{5cm} \author
 \cleardoubleemptypage
 
 % -------------------------------------------------------------------------------
-% ------------------------------- ACKNOWLEDGEMENTS ------------------------------
-% -------------------------------------------------------------------------------
-
-\phantomsection
-\addcontentsline{toc}{chapter}{Acknowledgements}
-\vspace*{2cm}
-\begin{center}
-    {\Large \bf Acknowledgements}
-\end{center}
-\vspace{1cm}
-
-\lipsum[1]
-
-\cleardoublepage
-
-% -------------------------------------------------------------------------------
-% ---------------------------------- ABSTRACT -----------------------------------
+% ---------------------------------- ABSTRACT --------------------------------
 % -------------------------------------------------------------------------------
 
 \phantomsection
@@ -144,20 +129,31 @@ Munich, \date \hspace{5cm} \author
 
 \cleardoublepage
 
+% -------------------------------------------------------------------------------
+% ---------------------------------- ACRONYMS --------------------------------
+% -------------------------------------------------------------------------------
+
 \phantomsection
-\addcontentsline{toc}{chapter}{Zusammenfassung}
+\addcontentsline{toc}{chapter}{Acronyms}
 \vspace*{2cm}
 \begin{center}
-    {\Large \bf Zusammenfassung}
+	{\Large \bf Acronyms}
 \end{center}
 \vspace{1cm}
 
-\lipsum[2]
+\begin{acronym}[ResNet] % use the longest abbrevation as option to attain an uniform layout
+	\acro{ml}[ML]{Machine Learning}
+	\acro{cv}[CV]{Computer Vision}
+	\acro{nn}[NN]{Neural Network}
+	\acro{cnn}[CNN]{Convolutional Neural Network}
+	\acro{resnet}[ResNet]{Residual Neural Network}
+	\acro{relu}[ReLU]{Rectified Linear Unit}
+\end{acronym}
 
 \cleardoublepage
 
 % -------------------------------------------------------------------------------
-% ------------------------------ TABLE OF CONTENTS ------------------------------
+% ------------------------------ TABLE OF CONTENTS -------------------------
 % -------------------------------------------------------------------------------
 
 \tableofcontents
@@ -165,14 +161,76 @@ Munich, \date \hspace{5cm} \author
 \cleardoubleemptypage
 
 % -------------------------------------------------------------------------------
-% --------------------------------- MAIN MATTER ---------------------------------
+% --------------------------------- MAIN MATTER ------------------------------
 % -------------------------------------------------------------------------------
 
 \mainmatter
 \part{Introduction and Background}
-\chapter{Introduction}
-\label{sec:intro}       % labels can be put almost anywhere and can be referencef from anywhere.
-Write some useful intro. Here are tips along the way:
+
+\chapter{Motivation}
+
+\section{Growing Support for Machine Learning Applications Running On-Device}
+
+\section{Privacy Implications of On-Device Machine Learning}
+
+\chapter{Computer Vision}
+
+\section{History of Computer Vision}
+
+\section{Typical Tasks in the Field of Computer Vision}
+
+\section{Computer Vision on Mobile Devices}
+
+\chapter{State of the Art Solutions for Object Detection on Mobile Devices}
+
+\section{Introduction to XYZ Networks}
+
+\section{Some Deep}
+\section{Dive Into}
+\section{Object Detection}
+\section{Theory Fun}
+
+\part{App Development}
+
+\chapter{Previous State of the Application}
+
+\section{Use Cases}
+
+\section{Notable Design Decisions}
+
+\chapter{Development Goals}
+
+\section{Migration From Java to Kotlin}
+
+\section{New Functionality: Object Detection}
+
+\chapter{Implementing Object Detection Based on the TensorFlow Lite Framework}
+
+\section{Some Deep}
+\section{Dive Into}
+\section{Object Detection}
+\section{Implementation Fun}
+
+% Potential Contets: Design and architecture choices, reused patterns from exisiting application, improvements to exisiting code
+
+\part{Results}
+
+\section{Performance of Current State of the Art Object Detection Networks on Mobile Devices}
+
+\section{Future Work} % Can also be named "Outlook" depending on the contents of this section
+
+% -------------------------------------------------------------------------------
+% ----------------------------------- APPENDIX --------------------------------
+% -------------------------------------------------------------------------------
+
+\appendix
+\part{Appendix}
+
+\chapter{Screenshots of the Application}
+
+\chapter{Tips With Greetings From the Chair}
+\label{sec:tips}       % labels can be put almost anywhere and can be referencef from anywhere.
+Here are tips along the way:
 
 \section{Tips}
 \subsection{How to Describe}
@@ -180,44 +238,44 @@ Write some useful intro. Here are tips along the way:
 \setlength{\columnsep}{30 pt}
 When listing several points you have three basic options:
 \begin{multicols}{3}
-    \begin{itemize}
-        \item itemize
-        \item enumerate
-        \item description
-    \end{itemize}
-
-    \vfill\null
-    \columnbreak
-
-    \begin{enumerate}
-        \item itemize
-        \item enumerate
-        \item description
-    \end{enumerate}
-
-    \vfill\null
-    \columnbreak
-
-    \begin{description}
-        \item[itemize] short, unordered
-        \item[enumerate] short ordered
-        \item[description] listing of descriptions. Also nice for longer ones.
-    \end{description}
-
+	\begin{itemize}
+		\item itemize
+		\item enumerate
+		\item description
+	\end{itemize}
+	
+	\vfill\null
+	\columnbreak
+	
+	\begin{enumerate}
+		\item itemize
+		\item enumerate
+		\item description
+	\end{enumerate}
+	
+	\vfill\null
+	\columnbreak
+	
+	\begin{description}
+		\item[itemize] short, unordered
+		\item[enumerate] short ordered
+		\item[description] listing of descriptions. Also nice for longer ones.
+	\end{description}
+	
 \end{multicols}
 
 
 \subsection{How to Quote}
 
 \begin{quote}
-    "This is a quote!"
+	"This is a quote!"
 \end{quote}
 
 \begin{itemize}
-    \item Citations to a source can be made like this \verb|\cite{gratl17task}| =~\cite{gratl17task}
-    \subitem Always join text and the citation with a non-breaking space: \verb|text~\cite{foo}|.
-    \item Referencing Sections, Figures, Tables, Formulas: \verb|\autoref{sec:intro}| = \autoref{sec:intro}.
-    \item Footnotes for url or further notes: \verb|\footnote{\url{https://www.top500.org}}| = \footnote{\url{https://www.top500.org}}
+	\item Citations to a source can be made like this \verb|\cite{gratl17task}| =~\cite{gratl17task}
+	\subitem Always join text and the citation with a non-breaking space: \verb|text~\cite{foo}|.
+	\item Referencing Sections, Figures, Tables, Formulas: \verb|\autoref{sec:tips}| = \autoref{sec:tips}.
+	\item Footnotes for url or further notes: \verb|\footnote{\url{https://www.top500.org}}| = \footnote{\url{https://www.top500.org}}
 \end{itemize}
 
 \subsection{How to Math}
@@ -225,8 +283,8 @@ When listing several points you have three basic options:
 Use the align environment for equations especially if you want to align them somehow.
 
 \begin{align}
-1 + 1 &\ne 3\\
-\left(\dfrac{10}{1}\right) - 9 &= 1
+	1 + 1 &\ne 3\\
+	\left(\dfrac{10}{1}\right) - 9 &= 1
 \end{align}
 
 % if you need a pagebreak because figure placement is broken:
@@ -239,125 +297,121 @@ Use the align environment for equations especially if you want to align them som
 Anything can also be put in multiple columns.
 
 \begin{multicols}{2} % defines an environment with two columns
-    \begin{figure}[H] % [H] for HERE
-        \centering
-        \includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}
-        \caption[Example Figure]{Some Caption. Always also include a source if it wasn't created by you!\\
-            \tiny{Source: \cite{gratl17task}}}
-        \label{fig:exampleLabel1} % labels always have to be placed after the caption
-    \end{figure}
-
-    \columnbreak    % start next column
-
-    \begin{figure}[H]
-        \centering
-        \begin{tikzpicture}
-            \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}};
-            \begin{scope}[x={(image.south east)},y={(image.north west)}]
-            \draw[red, thin,rounded corners] (.42,.42) rectangle (.58,.6);
-            \end{scope}
-        \end{tikzpicture}
-        \caption[Figure with tikz]{Figures can be drawn on or completely generated with tikz.}
-        \label{fig:exampleLabel2}
-    \end{figure}
+	\begin{figure}[H] % [H] for HERE
+		\centering
+		\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}
+		\caption[Example Figure]{Some Caption. Always also include a source if it wasn't created by you!\\
+			\tiny{Source: \cite{gratl17task}}}
+		\label{fig:exampleLabel1} % labels always have to be placed after the caption
+	\end{figure}
+	
+	\columnbreak    % start next column
+	
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\draw[red, thin,rounded corners] (.42,.42) rectangle (.58,.6);
+			\end{scope}
+		\end{tikzpicture}
+		\caption[Figure with tikz]{Figures can be drawn on or completely generated with tikz.}
+		\label{fig:exampleLabel2}
+	\end{figure}
 \end{multicols}
 
 \paragraph{Subfigures}
 If grouping of several pictures seems reasonable, think about using subfigures. This often comes in handy with plots.
 
 \begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.33\textwidth}
-        \includegraphics[width=\textwidth]{example-image-a}
-        \caption{example-image-a}
-        \label{fig:example-image-a}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.33\textwidth}
-        \includegraphics[width=\textwidth]{example-image-b}
-        \caption{example-image-b}
-        \label{fig:example-image-b}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.33\textwidth}
-        \includegraphics[width=\textwidth]{example-image-c}
-        \caption{example-image-c}
-        \label{fig:example-image-c}
-    \end{subfigure}
-    \caption{One caption to describe them all.}
+	\centering
+	\begin{subfigure}[b]{0.33\textwidth}
+		\includegraphics[width=\textwidth]{example-image-a}
+		\caption{example-image-a}
+		\label{fig:example-image-a}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.33\textwidth}
+		\includegraphics[width=\textwidth]{example-image-b}
+		\caption{example-image-b}
+		\label{fig:example-image-b}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.33\textwidth}
+		\includegraphics[width=\textwidth]{example-image-c}
+		\caption{example-image-c}
+		\label{fig:example-image-c}
+	\end{subfigure}
+	\caption{One caption to describe them all.}
 \end{figure}
 
 \subsection{How to Algorithm}
 
 \begin{figure}
-\begin{algorithm}[H]
-
-% Define custom keywords
-\SetKwFunction{KwNot}{not}
-% Define custom Functions
-\SetKwFunction{Fissorted}{is\_sorted}
-\SetKwFunction{Fbogosort}{bogosort}
-\SetKwFunction{Fshuffle}{shuffle}
-\SetKwProg{Fn}{Function}{:}{}
-\KwIn{\tabto{2cm}data array}
-\KwOut{\tabto{2cm} data sorted}
-\BlankLine
-
-\tcp{Checks if array is sorted}
-\Fn{\Fissorted{data}}{
-    \For{i $\leftarrow$ 0 \KwTo data.size() - 1}{
-    \label{algo:for}            % labels can also be put in the algorithm
-        \If{data[i] $>$ data[i+1]}{
-            \Return false
-        }
-    }
-    \Return true
-}
-
-\tcp{actual algorithm}
-\Fn{\Fbogosort{data}}{
-    \While{\KwNot \Fissorted{data}}{
-        random.\Fshuffle{data}
-    }
-}
-
-\caption[Bogosort]{Bogosort}
-\label{algo:example}
-\end{algorithm}
-\caption{some description what is happening}
+	\begin{algorithm}[H]
+		
+		% Define custom keywords
+		\SetKwFunction{KwNot}{not}
+		% Define custom Functions
+		\SetKwFunction{Fissorted}{is\_sorted}
+		\SetKwFunction{Fbogosort}{bogosort}
+		\SetKwFunction{Fshuffle}{shuffle}
+		\SetKwProg{Fn}{Function}{:}{}
+		\KwIn{\tabto{2cm}data array}
+		\KwOut{\tabto{2cm} data sorted}
+		\BlankLine
+		
+		\tcp{Checks if array is sorted}
+		\Fn{\Fissorted{data}}{
+			\For{i $\leftarrow$ 0 \KwTo data.size() - 1}{
+				\label{algo:for}            % labels can also be put in the algorithm
+				\If{data[i] $>$ data[i+1]}{
+					\Return false
+				}
+			}
+			\Return true
+		}
+		
+		\tcp{actual algorithm}
+		\Fn{\Fbogosort{data}}{
+			\While{\KwNot \Fissorted{data}}{
+				random.\Fshuffle{data}
+			}
+		}
+		
+		\caption[Bogosort]{Bogosort}
+		\label{algo:example}
+	\end{algorithm}
+	\caption{some description what is happening}
 \end{figure}
 
 \clearpage
 
 \subsection{How to Code}
 \begin{lstlisting}[style=eclipse-cpp, caption=General form of a typical runner() function., label=code:runner]
-void runner(int type, void *data){
-    switch(type)
-        case taskType1:
-            // do stuff using data
-        case taskType2:
-            // do other stuff using data
-}
+	void runner(int type, void *data){
+		switch(type)
+		case taskType1:
+		// do stuff using data
+		case taskType2:
+		// do other stuff using data
+	}
 \end{lstlisting}
 
 \subsection{How to Table}
 \begin{table}[H]
-    \begin{tabularx}{\columnwidth}{L | C | R}
-        \hline
-        \hline
-        bla left & bla centered\newline over two lines &  bla right\\
-        \hline
-        bla left & bla centered & \multirow[c]{2}{\hsize}{cell spanning two rows} \\
-        \cline{1-2}
-        \multicolumn{2}{c|}{cell spanning two columns} & \\
-    \end{tabularx}
-    \caption[Some Table]{Fancy table that can contain line breaks and extended cells.}
-    \label{tab:example}
+	\begin{tabularx}{\columnwidth}{L | C | R}
+		\hline
+		\hline
+		bla left & bla centered\newline over two lines &  bla right\\
+		\hline
+		bla left & bla centered & \multirow[c]{2}{\hsize}{cell spanning two rows} \\
+		\cline{1-2}
+		\multicolumn{2}{c|}{cell spanning two columns} & \\
+	\end{tabularx}
+	\caption[Some Table]{Fancy table that can contain line breaks and extended cells.}
+	\label{tab:example}
 \end{table}
 
-\appendix
-\part{Appendix}
-\chapter{Some more stuff}
-
-For everything that does not really belong in the thesis but is good to mention.
+%TODO: Insert screenshots. Potentially even with the respective old version of a screen to see the development.
 
 \listoffigures
 
