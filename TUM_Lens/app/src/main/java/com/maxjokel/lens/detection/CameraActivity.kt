@@ -269,14 +269,14 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
             fragment = camera2Fragment
         } else {
             fragment = LegacyCameraConnectionFragment()
-            fragment.setImageListener(this)
-            fragment.setLayout(layoutId)
-            fragment.setDesiredSize(desiredPreviewFrameSize)
+            fragment.imageListener = this
+            fragment.layout = layoutId
+            fragment.desiredSize = desiredPreviewFrameSize
         }
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
-    protected fun fillBytes(planes: Array<Plane>, yuvBytes: Array<ByteArray?>) {
+    private fun fillBytes(planes: Array<Plane>, yuvBytes: Array<ByteArray?>) {
         // Because of the variable row stride it's not possible to know in
         // advance the actual necessary dimensions of the yuv planes.
         for (i in planes.indices) {
@@ -299,11 +299,11 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
         return super.onOptionsItemSelected(item)
     }
 
-    protected fun readyForNextImage() {
+    fun readyForNextImage() {
         if (postInferenceCallback != null) postInferenceCallback!!.run()
     }
 
-    protected val screenOrientation: Int
+    val screenOrientation: Int
         get() = when (windowManager.defaultDisplay.rotation) {
             Surface.ROTATION_270 -> 270
             Surface.ROTATION_180 -> 180
