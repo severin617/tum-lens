@@ -15,7 +15,26 @@
 
 \include{settings}
 \usepackage{lipsum} % for filling pages with stuff
-\usepackage[nohyperlinks]{acronym} % for all the abbreviations we will use. TODO: Check with option "printonlyused" if all acronyms appear in the document.
+
+
+% -------------------------------------------------------------------------------
+% ---------------------- Acronyms and Glossary Definition ---------------------
+% -------------------------------------------------------------------------------
+\usepackage[acronym,toc,shortcuts]{glossaries}
+\makeglossaries
+
+\newglossaryentry{deep_learning}
+{
+	name=deep learning,
+	description={is a branch of machine learning utilising artificial neural networks for information processing. The extensive internal structure of these networks is characterised by numerous intermediate ("hidden") layers between the input layer and the output layer}
+}
+
+\newacronym{ml}{ML}{Machine Learning}
+\newacronym{cv}{CV}{Computer Vision}
+\newacronym{nn}{NN}{Neural Network}
+\newacronym{cnn}{CNN}{Convolutional Neural Network}
+\newacronym{resnet}{ResNet}{Residual Neural Network}
+\newacronym{relu}{ReLU}{Rectified Linear Unit}
 
 % -------------------------------------------------------------------------------
 % --------------------------------- Thesis Info ---------------------------------
@@ -130,26 +149,13 @@ Munich, \date \hspace{5cm} \author
 \cleardoublepage
 
 % -------------------------------------------------------------------------------
-% ---------------------------------- ACRONYMS --------------------------------
+% --------------------------- Acronyms and Glossary --------------------------
 % -------------------------------------------------------------------------------
 
-\phantomsection
-\addcontentsline{toc}{chapter}{Acronyms}
-\vspace*{2cm}
-\begin{center}
-	{\Large \bf Acronyms}
-\end{center}
-\vspace{1cm}
+\printglossary[type=\acronymtype,nonumberlist]
+\cleardoublepage
 
-\begin{acronym}[ResNet] % use the longest abbrevation as option to attain an uniform layout
-	\acro{ml}[ML]{Machine Learning}
-	\acro{cv}[CV]{Computer Vision}
-	\acro{nn}[NN]{Neural Network}
-	\acro{cnn}[CNN]{Convolutional Neural Network}
-	\acro{resnet}[ResNet]{Residual Neural Network}
-	\acro{relu}[ReLU]{Rectified Linear Unit}
-\end{acronym}
-
+\printglossary[nonumberlist]
 \cleardoublepage
 
 % -------------------------------------------------------------------------------
@@ -165,7 +171,9 @@ Munich, \date \hspace{5cm} \author
 % -------------------------------------------------------------------------------
 
 \mainmatter
-\chapter{Introduction}
+\chapter{Motivation}
+
+The field of \gls{deep_learning} is actually a branch of \acrfull{ml}.
 
 \section{Growing Support for Running Machine Learning Operations on Mobile Devices}
 
@@ -213,9 +221,11 @@ Munich, \date \hspace{5cm} \author
 
 \chapter{Results}
 
-\section{Performance of Object Detection Algorithms on Mobile Devices}
+\section{Performance}
 
-\section{Future Work} % Can also be named "Outlook" depending on the contents of this section
+\section{Accuracy}
+
+\section{Possible Applications} % Can also be named "Future Work" depending on the contents of this section
 
 % -------------------------------------------------------------------------------
 % ----------------------------------- APPENDIX --------------------------------
