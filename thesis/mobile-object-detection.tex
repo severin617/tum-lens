@@ -23,13 +23,26 @@
 \usepackage[acronym,toc,shortcuts]{glossaries}
 \makeglossaries
 
-\newglossaryentry{deep_learning}
+\newglossaryentry{ml}
 {
-	name=deep learning,
-	description={is a branch of machine learning utilising artificial neural networks for information processing. The extensive internal structure of these networks is characterised by numerous intermediate ("hidden") layers between the input layer and the output layer}
+	name={machine learning},
+	description={the use and development of computer systems that are able to learn and adapt without following explicit instructions, by using algorithms and statistical models to analyse and draw inferences from patterns in data}
 }
 
-\newacronym{ml}{ML}{Machine Learning}
+\newglossaryentry{dl}
+{
+	name={deep learning},
+	description={a type of machine learning based on artificial neural networks in which multiple layers of processing are used to extract progressively higher level features from data}
+	% is a branch of machine learning utilising artificial neural networks for information processing. The extensive internal structure of these networks is characterised by numerous intermediate ("hidden") layers between the input layer and the output layer
+}
+
+\newglossaryentry{api}
+{
+	name={api},
+	description={a set of functions and procedures allowing the creation of applications that access the features or data of an operating system, application, or other service}
+}
+
+\newacronym{nnapi}{NNAPI}{Neural Networks API}
 \newacronym{cv}{CV}{Computer Vision}
 \newacronym{nn}{NN}{Neural Network}
 \newacronym{cnn}{CNN}{Convolutional Neural Network}
@@ -173,11 +186,17 @@ Munich, \date \hspace{5cm} \author
 \mainmatter
 \chapter{Motivation}
 
-The field of \gls{deep_learning} is actually a branch of \acrfull{ml}.
+Die im Rahmen dieser Arbeit weiterentwickelte Android-App TUM-Lens [LINK] analysiert Bilder, die über die Kamera des Androidgeräts aufgenommen und als Live-Feed an die App übertragen werden. Für ein gutes Nutzererlebnis muss die Analyse der Bilder nahezu in Echtzeit erfolgen. Nur so passen die angezeigten Analyseergebnisse stets zum aktuellen Inhalt des Kamera-Feeds, der sich durch Schwenks des Smartphone durch dessen Benutzer sehr schnell ändern kann. Während die Analyse von Bilddaten in vielen Anwendungsfällen dezentral in leistungsfähigen Rechenzentren erfolgen kann, läuft die Bildanalyse im Falle von TUM-Lens auf dem mobilen Endgerät selbst ab.
 
-\section{Growing Support for Running Machine Learning Operations on Mobile Devices}
+\section{Growing Support for Running (Deep) Machine Learning Operations on Mobile Devices}
+
+Die stetig wachsende Unterstützung für die Enwicklung von Machine Learning und auch insbesondere Deep Learning Anwedungen für Smartphones ist ein wesentlicher Katalysator für die Entwicklung von TUM-Lens. Dabei wächst diese Unterstützung aus verschiedenen Richtungen gleichzeitig. Entwicklerfreundliche Frameworks wie das von Google Brain entwickelte TensorFlowoder das von Facebook's AI Research Lab entwickelte PyTorch gehören zu den bekanntesten deep learning frameworks \cite{dl_ranking_2018}. Die Veröffentlichung von TensorFlow Lite\footnote{\url{https://www.tensorflow.org/lite}} 2017 \cite{tflite_release_verge_2017} und PyTorch Mobile 2019 \cite{pytorch_release_2019} zeigen, dass auch mobile Plattformen zunehmend in den Fokus der Unternehmen rücken, die Machine Learning Software bereitstellen. Aber auch Geräteentwickler und die Entwickler von Betriebssystemen stellen zunehmend dedizierte Hard- und Softwarekomponenten bereit. Beispiele hierfür sind die von Apple 2017 vorgestellte Neural Engine \cite{neural_engine_verge_2017} oder Androids Neural Networks API \cite{nnapi_devguide_2021}. Bei Apple's Neural Engine handelt es sich um eine für die Anforderungen von Maschinellem Lernen optimierte Hardwarekomponente. Androids \acrfull{nnapi} ist dagegen eine hardwarenahe \Gls{api} zur effizienten Berechnung von machine learning Operationen und stellt ein Basis-Set an Funktionen für higher-level machine learning frameworks bereit. Als Resultat dieser Entwicklungen wird es zunehmend einfacher für Entwickler, effiziente Machine Learning Anwendungen für den Betrieb auf mobilen Geräten zu entwickeln.
+
+\section{Offline Usability}
+
 
 \section{Privacy Implications of On-Device Machine Learning}
+
 
 \chapter{Background Theory in Computer Vision}
 
