@@ -1,13 +1,14 @@
 %!TeX spellcheck=en_GB
-\documentclass[11pt,
-               a4paper,
-               bibtotoc,
+\documentclass[
+			   fontsize=11pt,
+               paper=a4,
+               bibliography=totoc,
                idxtotoc,
                headsepline,
                footsepline,
-               footexclude,
-               BCOR12mm,
-               DIV13,
+               footinclude=false,
+               BCOR=12mm,
+               DIV=13,
                openany,   % using this removes blank pages around part / chapter starts.
 %               oneside    % include this if you have to print only one page per sheet of paper.
                ]
@@ -110,8 +111,8 @@
 	\huge DEPARTMENT OF INFORMATICS\\[5mm]
 	\large TECHNICAL UNIVERSITY OF MUNICH\\[24mm]
 	{\Large \doctype in \studyProgram}\\[20mm]
-	{\LARGE\bf \title}\\[10mm]
-	{\LARGE\bf \titleGer}\\[10mm]
+	{\LARGE\textbf \title}\\[10mm]
+	{\LARGE\textbf \titleGer}\\[10mm]
 	\begin{tabular}{ll}
 		\Large Author:      	& \Large \author \\[2mm]
 		\Large Supervisor:  	& \Large \supervisor\\[2mm]
@@ -153,7 +154,7 @@ Munich, \date \hspace{5cm} \author
 \addcontentsline{toc}{chapter}{Abstract}
 \vspace*{2cm}
 \begin{center}
-    {\Large \bf Abstract}
+    {\Large \textbf Abstract}
 \end{center}
 \vspace{1cm}
 
@@ -194,8 +195,10 @@ Die stetig wachsende Unterstützung für die Enwicklung von Machine Learning und
 
 \section{Offline Usability}
 
+Manche Anwendungen benötigen zur Erfüllung ihrer Aufgabe per Definition eine Verbindung zum Internet. Der Voice Assistent Alexa von Amazon kann ohne Internetverbindung zwar einfache Sprachbefehle zur Kontrolle von smart home devices oder der Abfrage der Uhrzeit beantworten \cite{azn_local} und nutzt damit bereits heute on-device machine learning. Aber selbst wenn Alexa sämtliche Sprachbefehle lokal analysieren und verstehen könnte, müsste die Anfrage dennoch in den meisten Fällen an die Amazon Server weitergeleitet werden. Durch die Vielzahl möglicher Abfragen können nicht sämtliche Antworten auf dem Gerät vorgehalten, sondern müssen aus dem Internet abgerufen werden. Eine Kategorie solcher Abfragen sind takesaktuelle Themen wie die Frage nach dem Wetterbericht, dem Verkehr oder dem Ergebnis eines Sportevents. Zur Nutzung des vollständigen Funktionsumfanges von TUM-Lens ist hingegen keine Internetverbindung von Nöten. Sämtliche zur image classfification und object detection benötigten Informationen sind in Form verschiedener bereits trainierter neuronales Netze [acro] lokal auf dem Gerät gespeichert. Unter Einbindung der entsprechenden mobilen frameworks kann die Bildanalyse daher lokal auf dem Gerät und unabhängig von einer Internetverbindung durchgeführt werden.
 
 \section{Privacy Implications of On-Device Machine Learning}
+
 
 
 \chapter{Background Theory in Computer Vision}
@@ -443,7 +446,6 @@ If grouping of several pictures seems reasonable, think about using subfigures. 
 
 \listoftables
 
-\bibliographystyle{alpha}
-\bibliography{literature}
+\printbibliography
 
 \end{document}

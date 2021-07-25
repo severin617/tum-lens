@@ -129,3 +129,15 @@
 % for custon stuff like use:
 % \hyperref[custom:foo]{Custom~\ref*{custom:foo}}
 
+
+% replace \makebibliography with this package to enable nice formatting for citing web pages
+\usepackage[%
+backend=bibtex				% biber or bibtex
+,style=numeric-comp		% numerical-compressed TODO: Check if plain is fine as style (was 'alpha' before I changed it)
+,sortcites=true				  % sorts citations if multiple entry keys are passed to a citation command
+,isbn=true
+,url=true
+,doi=true
+%,natbib=true         % if you need natbib functions
+]{biblatex}
+\addbibresource{literature.bib}  % better than \bibliography
