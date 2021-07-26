@@ -1,4 +1,4 @@
-%!TeX spellcheck=en_GB
+% !TeX spellcheck = de_DE
 \documentclass[
 			   fontsize=11pt,
                paper=a4,
@@ -17,38 +17,79 @@
 \include{settings}
 \usepackage{lipsum} % for filling pages with stuff
 
+% -------------------------------------------------------------------------------
+% -------------------------- Glosssary Customisation --------------------------
+% -------------------------------------------------------------------------------
+% For some reason this did not work when located in settings.tex
+% Any links in resulting glossary will not be "clickable" unless you load the glossaries package after the hyperref package.
 
+\usepackage{xparse}
+\usepackage[acronym,toc]{glossaries}
+
+\DeclareDocumentCommand{\newdualentry}{O{}D<>{}m m m m m } {
+	\newglossaryentry{gls-#3}{
+		name={#5},
+		text={#5\glsadd{gls-#3}},
+		description={#6},
+		plural={#7},
+		#1
+	}
+	\newacronym[see={[Glossary:]{gls-#3}},#2]{#3}{#4}{#5\glsadd{gls-#3}}
+}
+
+% use the \newdualentry command like this:
+% \newdualentry{OWD}    																			% label
+% 	{OWD}		            																				 % abbreviation
+% 	{One-Way Delay} 	   																				% long form
+% 	{The time a packet uses through a network from one host to another}	  % description
+%   {OWDs}																							   % abbreviation in plural
+
+\makeglossaries
 % -------------------------------------------------------------------------------
 % ---------------------- Acronyms and Glossary Definition ---------------------
 % -------------------------------------------------------------------------------
-\usepackage[acronym,toc,shortcuts]{glossaries}
-\makeglossaries
 
-\newglossaryentry{ml}
-{
-	name={machine learning},
-	description={the use and development of computer systems that are able to learn and adapt without following explicit instructions, by using algorithms and statistical models to analyse and draw inferences from patterns in data}
-}
+\newacronym{nnapi}{NNAPI}{Neural Networks API}
 
-\newglossaryentry{dl}
+\newacronym{cv}{CV}{Computer Vision}
+
+\newacronym{cnn}{CNN}{Convolutional Neural Network}
+
+\newacronym{resnet}{ResNet}{Residual Neural Network}
+
+\newacronym{relu}{ReLU}{Rectified Linear Unit}
+
+\newdualentry{ml} %oxford dictionary
+	{ML}
+	{machine learning}
+	{the use and development of computer systems that are able to learn and adapt without following explicit instructions, by using algorithms and statistical models to analyse and draw inferences from patterns in data}
+	{ML}
+
+\newdualentry{ann} %wikipedia
+	{ANN}
+	{artificial neural network}
+	{computing systems inspired by the biological neural networks that constitute animal brains. They are often simply called neural networks}
+	{ANNs}
+	%An ANN is based on a collection of connected units or nodes called artificial neurons, which loosely model the neurons in a biological brain. Each connection, like the synapses in a biological brain, can transmit a signal to other neurons. An artificial neuron that receives a signal then processes it and can signal neurons connected to it. The "signal" at a connection is a real number, and the output of each neuron is computed by some non-linear function of the sum of its inputs. The connections are called edges. Neurons and edges typically have a weight that adjusts as learning proceeds. The weight increases or decreases the strength of the signal at a connection. Neurons may have a threshold such that a signal is sent only if the aggregate signal crosses that threshold. Typically, neurons are aggregated into layers. Different layers may perform different transformations on their inputs. Signals travel from the first layer (the input layer), to the last layer (the output layer), possibly after traversing the layers multiple times.
+	
+\newdualentry{api} %oxford dictionary
+	{API}
+	{application programming interface}
+	{set of functions and procedures allowing the creation of applications that access the features or data of an operating system, application, or other service}
+	{APIs}
+
+\newglossaryentry{dl} %oxford dictionary
 {
 	name={deep learning},
-	description={a type of machine learning based on artificial neural networks in which multiple layers of processing are used to extract progressively higher level features from data}
+	description={type of machine learning based on artificial neural networks in which multiple layers of processing are used to extract progressively higher level features from data}
 	% is a branch of machine learning utilising artificial neural networks for information processing. The extensive internal structure of these networks is characterised by numerous intermediate ("hidden") layers between the input layer and the output layer
 }
 
-\newglossaryentry{api}
+\newglossaryentry{diff_privacy} %https://oconnell.fas.harvard.edu/files/salil/files/differential_privacy_primer_nontechnical_audience.pdf
 {
-	name={api},
-	description={a set of functions and procedures allowing the creation of applications that access the features or data of an operating system, application, or other service}
+	name={differential privacy},
+	description={protects an individual’s information essentially as if her information were not used in the analysis at all, in the sense that the outcome of a differentially private algorithm is approximately the same whether the individual’s information was used or not}
 }
-
-\newacronym{nnapi}{NNAPI}{Neural Networks API}
-\newacronym{cv}{CV}{Computer Vision}
-\newacronym{nn}{NN}{Neural Network}
-\newacronym{cnn}{CNN}{Convolutional Neural Network}
-\newacronym{resnet}{ResNet}{Residual Neural Network}
-\newacronym{relu}{ReLU}{Rectified Linear Unit}
 
 % -------------------------------------------------------------------------------
 % --------------------------------- Thesis Info ---------------------------------
@@ -154,22 +195,12 @@ Munich, \date \hspace{5cm} \author
 \addcontentsline{toc}{chapter}{Abstract}
 \vspace*{2cm}
 \begin{center}
-    {\Large \textbf Abstract}
+    {\Large \textbf {Abstract}}
 \end{center}
 \vspace{1cm}
 
 \lipsum[2]
 
-\cleardoublepage
-
-% -------------------------------------------------------------------------------
-% --------------------------- Acronyms and Glossary --------------------------
-% -------------------------------------------------------------------------------
-
-\printglossary[type=\acronymtype,nonumberlist]
-\cleardoublepage
-
-\printglossary[nonumberlist]
 \cleardoublepage
 
 % -------------------------------------------------------------------------------
@@ -189,29 +220,56 @@ Munich, \date \hspace{5cm} \author
 
 Die im Rahmen dieser Arbeit weiterentwickelte Android-App TUM-Lens [LINK] analysiert Bilder, die über die Kamera des Androidgeräts aufgenommen und als Live-Feed an die App übertragen werden. Für ein gutes Nutzererlebnis muss die Analyse der Bilder nahezu in Echtzeit erfolgen. Nur so passen die angezeigten Analyseergebnisse stets zum aktuellen Inhalt des Kamera-Feeds, der sich durch Schwenks des Smartphone durch dessen Benutzer sehr schnell ändern kann. Während die Analyse von Bilddaten in vielen Anwendungsfällen dezentral in leistungsfähigen Rechenzentren erfolgen kann, läuft die Bildanalyse im Falle von TUM-Lens auf dem mobilen Endgerät selbst ab.
 
-\section{Growing Support for Running (Deep) Machine Learning Operations on Mobile Devices}
+%\section{Increasing Computation Power on Mobile Devices} %TODO: will probably not elaborate here as 3 topics for motivation might be enough
 
-Die stetig wachsende Unterstützung für die Enwicklung von Machine Learning und auch insbesondere Deep Learning Anwedungen für Smartphones ist ein wesentlicher Katalysator für die Entwicklung von TUM-Lens. Dabei wächst diese Unterstützung aus verschiedenen Richtungen gleichzeitig. Entwicklerfreundliche Frameworks wie das von Google Brain entwickelte TensorFlowoder das von Facebook's AI Research Lab entwickelte PyTorch gehören zu den bekanntesten deep learning frameworks \cite{dl_ranking_2018}. Die Veröffentlichung von TensorFlow Lite\footnote{\url{https://www.tensorflow.org/lite}} 2017 \cite{tflite_release_verge_2017} und PyTorch Mobile 2019 \cite{pytorch_release_2019} zeigen, dass auch mobile Plattformen zunehmend in den Fokus der Unternehmen rücken, die Machine Learning Software bereitstellen. Aber auch Geräteentwickler und die Entwickler von Betriebssystemen stellen zunehmend dedizierte Hard- und Softwarekomponenten bereit. Beispiele hierfür sind die von Apple 2017 vorgestellte Neural Engine \cite{neural_engine_verge_2017} oder Androids Neural Networks API \cite{nnapi_devguide_2021}. Bei Apple's Neural Engine handelt es sich um eine für die Anforderungen von Maschinellem Lernen optimierte Hardwarekomponente. Androids \acrfull{nnapi} ist dagegen eine hardwarenahe \Gls{api} zur effizienten Berechnung von machine learning Operationen und stellt ein Basis-Set an Funktionen für higher-level machine learning frameworks bereit. Als Resultat dieser Entwicklungen wird es zunehmend einfacher für Entwickler, effiziente Machine Learning Anwendungen für den Betrieb auf mobilen Geräten zu entwickeln.
+\section{Growing Support for Running Machine Learning Operations on Mobile Platforms}
+
+Die Unterstützung für die Entwicklung von \gls{ml} und auch insbesondere \gls{dl} Anwendungen für Smartphones wächst stetig. Dabei geschieht dies aus verschiedenen Richtungen gleichzeitig. Entwicklerfreundliche Frameworks wie das von Google Brain entwickelte TensorFlowoder das von Facebook's AI Research Lab entwickelte PyTorch gehören zu den bekanntesten \gls{dl} frameworks~\cite{dl_ranking_2018}. Die Veröffentlichung von TensorFlow Lite\footnote{\url{https://www.tensorflow.org/lite}} 2017~\cite{tflite_release_verge_2017} und PyTorch Mobile 2019~\cite{pytorch_release_2019} zeigen, dass auch mobile Plattformen zunehmend in den Fokus der Unternehmen rücken, die \acrlong{ml} Software bereitstellen. Aber auch Geräteentwickler und die Entwickler von Betriebssystemen stellen zunehmend dedizierte Hard- und Softwarekomponenten bereit. Beispiele hierfür sind die von Apple 2017 vorgestellte Neural Engine~\cite{neural_engine_verge_2017} oder Androids \gls{nnapi}~\cite{nnapi_devguide_2021}. Bei Apple's Neural Engine handelt es sich um eine für die Anforderungen von \acrlong{ml} optimierte Hardwarekomponente. Androids \gls{nnapi} ist dagegen ein hardwarenahe \gls{api} zur effizienten Berechnung von \gls{ml} Operationen und stellt ein Basis-Set an Funktionen für higher-level \glspl{ml} frameworks bereit. Als Resultat dieser Entwicklungen wird es zunehmend einfacher für Entwickler, effiziente \gls{ml} Anwendungen für den Betrieb auf mobilen Geräten zu entwickeln. Diese Unterstützung war ein wesentlicher Katalysator für die Entwicklung und Weiterentwicklung von TUM-Lens im Rahmen zweier Bachelorarbeiten.
 
 \section{Offline Usability}
 
-Manche Anwendungen benötigen zur Erfüllung ihrer Aufgabe per Definition eine Verbindung zum Internet. Der Voice Assistent Alexa von Amazon kann ohne Internetverbindung zwar einfache Sprachbefehle zur Kontrolle von smart home devices oder der Abfrage der Uhrzeit beantworten \cite{azn_local} und nutzt damit bereits heute on-device machine learning. Aber selbst wenn Alexa sämtliche Sprachbefehle lokal analysieren und verstehen könnte, müsste die Anfrage dennoch in den meisten Fällen an die Amazon Server weitergeleitet werden. Durch die Vielzahl möglicher Abfragen können nicht sämtliche Antworten auf dem Gerät vorgehalten, sondern müssen aus dem Internet abgerufen werden. Eine Kategorie solcher Abfragen sind takesaktuelle Themen wie die Frage nach dem Wetterbericht, dem Verkehr oder dem Ergebnis eines Sportevents. Zur Nutzung des vollständigen Funktionsumfanges von TUM-Lens ist hingegen keine Internetverbindung von Nöten. Sämtliche zur image classfification und object detection benötigten Informationen sind in Form verschiedener bereits trainierter neuronales Netze [acro] lokal auf dem Gerät gespeichert. Unter Einbindung der entsprechenden mobilen frameworks kann die Bildanalyse daher lokal auf dem Gerät und unabhängig von einer Internetverbindung durchgeführt werden.
+TUM-Lens ist im Vergleich zu vielen anderen auf \acrlong{ml} basierenden Apps eigenständiger, da für ihre Nutzung keine Internetverbindung nötig ist. Häufig benötigen Apps und Dienste zur Erfüllung ihrer Aufgabe per Definition eine Verbindung zum Internet. Der Sprachassistent Alexa von Amazon kann ohne Internetverbindung zwar einfache Sprachbefehle zur Kontrolle von smart home devices oder der Abfrage der Uhrzeit beantworten~\cite{azn_local} und nutzt damit bereits heute on-device \acrlong{ml}. Aber selbst wenn Alexa sämtliche Sprachbefehle lokal analysieren und verstehen könnte, müsste die Anfrage dennoch in den meisten Fällen an die Amazon Server weitergeleitet werden. Durch die Vielzahl möglicher Abfragen können nicht sämtliche Antworten auf dem Gerät vorgehalten, sondern müssen aus dem Internet abgerufen werden. Eine Kategorie solcher Abfragen sind tagesaktuelle Themen wie die Frage nach dem Wetterbericht, dem Verkehr oder dem Ergebnis eines Sportevents. Zur Nutzung des vollständigen Funktionsumfanges von TUM-Lens ist hingegen keine Internetverbindung von Nöten. Sämtliche zur image classfification und object detection benötigten Informationen sind in Form verschiedener bereits trainierter \gls{ann} lokal auf dem Gerät gespeichert. Unter Einbindung der entsprechenden mobilen frameworks kann die Bildanalyse daher lokal auf dem Gerät durchgeführt werden und macht die App daher unabhängig von einer Internetverbindung.
 
-\section{Privacy Implications of On-Device Machine Learning}
+\section{Improved Privacy}
 
-
+Der Einsatz von on-device \gls{ml} bietet einen weiteren Mechanismus zum Schutz persönlicher Daten im Kontext von Machine Learning zusätzlich zu bestehenden Methoden wie \gls{diff_privacy}. Durch die Eingangs erwähnten wachsende Unterstützung für mobile \gls{ml} Anwendungen aber auch durch die unabhängig davon stetig steigende Leistung mobiler Geräte~\cite{mobile_cpu_power} wird nicht nur die Verwendung vor-trainierter \glspl{ann} möglich, sondern gerade auch das Training neuer \glspl{ann} auf dem mobilen Gerät selbst immer relevanter~\cite{liu19}. Findet der Trainingsprozess lokal auf dem Gerät selbst statt, müssen keinerlei Daten an externe Instanzen wie die Server eines Unternehmens übertragen werden. Dies ermöglicht es Anwendungen zu entwickeln, die sich im Rahmen ihrer Nutzung immer individueller an den Nutzer anpassen und dabei ein Maximum an Datenschutz garantieren. Ein Beispiel für die exemplarische Entwicklung einer solchen Applikation ist DeepType~\cite{deepType}. DeepType versucht bei der Tastatureingabe des Nutzers das als nächstes verwendete Wort vorherzusagen. Während jeder Nutzer anfangs mit der gleichen vor-trainierten Version des von DeepType verwendeten \gls{ann} startet, trainiert die Anwendung dieses \gls{ann} mit jeder Eingabe weiter und passt sich so immer mehr an das charakteristische Eingabeverhalten des Nutzers an, ohne dass die Texteingaben jemals das Endgerät verlassen.
 
 \chapter{Background Theory in Computer Vision}
 
 \section{History of Computer Vision}
 
-\section{Typical Tasks in the Field of Computer Vision}
+
+\section{How Object Detection Differs From Related Tasks}
+
+The field of computer vision umspannt eine Vielzahl unterschiedlicher Problemstellung und eine noch größere Anzahl möglicher Lösungsansätze. Im Folgenden wird die Objekterkennung als typische Aufgabenstellung im Computer Vision Kontext von den ihr von der Zielsetzung am nächsten stehenden Aufgabenstellungen abgegrenzt.
+
+\begin{figure}[H] % [H] for HERE
+	\centering
+	\includegraphics[width=\textwidth]{figures/detection_related_tasks.png}
+	\caption[Typical Computer Vision Tasks]{Object detection differs conceptually from other related computer vision tasks with regard to spatial information, the concept of objects and the number of detections in a given scene.\\
+		\tiny{Source:~\cite{cvTasks}}}
+	\label{fig:cvTasks} % labels always have to be placed after the caption
+\end{figure}
+
+\subsection{semantic segmentation}
+Bei der segmantic segmentation wird jedem Pixel eines Bildes eine Klasse zugeordnet. Es gibt allerdings keine Objekte. Dies führt dazu, dass bei mehreren Objekten der gleichen Klasse im Bild, alle zugehörigen Pixel das gleiche Klassenlabel erhalten und die unterschiedlichen Objekte nicht anhand des Ergebnisses der semantic segmentation differenziert werden können.
+
+\subsection{image classification (potentially including localisation)}
+Bei der image classification ist das Ergebnis der detection immer ein einzelnes Objekt beziehungsweise dessen Klasse. In selten Anwendungsvarianten wird für das eine erkannte Objekt auch eine bounding box ausgegeben - in der Regel verbindet man mit dem task der classification allerdings keinen spatial extent.
+
+\subsection{object detection}
+Die Objekterkennung befasst sich mit der Identifizierung einer beliebigen Anzahl von Objekten innerhalb eines Bildes. Für jedes Objekt wird dabei ein Klassenlabel sowie seine Position in Form der Koordinaten eines das Objekt umspannenden Rechteckes ausgegeben. Wichtig hierbei ist, dass wie in Abbildung \ref{fig:cvTasks} erkennbar ist, auch mehrere Objekte der gleichen Klasse erkannt werden können. Die verschiedenen Objekte der gleichen Klasse sind dabei im Gegensatz zum vorherigen task der semenatic segmentation unterscheidbar.
+
+\subsection{instance segmentation}
+Die instance segmentation erfüllt im wesentlichen eine besser Variante der object detection. Es werden wieder mehrere Objekte verschiedener Klassen erkannt und die Positionen der Klassen mit ausgegeben. Dabei sind die Positionen allerdings nicht durch bounding boxes wie bei der object detection markiert, sondern jeder zu einem Objekt gehörende Pixel erhält ein Label dieses Objekts. Die Objekte werden daher noch schärfer von den Bildbereichen getrennt, die kein Objekt beinhalten und im Gegensatz zur semantic segmentation bleiben einzelne Objekte der gleichen Klasse unterscheidbar.
+
 
 \section{Computer Vision on Mobile Devices}
 
 \chapter{State of the Art Solutions for Object Detection on Mobile Devices}
 
 \section{Introduction to XYZ Networks}
+
 
 \section{Some Deep}
 \section{Dive Into}
@@ -248,6 +306,9 @@ Manche Anwendungen benötigen zur Erfüllung ihrer Aufgabe per Definition eine V
 \section{Accuracy}
 
 \section{Possible Applications} % Can also be named "Future Work" depending on the contents of this section
+
+Die Anwendungsbereiche von Computer Vision sind zahlreich. Zu den regelmäßigen Aufgaben im Bereich 
+
 
 % -------------------------------------------------------------------------------
 % ----------------------------------- APPENDIX --------------------------------
@@ -330,7 +391,7 @@ Anything can also be put in multiple columns.
 		\centering
 		\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}
 		\caption[Example Figure]{Some Caption. Always also include a source if it wasn't created by you!\\
-			\tiny{Source: \cite{gratl17task}}}
+			\tiny{Source:~\cite{gratl17task}}}
 		\label{fig:exampleLabel1} % labels always have to be placed after the caption
 	\end{figure}
 	
@@ -447,5 +508,9 @@ If grouping of several pictures seems reasonable, think about using subfigures. 
 \listoftables
 
 \printbibliography
+
+\printglossary[type=acronym,nonumberlist]
+
+\printglossary[type=main,nonumberlist]
 
 \end{document}
