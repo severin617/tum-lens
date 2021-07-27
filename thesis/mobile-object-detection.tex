@@ -59,18 +59,12 @@
 
 \newacronym{relu}{ReLU}{Rectified Linear Unit}
 
-\newdualentry{ml} %oxford dictionary
-	{ML}
-	{machine learning}
-	{the use and development of computer systems that are able to learn and adapt without following explicit instructions, by using algorithms and statistical models to analyse and draw inferences from patterns in data}
-	{ML}
+\newacronym{ml}{ML}{Machine Learning}
 
-\newdualentry{ann} %wikipedia
-	{ANN}
-	{artificial neural network}
-	{computing systems inspired by the biological neural networks that constitute animal brains. They are often simply called neural networks}
-	{ANNs}
-	%An ANN is based on a collection of connected units or nodes called artificial neurons, which loosely model the neurons in a biological brain. Each connection, like the synapses in a biological brain, can transmit a signal to other neurons. An artificial neuron that receives a signal then processes it and can signal neurons connected to it. The "signal" at a connection is a real number, and the output of each neuron is computed by some non-linear function of the sum of its inputs. The connections are called edges. Neurons and edges typically have a weight that adjusts as learning proceeds. The weight increases or decreases the strength of the signal at a connection. Neurons may have a threshold such that a signal is sent only if the aggregate signal crosses that threshold. Typically, neurons are aggregated into layers. Different layers may perform different transformations on their inputs. Signals travel from the first layer (the input layer), to the last layer (the output layer), possibly after traversing the layers multiple times.
+\newacronym{nn}{NN}{Neural Network}
+
+\newacronym{ann}{ANN}{Artificial Neural Network}
+	
 	
 \newdualentry{api} %oxford dictionary
 	{API}
@@ -234,12 +228,54 @@ TUM-Lens ist im Vergleich zu vielen anderen auf \acrlong{ml} basierenden Apps ei
 
 Der Einsatz von on-device \gls{ml} bietet einen weiteren Mechanismus zum Schutz persönlicher Daten im Kontext von Machine Learning zusätzlich zu bestehenden Methoden wie \gls{diff_privacy}. Durch die Eingangs erwähnten wachsende Unterstützung für mobile \gls{ml} Anwendungen aber auch durch die unabhängig davon stetig steigende Leistung mobiler Geräte~\cite{mobile_cpu_power} wird nicht nur die Verwendung vor-trainierter \glspl{ann} möglich, sondern gerade auch das Training neuer \glspl{ann} auf dem mobilen Gerät selbst immer relevanter~\cite{liu19}. Findet der Trainingsprozess lokal auf dem Gerät selbst statt, müssen keinerlei Daten an externe Instanzen wie die Server eines Unternehmens übertragen werden. Dies ermöglicht es Anwendungen zu entwickeln, die sich im Rahmen ihrer Nutzung immer individueller an den Nutzer anpassen und dabei ein Maximum an Datenschutz garantieren. Ein Beispiel für die exemplarische Entwicklung einer solchen Applikation ist DeepType~\cite{deepType}. DeepType versucht bei der Tastatureingabe des Nutzers das als nächstes verwendete Wort vorherzusagen. Während jeder Nutzer anfangs mit der gleichen vor-trainierten Version des von DeepType verwendeten \gls{ann} startet, trainiert die Anwendung dieses \gls{ann} mit jeder Eingabe weiter und passt sich so immer mehr an das charakteristische Eingabeverhalten des Nutzers an, ohne dass die Texteingaben jemals das Endgerät verlassen.
 
-\chapter{Background Theory in Computer Vision}
+\chapter{Background Theory}
+
+\section{Important Concepts}
+
+Buzzwords wie Machine Learning sind aus unserem Alltag nicht mehr wegzudenken. Daher ist es für ein gemeinsames Verständnis der theoretischen Inhalte dieser Arbeit unerlässlich, die wichtigsten Konzepte zu definieren.
+
+\subsection{Machine Learning}
+
+A popular definition of \gls{ml} is attributed to Arthur Samuel describing \gls{ml} as the "field of study that gives computers the ability to learn without being explicitly programmed"\footnote{Althought cited in popular machine learning material like Andrew Ng's \gls{ml} course at Stanford~\cite{mlCourseStan} the quote appears neither in Samuel's 1959~\cite{mlQuote1959} nor his 1967 paper~\cite{mlQuote1967}.}. Machine learning algorithms circumvent this need for explicit programming by improving an internal model through data. This process is called training and the data used to train the model is often regarded to as the model's experience~\cite{mlMitchell}.
+
+\subsection{Artificial Neural Networks}
+
+An \gls{ann} - often just referred to as \gls{nn} - is a data processing concept that is inspired by biological neurons and their interconnectivity. The artificial neurons (also called "nodes") in an \gls{ann} are grouped in "layers". There are three important types of layers: The input layer, the output layer and an arbitrary number of hidden layers in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The conncetion between nodes are also known as "edges" and typically carry a weight that can be changed during the training process of the \gls{ann}. 
+
+\begin{multicols}{2} % defines an environment with two columns
+	\begin{figure}[H] % [H] for HERE
+		\centering
+		\includegraphics[width=.9\columnwidth]{figures/ann1.jpeg}
+		\caption[Example Figure]{Some Caption. Always also include a source if it wasn't created by you!\\
+			\tiny{Source:~\cite{annGraphics}}}
+		\label{fig:exampleLabel1} % labels always have to be placed after the caption
+	\end{figure}
+	
+	\columnbreak    % start next column
+	
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}
+			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}};
+			\begin{scope}[x={(image.south east)},y={(image.north west)}]
+				\draw[red, thin,rounded corners] (.42,.42) rectangle (.58,.6);
+			\end{scope}
+		\end{tikzpicture}
+		\caption[Figure with tikz]{Figures can be drawn on or completely generated with tikz.}
+		\label{fig:exampleLabel2}
+	\end{figure}
+\end{multicols}
+
+
+\subsection{Deep Learning}
+
+\Gls{dl} ist ein Teilbereich des Maschinellen Lernens. 
 
 \section{History of Computer Vision}
 
+\section{A Core Task of Computer Vision: Object Detection}
 
-\section{How Object Detection Differs From Related Tasks}
+\subsection{How Object Detection Differs From Related Tasks}
 
 The field of computer vision umspannt eine Vielzahl unterschiedlicher Problemstellung und eine noch größere Anzahl möglicher Lösungsansätze. Im Folgenden wird die Objekterkennung als typische Aufgabenstellung im Computer Vision Kontext von den ihr von der Zielsetzung am nächsten stehenden Aufgabenstellungen abgegrenzt.
 
@@ -251,30 +287,65 @@ The field of computer vision umspannt eine Vielzahl unterschiedlicher Problemste
 	\label{fig:cvTasks} % labels always have to be placed after the caption
 \end{figure}
 
-\subsection{semantic segmentation}
+\subsubsection{semantic segmentation}
 Bei der segmantic segmentation wird jedem Pixel eines Bildes eine Klasse zugeordnet. Es gibt allerdings keine Objekte. Dies führt dazu, dass bei mehreren Objekten der gleichen Klasse im Bild, alle zugehörigen Pixel das gleiche Klassenlabel erhalten und die unterschiedlichen Objekte nicht anhand des Ergebnisses der semantic segmentation differenziert werden können.
 
-\subsection{image classification (potentially including localisation)}
+\subsubsection{image classification (potentially including localisation)}
 Bei der image classification ist das Ergebnis der detection immer ein einzelnes Objekt beziehungsweise dessen Klasse. In selten Anwendungsvarianten wird für das eine erkannte Objekt auch eine bounding box ausgegeben - in der Regel verbindet man mit dem task der classification allerdings keinen spatial extent.
 
-\subsection{object detection}
+\subsubsection{object detection}
 Die Objekterkennung befasst sich mit der Identifizierung einer beliebigen Anzahl von Objekten innerhalb eines Bildes. Für jedes Objekt wird dabei ein Klassenlabel sowie seine Position in Form der Koordinaten eines das Objekt umspannenden Rechteckes ausgegeben. Wichtig hierbei ist, dass wie in Abbildung \ref{fig:cvTasks} erkennbar ist, auch mehrere Objekte der gleichen Klasse erkannt werden können. Die verschiedenen Objekte der gleichen Klasse sind dabei im Gegensatz zum vorherigen task der semenatic segmentation unterscheidbar.
 
-\subsection{instance segmentation}
+\subsubsection{instance segmentation}
 Die instance segmentation erfüllt im wesentlichen eine besser Variante der object detection. Es werden wieder mehrere Objekte verschiedener Klassen erkannt und die Positionen der Klassen mit ausgegeben. Dabei sind die Positionen allerdings nicht durch bounding boxes wie bei der object detection markiert, sondern jeder zu einem Objekt gehörende Pixel erhält ein Label dieses Objekts. Die Objekte werden daher noch schärfer von den Bildbereichen getrennt, die kein Objekt beinhalten und im Gegensatz zur semantic segmentation bleiben einzelne Objekte der gleichen Klasse unterscheidbar.
 
 
-\section{Computer Vision on Mobile Devices}
+%\section{Computer Vision on Mobile Devices}
 
-\chapter{State of the Art Solutions for Object Detection on Mobile Devices}
-
-\section{Introduction to XYZ Networks}
+\subsection{Architectures}
 
 
-\section{Some Deep}
-\section{Dive Into}
-\section{Object Detection}
-\section{Theory Fun}
+
+\subsubsection{R-CNN}
+
+2014
+\cite{rcnnIntro}
+
+
+
+%Heute Spielarten wie Fast R-CNN, Faster R-CNN, Mask R-CNN
+
+\subsubsection{MobileNet}
+
+2017
+
+%In der Implementierung verwendet
+
+\subsubsection{RetinaNet}
+
+2018
+
+
+\subsubsection{CenterNet}
+
+2019
+
+\subsubsection{EfficientDet}
+
+2019
+
+%YOLO
+
+
+\subsection{Single Shot MultiBox Detector: MobileNetSSDv2}
+
+\subsubsection{Introduction to XYZ Networks}
+
+
+\subsubsection{Some Deep}
+\subsubsection{Dive Into}
+\subsubsection{Object Detection}
+\subsubsection{Theory Fun}
 
 \chapter{App Development}
 
@@ -297,6 +368,8 @@ Die instance segmentation erfüllt im wesentlichen eine besser Variante der obje
 \subsection{Object Detection}
 \subsection{Implementation Fun}
 
+\subsection{Next steps in the development of TUM-Lens}
+
 % Potential Contets: Design and architecture choices, reused patterns from exisiting application, improvements to exisiting code
 
 \chapter{Results}
@@ -308,6 +381,12 @@ Die instance segmentation erfüllt im wesentlichen eine besser Variante der obje
 \section{Possible Applications} % Can also be named "Future Work" depending on the contents of this section
 
 Die Anwendungsbereiche von Computer Vision sind zahlreich. Zu den regelmäßigen Aufgaben im Bereich 
+
+Organisation von Fotos auf dem Smartphone, ohne dass diese an die Server von Apple, \& Google Co geschickt werden müssen (Gruppieren von Fotos, die zu einem Urlaub gehören, Gesichtserkennung, Objekterkennung)
+
+Autonome Autos werden unahängig von einer Verbindung zum Internet (5G, shared medium, bleibt das Auto im Tunnel dann stehen?)
+
+
 
 
 % -------------------------------------------------------------------------------
