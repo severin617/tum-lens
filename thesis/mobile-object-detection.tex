@@ -236,42 +236,44 @@ Buzzwords wie Machine Learning sind aus unserem Alltag nicht mehr wegzudenken. D
 
 \subsection{Machine Learning}
 
-A popular definition of \gls{ml} is attributed to Arthur Samuel describing \gls{ml} as the "field of study that gives computers the ability to learn without being explicitly programmed"\footnote{Althought cited in popular machine learning material like Andrew Ng's \gls{ml} course at Stanford~\cite{mlCourseStan} the quote appears neither in Samuel's 1959~\cite{mlQuote1959} nor his 1967 paper~\cite{mlQuote1967}.}. Machine learning algorithms circumvent this need for explicit programming by improving an internal model through data. This process is called training and the data used to train the model is often regarded to as the model's experience~\cite{mlMitchell}.
+A popular definition of \gls{ml} is attributed to Arthur Samuel describing \gls{ml} as the "field of study that gives computers the ability to learn without being explicitly programmed"\footnote{Althought cited in popular machine learning material like Andrew Ng's \gls{ml} course at Stanford~\cite{mlCourseStan} the quote appears neither in Samuel's 1959~\cite{mlQuote1959} nor his 1967 paper~\cite{mlQuote1967}.}. Machine learning algorithms circumvent this need for explicit programming by improving an internal model through data. This process is called training and the data used to train the model is often regarded to as the model's experience~\cite{mlMitchell}. The different categories of \gls{ml} include 
+
+%TODO: Build graph of different machine learning subfields and explain them briefly
 
 \subsection{Artificial Neural Networks}
 
-An \gls{ann} - often just referred to as \gls{nn} - is a data processing concept that is inspired by biological neurons and their interconnectivity. The artificial neurons (also called "nodes") in an \gls{ann} are grouped in "layers". There are three important types of layers: The input layer, the output layer and an arbitrary number of hidden layers in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The conncetion between nodes are also known as "edges" and typically carry a weight that can be changed during the training process of the \gls{ann}. 
+An \gls{ann} - often just referred to as \gls{nn} - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \ref{fig:2layeredANN} and \ref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The conncetions between nodes are also known as \textit{edges} and typically carry a weight that can be changed during the training process of the \gls{ann}. These weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. Zusammengefasst transformiert ein \gls{ann} einen Inputvektor durch eine Reihe nicht-linearer Funktionen in einen Outputvekor, wobei sowohl die Berechnung des Outputs als auch der Trainingsprozess durch die spezifische Struktur des \gls{ann} und seine Parameter charakterisiert werden.
+
+%TODO: Maybe introduce a view typical ANN architectures like feed forward, convolutional, recurring, etc.
+
+\subsection{Training}
+
+Die Parameter müssen während des Trainingsprozesses so angepasst werden, dass das \gls{ann} die korrekten Ergebnisse zurückliefert.
+%TODO Finish this subsection
+
+\subsection{Deep Learning}
+
+\Gls{dl} ist ein Teilbereich des Maschinellen Lernens. Charakteristisch für Deep Learning ist die Nutzung von \glspl{ann} mit vielen hidden layers. Je mehr hidden layers ein Netzwerk hat, desto tiefer ist es. Je tiefer ein Netzwerk ist und je mehr Nodes das Netzwerk pro Layer hat, desto komplexer sind die Berechnungen, die das \gls{ann} erfolgreich ausführen kann~\cite{dlBookGoodf}. Mit der wachsender Anzahl von Layern und Nodes wächst auch die Anzahl der Parameter. Ihre große Anzahl ist der Grund dafür, dass Deep Learning im Vergleich zu anderen Teildisziplinen des Maschinellen Lernens sehr große Datenmenge benötigt, um adäquate Ergebnisse zu liefern. Netzwerke dieser Gattung haben die Fähigkeit außerordentlich komplexer Berechnungen auf Kosten eines ressourcenaufwändigen Trainingsprozesses erhalten.
 
 \begin{multicols}{2} % defines an environment with two columns
-	\begin{figure}[H] % [H] for HERE
+	\begin{figure}[H] % [H] for EXACTLY HERE
 		\centering
-		\includegraphics[width=.9\columnwidth]{figures/ann1.jpeg}
-		\caption[Example Figure]{Some Caption. Always also include a source if it wasn't created by you!\\
+		\includegraphics[height=3cm]{figures/ann1.jpeg}
+		\caption[2-layered ANN]{2-layered \gls{ann}. It is called fully connected as every node from the previous layer is connected to every node in the next layer. \\
 			\tiny{Source:~\cite{annGraphics}}}
-		\label{fig:exampleLabel1} % labels always have to be placed after the caption
+		\label{fig:2layeredANN} % labels always have to be placed after the caption
 	\end{figure}
 	
 	\columnbreak    % start next column
 	
-	\begin{figure}[H]
+	\begin{figure}[H] % [H] for EXACTLY HERE
 		\centering
-		\begin{tikzpicture}
-			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}};
-			\begin{scope}[x={(image.south east)},y={(image.north west)}]
-				\draw[red, thin,rounded corners] (.42,.42) rectangle (.58,.6);
-			\end{scope}
-		\end{tikzpicture}
-		\caption[Figure with tikz]{Figures can be drawn on or completely generated with tikz.}
-		\label{fig:exampleLabel2}
+		\includegraphics[height=3cm]{figures/ann2.jpeg}
+		\caption[3-layered ANN]{3-layered \gls{ann}. Inn \glspl{ann}, nodes in one layer are connected to nodes in other layers but not to other nodes in the same layer. \\
+			\tiny{Source:~\cite{annGraphics}}}
+		\label{fig:3layeredANN} % labels always have to be placed after the caption
 	\end{figure}
 \end{multicols}
-
-
-\subsection{Deep Learning}
-
-\Gls{dl} ist ein Teilbereich des Maschinellen Lernens. 
-
-\section{History of Computer Vision}
 
 \section{A Core Task of Computer Vision: Object Detection}
 
@@ -335,7 +337,8 @@ Die instance segmentation erfüllt im wesentlichen eine besser Variante der obje
 2019
 
 %YOLO
-
+%ShuffleNet 2018
+%FBNet 2019
 
 \subsection{Single Shot MultiBox Detector: MobileNetSSDv2}
 
