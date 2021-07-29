@@ -232,24 +232,77 @@ Der Einsatz von on-device \gls{ml} bietet einen weiteren Mechanismus zum Schutz 
 
 \section{Important Concepts}
 
-Buzzwords wie Machine Learning sind aus unserem Alltag nicht mehr wegzudenken. Daher ist es für ein gemeinsames Verständnis der theoretischen Inhalte dieser Arbeit unerlässlich, die wichtigsten Konzepte zu definieren.
+Everybody is talking about \acrfull{ml}. Der Begriff ist aus unserem Alltag bereits nicht mehr wegzudenken. Aufgrund der Vielzahl von Kontexten, in denen teils berechtigt und teils unberechtigt von \acrfull{ml} gesprochen wird, ist es wichtig ein gemeinsames Verständnis für die theoretischen Inhalte dieser Arbeit zu schaffen. 
 
 \subsection{Machine Learning}
 
-A popular definition of \gls{ml} is attributed to Arthur Samuel describing \gls{ml} as the "field of study that gives computers the ability to learn without being explicitly programmed"\footnote{Althought cited in popular machine learning material like Andrew Ng's \gls{ml} course at Stanford~\cite{mlCourseStan} the quote appears neither in Samuel's 1959~\cite{mlQuote1959} nor his 1967 paper~\cite{mlQuote1967}.}. Machine learning algorithms circumvent this need for explicit programming by improving an internal model through data. This process is called training and the data used to train the model is often regarded to as the model's experience~\cite{mlMitchell}. The different categories of \gls{ml} include 
+A popular definition of \gls{ml} is attributed to Arthur Samuel describing \gls{ml} as the "field of study that gives computers the ability to learn without being explicitly programmed"\footnote{Althought cited in popular machine learning material like Andrew Ng's \gls{ml} course at Stanford~\cite{mlCourseStan} the quote appears neither in Samuel's 1959~\cite{mlQuote1959} nor his 1967 paper~\cite{mlQuote1967}.}. Machine learning algorithms circumvent this need for explicit programming by improving an internal model through data. This process is called training and the data used to train the model is often regarded to as the model's experience~\cite{mlMitchell}. \Gls{ml} can be divided into the subfields Supervised Learning, Unsupervised Learning, Semi-supervised Learning and Reinforcement Learning as indicated in figure \ref{fig:mlClassification}.
 
-%TODO: Build graph of different machine learning subfields and explain them briefly
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[node distance=4cm]
+		\node[box] (ml) {\large{\textbf{Classification of Machine Learning}}};
+		\node[box, above left of = ml] (supervised) {
+			\begin{minipage}{5cm}
+				\centering\textbf{Supervised Learning}
+				\begin{itemize}
+					\item \texttt{Regression}
+					\item \texttt{Classification}
+				\end{itemize}
+			\end{minipage}
+		};
+		\node[box, above right of = ml] (unsupervised) {
+			\begin{minipage}{5cm}
+				\centering\textbf{Unsupervised Learning}
+				\begin{itemize}
+					\item \texttt{Clustering}
+					\item \texttt{Association}
+				\end{itemize}
+			\end{minipage}
+		};
+		\node[box,  below right of = ml] (semisupervised) {
+			\begin{minipage}{5cm}
+				\centering\textbf{Semi-supervised Learning}
+				\begin{itemize}
+					\item \texttt{Classification}
+					\item \texttt{Clustering}
+				\end{itemize}
+			\end{minipage}
+		};
+
+		\node[box, below left of = ml] (reinforcement) {
+			\begin{minipage}{5cm}
+				\centering\textbf{Reinformcement Learning}
+				\begin{itemize}
+					\item \texttt{Classification}
+					\item \texttt{Control}
+				\end{itemize}
+			\end{minipage}
+		};
+		\draw[arrow, shorten >= 5pt, shorten <= 5pt] (ml) -- (supervised);
+		\draw[arrow, shorten >= 5pt, shorten <= 5pt] (ml) -- (unsupervised);
+		\draw[arrow, shorten >= 5pt, shorten <= 5pt] (ml) -- (semisupervised);
+		\draw[arrow, shorten >= 5pt, shorten <= 5pt] (ml) -- (reinforcement);
+	\end{tikzpicture}
+	\caption[Classification of Machine Learning]{The field of \acrlong{ml} divided into subfields by the characteristics of the underlying learning process. Also indicates the learning problems that are typically tried to be solved by utilising the respective learning process.}
+	\label{fig:mlClassification}
+\end{figure}
+
+\subsubsection{Supervised Learning}
+In supervised learning, the learning machine is provided with input data and the output that is expected for the given input. In the classical case of spam filtering, the input can be a collection of emails and the expected output is a label attached to each email that either classifies it as spam or as non-spam. The learning machine is then fed all e-mails as input data and learns to recognise which information in the input is important to claculate the correct classification. As the system knows the correct answer for each training input, it can process an email, predict wether it's spam or not, and then use the known answer to change its weights in a way that will make it more likely to lead to a correct prediction and less likely to lead to a false prediction the next time it is presented with a similar input.
+
+\subsubsection{Unsupervised Learning}
+Detecting patterns and structuring data is where unsupervised learning comes into play. Learners of this type don't need to be provided with an expected output while being trained. A scenario for the application of unsupervised learning is the problem of dividing a customer base into subgroups in order to treat every subgroup according to their specific needs. The employe might help the machine learning system by providing the number of subgroups he wants the system to generate. Most importantly however, he does not have to know the correct subgroup for the customers in the training data in order to solve this problem. The algorithms that tackle these learning problems are designed so that they can find structure in the data they are given and then also put new data in the best place given the current knowledge of the inherent structure in the overall dataset.
+
+\subsubsection{Semi-Supervised Learning}
+
+\subsubsection{Reinforcement Learning}
 
 \subsection{Artificial Neural Networks}
 
-An \gls{ann} - often just referred to as \gls{nn} - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \ref{fig:2layeredANN} and \ref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The conncetions between nodes are also known as \textit{edges} and typically carry a weight that can be changed during the training process of the \gls{ann}. These weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. Zusammengefasst transformiert ein \gls{ann} einen Inputvektor durch eine Reihe nicht-linearer Funktionen in einen Outputvekor, wobei sowohl die Berechnung des Outputs als auch der Trainingsprozess durch die spezifische Struktur des \gls{ann} und seine Parameter charakterisiert werden.
+An \gls{ann} - often just referred to as \gls{nn} - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \ref{fig:2layeredANN} and \ref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The conncetions between nodes are also known as \textit{edges} and typically carry a weight. In the case of \glspl{ann}, the training process that is typical for all machine learning systems is the adjustment of these connection weights. The weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. Zusammengefasst transformiert ein \gls{ann} einen Inputvektor durch eine Reihe nicht-linearer Funktionen in einen Outputvekor, wobei sowohl die Berechnung des Outputs als auch der Trainingsprozess durch die spezifische Struktur des \gls{ann} und seine Parameter charakterisiert werden.
 
 %TODO: Maybe introduce a view typical ANN architectures like feed forward, convolutional, recurring, etc.
-
-\subsection{Training}
-
-Die Parameter müssen während des Trainingsprozesses so angepasst werden, dass das \gls{ann} die korrekten Ergebnisse zurückliefert.
-%TODO Finish this subsection
 
 \subsection{Deep Learning}
 
@@ -259,7 +312,7 @@ Die Parameter müssen während des Trainingsprozesses so angepasst werden, dass 
 	\begin{figure}[H] % [H] for EXACTLY HERE
 		\centering
 		\includegraphics[height=3cm]{figures/ann1.jpeg}
-		\caption[2-layered ANN]{2-layered \gls{ann}. It is called fully connected as every node from the previous layer is connected to every node in the next layer. \\
+		\caption[2-Layered ANN]{2-layered \gls{ann}. It is called fully connected as every node from the previous layer is connected to every node in the next layer. \\
 			\tiny{Source:~\cite{annGraphics}}}
 		\label{fig:2layeredANN} % labels always have to be placed after the caption
 	\end{figure}
@@ -269,7 +322,7 @@ Die Parameter müssen während des Trainingsprozesses so angepasst werden, dass 
 	\begin{figure}[H] % [H] for EXACTLY HERE
 		\centering
 		\includegraphics[height=3cm]{figures/ann2.jpeg}
-		\caption[3-layered ANN]{3-layered \gls{ann}. Inn \glspl{ann}, nodes in one layer are connected to nodes in other layers but not to other nodes in the same layer. \\
+		\caption[3-Layered ANN]{3-layered \gls{ann}. In \glspl{ann}, nodes in one layer are connected to nodes in other layers but not to other nodes in the same layer. \\
 			\tiny{Source:~\cite{annGraphics}}}
 		\label{fig:3layeredANN} % labels always have to be placed after the caption
 	\end{figure}
@@ -340,7 +393,7 @@ Die instance segmentation erfüllt im wesentlichen eine besser Variante der obje
 %ShuffleNet 2018
 %FBNet 2019
 
-\subsection{Single Shot MultiBox Detector: MobileNetSSDv2}
+\subsection{MobileNetSSDv2: A Single Shot MultiBox Detector}
 
 \subsubsection{Introduction to XYZ Networks}
 
