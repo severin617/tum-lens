@@ -61,8 +61,6 @@
 
 \newacronym{ml}{ML}{Machine Learning}
 
-\newacronym{nn}{NN}{Neural Network}
-
 \newacronym{ann}{ANN}{Artificial Neural Network}
 	
 \newdualentry{api} %oxford dictionary
@@ -298,13 +296,13 @@ Reinforcement learning is "learning what to do - how to map situations to action
 
 \subsection{Artificial Neural Networks}
 
-An \gls{ann} - often just referred to as \gls{nn} - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \ref{fig:2layeredANN} and \ref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The conncetions between nodes are also known as \textit{edges} and typically carry a weight. In the case of \glspl{ann}, the training process that is typical for all machine learning systems is the adjustment of these connection weights. The weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. Zusammengefasst transformiert ein \gls{ann} einen Inputvektor durch eine Reihe nicht-linearer Funktionen in einen Outputvekor, wobei sowohl die Berechnung des Outputs als auch der Trainingsprozess durch die spezifische Struktur des \gls{ann} und seine Parameter charakterisiert werden.
+An \acrlong{ann} - often just referred to as neural network - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \ref{fig:2layeredANN} and \ref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The connections between nodes are also known as \textit{edges} and typically carry a weight. In the case of \glspl{ann}, the training process that is typical for all machine learning systems is the adjustment of these connection weights. The weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. In summary, an \gls{ann} transforms an input vector into an output vector through a series of non-linear functions, where both the calculation of the output and the training process are characterised by the specific structure of the \gls{ann} and its parameters.
 
 %TODO: Maybe introduce a view typical ANN architectures like feed forward, convolutional, recurring, etc.
 
 \subsection{Deep Learning}
 
-Deep learning ist ein Teilbereich des Maschinellen Lernens. Charakteristisch für Deep Learning ist die Nutzung von \glspl{ann} mit vielen hidden layers. Je mehr hidden layers ein Netzwerk hat, desto tiefer ist es. Je tiefer ein Netzwerk ist und je mehr Nodes das Netzwerk pro Layer hat, desto komplexer sind die Berechnungen, die das \gls{ann} erfolgreich ausführen kann~\cite{dlBookGoodf}. Mit der wachsender Anzahl von Layern und Nodes wächst auch die Anzahl der Parameter. Ihre große Anzahl ist der Grund dafür, dass Deep Learning im Vergleich zu anderen Teildisziplinen des Maschinellen Lernens sehr große Datenmenge benötigt, um adäquate Ergebnisse zu liefern. Netzwerke dieser Gattung haben die Fähigkeit außerordentlich komplexer Berechnungen auf Kosten eines ressourcenaufwändigen Trainingsprozesses erhalten.
+Deep learning is a subarea of machine learning. Deep learning is characterised by the use of \glspl{ann} with many hidden layers. The more hidden layers a network has, the deeper it is. The deeper a network is and the more nodes the network has per layer, the more complex the computations that the \gls{ann} can successfully perform~\cite{dlBookGoodf}. As the number of layers and nodes grows, so does the number of parameters. Their large number is the reason deep learning requires extensive amounts of data to provide adequate results compared to other sub-disciplines of machine learning. Networks of this genus have been given the ability to perform extraordinarily complex computations at the expense of a resource-intensive training process.
 
 \begin{multicols}{2} % defines an environment with two columns
 	\begin{figure}[H] % [H] for EXACTLY HERE
@@ -328,36 +326,37 @@ Deep learning ist ein Teilbereich des Maschinellen Lernens. Charakteristisch fü
 
 \section{A Core Task of Computer Vision: Object Detection}
 
+
+
 \subsection{How Object Detection Differs From Related Tasks}
 
-The field of computer vision umspannt eine Vielzahl unterschiedlicher Problemstellung und eine noch größere Anzahl möglicher Lösungsansätze. Im Folgenden wird die Objekterkennung als typische Aufgabenstellung im Computer Vision Kontext von den ihr von der Zielsetzung am nächsten stehenden Aufgabenstellungen abgegrenzt.
+The field of \gls{cv} encompasses numerous distinct problems and an even larger number of potential solutions. In the following, object detection as a typical task in the \gls{cv} context is distinguished from other \gls{cv} tasks that are closest to it in terms of learning objectives.
 
 \begin{figure}[H] % [H] for HERE
 	\centering
 	\includegraphics[width=\textwidth]{figures/detection_related_tasks.png}
-	\caption[Typical Computer Vision Tasks]{Object detection differs conceptually from other related computer vision tasks with regard to spatial information, the concept of objects and the number of detections in a given scene.\\
+	\caption[Typical Computer Vision Tasks]{Object detection differs conceptually from other related \gls{cv} tasks regarding spatial information, the concept of objects and the number of detections in a scene.\\
 		\tiny{Source:~\cite{cvTasks}}}
 	\label{fig:cvTasks} % labels always have to be placed after the caption
 \end{figure}
 
-\subsubsection{semantic segmentation}
-Bei der segmantic segmentation wird jedem Pixel eines Bildes eine Klasse zugeordnet. Es gibt allerdings keine Objekte. Dies führt dazu, dass bei mehreren Objekten der gleichen Klasse im Bild, alle zugehörigen Pixel das gleiche Klassenlabel erhalten und die unterschiedlichen Objekte nicht anhand des Ergebnisses der semantic segmentation differenziert werden können.
+\subsubsection{Semantic Segmentation}
+In semantic segmentation, each pixel of an image is assigned a class. However, there are no objects. This means that if there are several objects of the same class in the image, all the associated pixels receive the same class label. Therefore, the different objects cannot be differentiated based on the result of the semantic segmentation.
 
-\subsubsection{image classification (potentially including localisation)}
-Bei der image classification ist das Ergebnis der detection immer ein einzelnes Objekt beziehungsweise dessen Klasse. In selten Anwendungsvarianten wird für das eine erkannte Objekt auch eine bounding box ausgegeben - in der Regel verbindet man mit dem task der classification allerdings keinen spatial extent.
+\subsubsection{Image Classification}
+In image classification, the result of the detection is a single class. In rare application variants, a bounding box for one object of the detected class is also returned - as a rule, however, no spatial extent is associated with the task of classification.
 
-\subsubsection{object detection}
-Die Objekterkennung befasst sich mit der Identifizierung einer beliebigen Anzahl von Objekten innerhalb eines Bildes. Für jedes Objekt wird dabei ein Klassenlabel sowie seine Position in Form der Koordinaten eines das Objekt umspannenden Rechteckes ausgegeben. Wichtig hierbei ist, dass wie in Abbildung \ref{fig:cvTasks} erkennbar ist, auch mehrere Objekte der gleichen Klasse erkannt werden können. Die verschiedenen Objekte der gleichen Klasse sind dabei im Gegensatz zum vorherigen task der semenatic segmentation unterscheidbar.
+\subsubsection{Object Detection}
+Object detection deals with the identification of any number of objects within an image. For each object, a class label and its position are returned as the coordinates of a rectangle enclosing the object. It is important here that, as depicted in Figure \ref{fig:cvTasks}, several objects of the same class can also be recognised. In contrast to the  task of semantic segmentation, the different objects of the same class can be distinguished.
 
-\subsubsection{instance segmentation}
-Die instance segmentation erfüllt im wesentlichen eine besser Variante der object detection. Es werden wieder mehrere Objekte verschiedener Klassen erkannt und die Positionen der Klassen mit ausgegeben. Dabei sind die Positionen allerdings nicht durch bounding boxes wie bei der object detection markiert, sondern jeder zu einem Objekt gehörende Pixel erhält ein Label dieses Objekts. Die Objekte werden daher noch schärfer von den Bildbereichen getrennt, die kein Objekt beinhalten und im Gegensatz zur semantic segmentation bleiben einzelne Objekte der gleichen Klasse unterscheidbar.
-
+\subsubsection{Instance Segmentation}
+The instance segmentation essentially fulfils a better variant of the object detection. Again, several objects of different classes are detected and the positions of the classes are also part of the output. However, the positions are not marked by bounding boxes as in object detection, but each pixel belonging to an object receives a label of this object. The objects are therefore even more sharply separated from the image areas that do not contain an object and, in contrast to semantic segmentation, individual objects of the same class remain distinguishable.
 
 %\section{Computer Vision on Mobile Devices}
 
 \subsection{Architectures}
 
-
+State of the art object detection algorithms run predominantly on deep learning architectures~\cite{dlForDetection}. The bachelor's thesis preceeding this work, \textit{Implementing a TensorFlow-Slim based Android app for image classification}~\cite{maxJokel}, already explains why \glspl{cnn} is the most widespread class of deep neural networks used for perceptual tasks. This explanation will therefore not be pursued here once more. Instead, we survey a selection of modern 
 
 \subsubsection{R-CNN}
 
@@ -428,7 +427,7 @@ Die instance segmentation erfüllt im wesentlichen eine besser Variante der obje
 
 \chapter{Results}
 
-\section{Performance}
+\section{Performance Evaluation}
 
 \section{Accuracy}
 
