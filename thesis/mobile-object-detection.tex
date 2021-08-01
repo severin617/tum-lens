@@ -324,11 +324,9 @@ Deep learning is a subarea of machine learning. Deep learning is characterised b
 	\end{figure}
 \end{multicols}
 
-\section{A Core Task of Computer Vision: Object Detection}
+\chapter{Object Detection}
 
-
-
-\subsection{How Object Detection Differs From Related Tasks}
+\section{How Object Detection Differs From Related Tasks}
 
 The field of \gls{cv} encompasses numerous distinct problems and an even larger number of potential solutions. In the following, object detection as a typical task in the \gls{cv} context is distinguished from other \gls{cv} tasks that are closest to it in terms of learning objectives.
 
@@ -340,65 +338,137 @@ The field of \gls{cv} encompasses numerous distinct problems and an even larger 
 	\label{fig:cvTasks} % labels always have to be placed after the caption
 \end{figure}
 
-\subsubsection{Semantic Segmentation}
+\subsection{Semantic Segmentation}
 In semantic segmentation, each pixel of an image is assigned a class. However, there are no objects. This means that if there are several objects of the same class in the image, all the associated pixels receive the same class label. Therefore, the different objects cannot be differentiated based on the result of the semantic segmentation.
 
-\subsubsection{Image Classification}
+\subsection{Image Classification}
 In image classification, the result of the detection is a single class. In rare application variants, a bounding box for one object of the detected class is also returned - as a rule, however, no spatial extent is associated with the task of classification.
 
-\subsubsection{Object Detection}
+\subsection{Object Detection}
 Object detection deals with the identification of any number of objects within an image. For each object, a class label and its position are returned as the coordinates of a rectangle enclosing the object. It is important here that, as depicted in Figure \ref{fig:cvTasks}, several objects of the same class can also be recognised. In contrast to the  task of semantic segmentation, the different objects of the same class can be distinguished.
 
-\subsubsection{Instance Segmentation}
+\subsection{Instance Segmentation}
 The instance segmentation essentially fulfils a better variant of the object detection. Again, several objects of different classes are detected and the positions of the classes are also part of the output. However, the positions are not marked by bounding boxes as in object detection, but each pixel belonging to an object receives a label of this object. The objects are therefore even more sharply separated from the image areas that do not contain an object and, in contrast to semantic segmentation, individual objects of the same class remain distinguishable.
 
 %\section{Computer Vision on Mobile Devices}
 
-\subsection{Architectures}
+\section{Object Detection Frameworks}
 
-State of the art object detection algorithms run predominantly on deep learning architectures~\cite{dlForDetection}. The bachelor's thesis preceeding this work, \textit{Implementing a TensorFlow-Slim based Android app for image classification}~\cite{maxJokel}, already explains why \glspl{cnn} is the most widespread class of deep neural networks used for perceptual tasks. This explanation will therefore not be pursued here once more. Instead, we survey a selection of modern 
+State of the art object detection frameworks run predominantly on deep learning architectures~\cite{dlForDetection}. The bachelor's thesis preceeding this work, \textit{Implementing a TensorFlow-Slim based Android app for image classification}~\cite{maxJokel}, already explains how \glspl{cnn} work and why they are the most important building blocks for deep learning framesworks solving perceptual tasks. This explanation will therefore not be pursued here once more. Instead, we survey a range of modern object detection frameworks. Each framework is defined by the combination of a backbone and a detector. The selection was not put together at random but is based on popularity and performance in standard object detection benchmarks~\cite{backbones}. %TODO: add reference for detection frameworks
 
-\subsubsection{R-CNN}
+\subsection{Backbones}
 
-2014
-\cite{rcnnIntro}
-
+The term \textit{backbone} in the context of \glspl{ann} might be used differently depending on the task pursued. In the case of visual tasks and this thesis, the backbone is the part of an object detection framework that extracts features from the input data. This encapsulation of the feature extraction task in its own set of \glspl{cnn} allows the designer of the object detection pipeline to swap and test different backbones for the task at hand~\cite{backbones}.
 
 
-%Heute Spielarten wie Fast R-CNN, Faster R-CNN, Mask R-CNN
+\begin{center}
+	\begin{tabular}{||c c c c||} 
+		\hline
+		Col1 & Col2 & Col2 & Col3 \\ [0.5ex] 
+		\hline\hline
+		1 & 6 & 87837 & 787 \\ 
+		\hline
+		2 & 7 & 78 & 5415 \\
+		\hline
+		3 & 545 & 778 & 7507 \\
+		\hline
+		4 & 545 & 18744 & 7560 \\
+		\hline
+		5 & 88 & 788 & 6344 \\ [1ex] 
+		\hline
+	\end{tabular}
+\end{center}
+
+
+
+\begin{table}[H]
+	\begin{tabularx}{\columnwidth}{C | C | C | C}
+		\hline
+		backbone & first publication & number of parameters & detectors that use it  \\
+		\hline \hline
+		AlexNet & 2012 [B] & lorem ipsum & HyperNet [C] \\
+		\hline
+		VGG-16 & 2014 [D] & lorem ipsum & PFPNet-R512 [K] \\
+		\hline
+		GoogLeNet & 2014 [F] & lorem ipsum & YOLOv1 [E] \\
+		\hline
+		ResNets & 2015 [A] & lorem ipsum & BlitzNet512 [G], CoupleNet [I], RetinaNet [H],  Faster R-CNN [A], R-FCN [I] \\
+		\hline
+		Inception-ResNet-V2 & bla centered & gg & Faster R-CNN G-RMI [23], Faster R-CNN with TDM [24] \\
+		\hline
+		DarkNet-19 & lorem ipsum & lorem ipsum & YOLOv2 [J] \\
+		\hline
+		MobileNet & lorem ipsum & lorem ipsum & SSDv2 \\		
+	\end{tabularx}
+	\caption[Modern CNN Backbones]{Fancy table that can contain line breaks and extended cells.}
+	\label{tab:backbones}
+\end{table}
+
+TODO: Quellen in Quellenverzeichnis:
+
+A: https://doi.org/10.1109/CVPR.2016.90
+B: https://scholar.google.com/scholar?q=Krizhevsky%2C%20A.%2C%20Sutskever%2C%20I.%2C%20Hinton%2C%20G.E.%3A%20ImageNet%20classification%20with%20deep%20convolutional%20neural%20networks.%20In%3A%20Pereira%2C%20F.%2C%20Burges%2C%20C.J.C.%2C%20Bottou%2C%20L.%2C%20Weinberger%2C%20K.Q.%20%28eds.%29%20Advances%20in%20Neural%20Information%20Processing%20Systems%2025%2C%20pp.%201097%E2%80%931105.%20Curran%20Associates%2C%20Inc.%20%282012%29
+C: https://doi.org/10.1109/CVPR.2016.98
+D: http://arxiv.org/abs/1409.1556
+E:  https://doi.org/10.1109/CVPR.2016.91
+F:  https://doi.org/10.1109/CVPR.2015.7298594
+G: http://arxiv.org/abs/1708.02813
+H: http://arxiv.org/abs/1708.02002
+I:  https://doi.org/10.1109/ICCV.2017.444 https://scholar.google.com/scholar?q=Dai%2C%20J.%2C%20Li%2C%20Y.%2C%20He%2C%20K.%2C%20Sun%2C%20J.%3A%20R-FCN%3A%20object%20detection%20via%20region-based%20fully%20convolutional%20networks.%20In%3A%20Lee%2C%20D.D.%2C%20Sugiyama%2C%20M.%2C%20Luxburg%2C%20U.V.%2C%20Guyon%2C%20I.%2C%20Garnett%2C%20R.%20%28eds.%29%20Advances%20in%20Neural%20Information%20Processing%20Systems%2029%2C%20pp.%20379%E2%80%93387.%20Curran%20Associates%2C%20Inc.%20%282016%29
+J: http://arxiv.org/abs/1612.08242
+%K: https://doi.org/10.1007/978-3-030-01228-1_15
+
+\subsubsection{ResNet}
+
+
 
 \subsubsection{MobileNet}
-
 2017
 
 %In der Implementierung verwendet
 
-\subsubsection{RetinaNet}
+\subsection{Object Detection Frameworks}
+
+\subsection{R-CNN}
+
+2014
+\cite{rcnnIntro}
+
+%YOLO
+
+%Heute Spielarten wie Fast R-CNN, Faster R-CNN, Mask R-CNN
+
+
+
+
+\subsection{RetinaNet}
 
 2018
 
 
-\subsubsection{CenterNet}
+\subsection{CenterNet}
 
 2019
 
-\subsubsection{EfficientDet}
+\subsection{EfficientDet}
 
 2019
 
-%YOLO
+
 %ShuffleNet 2018
 %FBNet 2019
 
-\subsection{MobileNetSSDv2: A Single Shot MultiBox Detector}
+% TODO: Besser unterscheiden zwischen typischen Backbone Architekturen wie MobileNet und ResNet sowie den "kompletten" Detection Frameworks wie eben das in Lens implementierte MobileNetSSDv2.
 
-\subsubsection{Introduction to XYZ Networks}
+\section{MobileNetSSDv2: A Single Shot MultiBox Detector}
+
+\subsection{Introduction to XYZ Networks}
 
 
-\subsubsection{Some Deep}
-\subsubsection{Dive Into}
-\subsubsection{Object Detection}
-\subsubsection{Theory Fun}
+\subsection{Some Deep}
+\subsection{Dive Into}
+\subsection{Object Detection}
+\subsection{Theory Fun}
 
 \chapter{App Development}
 
