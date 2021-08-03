@@ -294,7 +294,7 @@ One use for semi-supervised learning is cluster analysis, which was already used
 Reinforcement learning is "learning what to do - how to map situations to actions - so as to maximize a numerical reward signal"~\cite{introRL}. Systems are trained via reinforcement learning to learn how to behave in dynamic environments. The tasks in these environments can stretch from playing a video game~\cite{rlStarCraft} to driving an autonomous car~\cite{rlCars}. These exemplary tasks show two characteristics that distinguish reinforcement learning from the other subfields of \gls{ml}: The reward signal is often delayed and attribution to single actions is difficult. Only once a game is won or the car has arrived safely at its destination the system knows if all the decisions it made along the way lead to a positive outcome. \textit{Trial-and-error} is therefore a term that summarises this learning paradigm quite precisely.
 
 
-\subsection{Artificial Neural Networks}
+\subsection{Artificial Neural Networks} \label{ssection:ann}
 
 An \acrlong{ann} - often just referred to as neural network - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \ref{fig:2layeredANN} and \ref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The connections between nodes are also known as \textit{edges} and typically carry a weight. In the case of \glspl{ann}, the training process that is typical for all machine learning systems is the adjustment of these connection weights. The weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. In summary, an \gls{ann} transforms an input vector into an output vector through a series of non-linear functions, where both the calculation of the output and the training process are characterised by the specific structure of the \gls{ann} and its parameters.
 
@@ -360,105 +360,82 @@ State of the art object detection frameworks run predominantly on deep learning 
 
 The term \textit{backbone} in the context of \glspl{ann} might be used differently depending on the task pursued. In the case of visual tasks and this thesis, the backbone is the part of an object detection framework that extracts features from the input data. This encapsulation of the feature extraction task in its own set of \glspl{cnn} allows the designer of the object detection pipeline to swap and test different backbones for the task at hand~\cite{backbones}.
 
-
-\begin{center}
-	\begin{tabular}{||c c c c||} 
-		\hline
-		Col1 & Col2 & Col2 & Col3 \\ [0.5ex] 
-		\hline\hline
-		1 & 6 & 87837 & 787 \\ 
-		\hline
-		2 & 7 & 78 & 5415 \\
-		\hline
-		3 & 545 & 778 & 7507 \\
-		\hline
-		4 & 545 & 18744 & 7560 \\
-		\hline
-		5 & 88 & 788 & 6344 \\ [1ex] 
-		\hline
-	\end{tabular}
-\end{center}
-
-
-
 \begin{table}[H]
-	\begin{tabularx}{\columnwidth}{C | C | C | C}
+	\begin{tabularx}{\columnwidth}{C | C | C}
 		\hline
-		backbone & first publication & number of parameters & detectors that use it  \\
+		backbone					& first publication & detectors \\
 		\hline \hline
-		AlexNet & 2012 [B] & lorem ipsum & HyperNet [C] \\
+		AlexNet						  & 2012 \cite{backboneAlexNet}			& HyperNet \cite{detectorHyperNet} \\
 		\hline
-		VGG-16 & 2014 [D] & lorem ipsum & PFPNet-R512 [K] \\
+		VGG-16						 & 2014 [D]			   & PFPNet-R512 [K] \\
 		\hline
-		GoogLeNet & 2014 [F] & lorem ipsum & YOLOv1 [E] \\
+		GoogLeNet			   	   & 2014 \cite{backboneGoogLeNet}			 & YOLOv1 \cite{detectorYOLOv1} \\
 		\hline
-		ResNets & 2015 [A] & lorem ipsum & BlitzNet512 [G], CoupleNet [I], RetinaNet [H],  Faster R-CNN [A], R-FCN [I] \\
+		ResNets					  	  & 2015 \cite{backboneResNet}		   & BlitzNet512 [G], CoupleNet [I], RetinaNet [H],  Faster R-CNN [A], R-FCN [I] \\
 		\hline
-		Inception-ResNet-V2 & bla centered & gg & Faster R-CNN G-RMI [23], Faster R-CNN with TDM [24] \\
+		Inception-ResNet-V2   & tbd					  & Faster R-CNN G-RMI [23], Faster R-CNN with TDM [24] \\
 		\hline
-		DarkNet-19 & lorem ipsum & lorem ipsum & YOLOv2 [J] \\
+		DarkNet-19					& tbd					& YOLOv2 [J] \\
 		\hline
-		MobileNet & lorem ipsum & lorem ipsum & SSDv2 \\		
+		MobileNet					 & tbd					 & SSDv2 \\		
 	\end{tabularx}
-	\caption[Modern CNN Backbones]{Fancy table that can contain line breaks and extended cells.}
-	\label{tab:backbones}
+	\caption[Modern CNN Backbones and Detectors]{Overview of modern \gls{cnn} backbone networks and detectors that build upon them.}
+	\label{tab:backbonesDetectors}
 \end{table}
 
 TODO: Quellen in Quellenverzeichnis:
 
-A: https://doi.org/10.1109/CVPR.2016.90
-B: https://scholar.google.com/scholar?q=Krizhevsky%2C%20A.%2C%20Sutskever%2C%20I.%2C%20Hinton%2C%20G.E.%3A%20ImageNet%20classification%20with%20deep%20convolutional%20neural%20networks.%20In%3A%20Pereira%2C%20F.%2C%20Burges%2C%20C.J.C.%2C%20Bottou%2C%20L.%2C%20Weinberger%2C%20K.Q.%20%28eds.%29%20Advances%20in%20Neural%20Information%20Processing%20Systems%2025%2C%20pp.%201097%E2%80%931105.%20Curran%20Associates%2C%20Inc.%20%282012%29
-C: https://doi.org/10.1109/CVPR.2016.98
 D: http://arxiv.org/abs/1409.1556
-E:  https://doi.org/10.1109/CVPR.2016.91
-F:  https://doi.org/10.1109/CVPR.2015.7298594
 G: http://arxiv.org/abs/1708.02813
 H: http://arxiv.org/abs/1708.02002
 I:  https://doi.org/10.1109/ICCV.2017.444 https://scholar.google.com/scholar?q=Dai%2C%20J.%2C%20Li%2C%20Y.%2C%20He%2C%20K.%2C%20Sun%2C%20J.%3A%20R-FCN%3A%20object%20detection%20via%20region-based%20fully%20convolutional%20networks.%20In%3A%20Lee%2C%20D.D.%2C%20Sugiyama%2C%20M.%2C%20Luxburg%2C%20U.V.%2C%20Guyon%2C%20I.%2C%20Garnett%2C%20R.%20%28eds.%29%20Advances%20in%20Neural%20Information%20Processing%20Systems%2029%2C%20pp.%20379%E2%80%93387.%20Curran%20Associates%2C%20Inc.%20%282016%29
 J: http://arxiv.org/abs/1612.08242
 %K: https://doi.org/10.1007/978-3-030-01228-1_15
 
+\subsubsection{AlexNet}
+
+
+
 \subsubsection{ResNet}
 
-
+While the baseline \gls{ann} described in section \ref{ssection:ann} only connects adjacent layers, \glspl{resnet} are a special subclass of \gls{ann} that introduces \textit{shortcut conncetions}~\cite{backboneResNet}. Shortcut connection are edges in the network that skip one or more layers.
 
 \subsubsection{MobileNet}
+As the name suggests MobileNets were developed especially for computer vision applications on mobile devices with limited 
 2017
 
 %In der Implementierung verwendet
 
-\subsection{Object Detection Frameworks}
+\subsection{Two-Stage Detectors}
+
+This class of detectors separates the object detection task into two distinct stages~\cite{12stageSYNASC2018}. In the first stage, a dedicated network uses the image data to generate region proposals, also called regions of interest (ROI), as its output. The second stage is a separate network that takes the ROI, potentially decreases the final number of ROI using mechanics that depend on the specific detector, and then performs the classification on each of the final regions. The classified regions are then returned as the detected objects. Two-stage detectors tend to have a higher precision than single-stage detectors but can only achieve that at the cost of much slower processing speed. Table \ref{tab:backbonesDetectors} shows a selection popular detectos including R-CNN and some of its many successors, Fast-CNN and Faster-CNN.
+%TODO make sure they really do appear in the tabel
 
 \subsection{R-CNN}
 
-2014
-\cite{rcnnIntro}
+Fast, Faster R-CNN, and other advancements like Mask-R-CNN
+2014 \cite{rcnnIntro}
 
-%YOLO
+\subsection{Single-Stage Detectors}
 
-%Heute Spielarten wie Fast R-CNN, Faster R-CNN, Mask R-CNN
-
-
-
-
-\subsection{RetinaNet}
+\subsubsection{RetinaNet}
 
 2018
 
+\subsubsection{YOLO}
 
-\subsection{CenterNet}
-
-2019
-
-\subsection{EfficientDet}
-
-2019
+YOLO (You Only Look Once) ; currently Yolov3 2018
 
 
-%ShuffleNet 2018
-%FBNet 2019
+\subsection{SSD}
 
-% TODO: Besser unterscheiden zwischen typischen Backbone Architekturen wie MobileNet und ResNet sowie den "kompletten" Detection Frameworks wie eben das in Lens implementierte MobileNetSSDv2.
+%%%%
+% Other modern and potentially interesting detectors
+% CenterNet 2019
+% EfficientDet 2019
+% ShuffleNet 2018
+% FBNet 2019
+%%%%
 
 \section{MobileNetSSDv2: A Single Shot MultiBox Detector}
 
