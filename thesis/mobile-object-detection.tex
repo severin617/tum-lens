@@ -356,7 +356,7 @@ The instance segmentation essentially fulfils a better variant of the object det
 
 State of the art object detection frameworks run predominantly on deep learning architectures~\cite{dlForDetection}. The bachelor's thesis preceeding this work, \textit{Implementing a TensorFlow-Slim based Android app for image classification}~\cite{maxJokel}, already explains how \glspl{cnn} work and why they are the most important building blocks for deep learning framesworks solving perceptual tasks. This explanation will therefore not be pursued here once more. Instead, we survey a range of modern object detection frameworks. Each framework is defined by the combination of a backbone and a detector. The selection was not put together at random but is based on popularity and performance in standard object detection benchmarks~\cite{backbones}. %TODO: add reference for detection frameworks
 
-\subsection{Backbones}
+\subsection{Backbones} \label{ssec:backbones}
 
 The term \textit{backbone} in the context of \glspl{ann} might be used differently depending on the task pursued. In the case of visual tasks and this thesis, the backbone is the part of an object detection framework that extracts features from the input data. This encapsulation of the feature extraction task in its own set of \glspl{cnn} allows the designer of the object detection pipeline to swap and test different backbones for the task at hand~\cite{backbones}.
 
@@ -367,11 +367,11 @@ The term \textit{backbone} in the context of \glspl{ann} might be used different
 		\hline \hline
 		AlexNet						  & 2012 \cite{backboneAlexNet}			& HyperNet \cite{detectorHyperNet} \\
 		\hline
-		VGG-16						 & 2014 [D]			   & PFPNet-R512 [K] \\
+		VGG-16						 & 2014 \cite{backboneVGG}			   & PFPNet-R512 [K] \\
 		\hline
 		GoogLeNet			   	   & 2014 \cite{backboneGoogLeNet}			 & YOLOv1 \cite{detectorYOLOv1} \\
 		\hline
-		ResNets					  	  & 2015 \cite{backboneResNet}		   & BlitzNet512 [G], CoupleNet [I], RetinaNet [H],  Faster R-CNN [A], R-FCN [I] \\
+		ResNets					  	  & 2015 \cite{backboneResNet}		   & BlitzNet512 \cite{detectorBlitzNet}, CoupleNet \cite{detectorCoupleNet}, \cite{detectorRetinaNet},  Faster R-CNN [A], R-FCN ? \\
 		\hline
 		Inception-ResNet-V2   & tbd					  & Faster R-CNN G-RMI [23], Faster R-CNN with TDM [24] \\
 		\hline
@@ -385,10 +385,8 @@ The term \textit{backbone} in the context of \glspl{ann} might be used different
 
 TODO: Quellen in Quellenverzeichnis:
 
-D: http://arxiv.org/abs/1409.1556
-G: http://arxiv.org/abs/1708.02813
-H: http://arxiv.org/abs/1708.02002
-I:  https://doi.org/10.1109/ICCV.2017.444 https://scholar.google.com/scholar?q=Dai%2C%20J.%2C%20Li%2C%20Y.%2C%20He%2C%20K.%2C%20Sun%2C%20J.%3A%20R-FCN%3A%20object%20detection%20via%20region-based%20fully%20convolutional%20networks.%20In%3A%20Lee%2C%20D.D.%2C%20Sugiyama%2C%20M.%2C%20Luxburg%2C%20U.V.%2C%20Guyon%2C%20I.%2C%20Garnett%2C%20R.%20%28eds.%29%20Advances%20in%20Neural%20Information%20Processing%20Systems%2029%2C%20pp.%20379%E2%80%93387.%20Curran%20Associates%2C%20Inc.%20%282016%29
+
+ https://scholar.google.com/scholar?q=Dai%2C%20J.%2C%20Li%2C%20Y.%2C%20He%2C%20K.%2C%20Sun%2C%20J.%3A%20R-FCN%3A%20object%20detection%20via%20region-based%20fully%20convolutional%20networks.%20In%3A%20Lee%2C%20D.D.%2C%20Sugiyama%2C%20M.%2C%20Luxburg%2C%20U.V.%2C%20Guyon%2C%20I.%2C%20Garnett%2C%20R.%20%28eds.%29%20Advances%20in%20Neural%20Information%20Processing%20Systems%2029%2C%20pp.%20379%E2%80%93387.%20Curran%20Associates%2C%20Inc.%20%282016%29
 J: http://arxiv.org/abs/1612.08242
 %K: https://doi.org/10.1007/978-3-030-01228-1_15
 
@@ -408,15 +406,21 @@ As the name suggests MobileNets were developed especially for computer vision ap
 
 \subsection{Two-Stage Detectors}
 
-This class of detectors separates the object detection task into two distinct stages~\cite{12stageSYNASC2018}. In the first stage, a dedicated network uses the image data to generate region proposals, also called regions of interest (ROI), as its output. The second stage is a separate network that takes the ROI, potentially decreases the final number of ROI using mechanics that depend on the specific detector, and then performs the classification on each of the final regions. The classified regions are then returned as the detected objects. Two-stage detectors tend to have a higher precision than single-stage detectors but can only achieve that at the cost of much slower processing speed. Table \ref{tab:backbonesDetectors} shows a selection popular detectos including R-CNN and some of its many successors, Fast-CNN and Faster-CNN.
+This class of detectors separates the object detection task into two distinct stages~\cite{12stageSYNASC2018}. The network of the first stage (named Region Proposal Network (RPN) in the context of the R-CNN detector family) uses the image data to generate region proposals. The second stage is a separate network that takes these region proposals (or ROI - short for regions of interest), potentially decreases the final number of ROI using mechanics that depend on the specific detector, and then performs the classification on each of the final regions. The classified regions are then returned as the detected objects. Two-stage detectors tend to have a higher localization and object recognition accuracy than single-stage detectors but can only achieve that at the cost of considerably slower inference speed~\cite{surveyICBDT2019}. Table \ref{tab:backbonesDetectors} shows a selection of popular detectos including R-CNN and some of its many successors, Fast-CNN and Faster-CNN.
 %TODO make sure they really do appear in the tabel
+
+
 
 \subsection{R-CNN}
 
+R-CNN was 
 Fast, Faster R-CNN, and other advancements like Mask-R-CNN
 2014 \cite{rcnnIntro}
 
 \subsection{Single-Stage Detectors}
+
+Detection framesworks are considered to have only a single stage when they consist of one deep neural network only and compute the objects (bounding box coordinates and category) in a single pass through that network. By eliminating the explicit generation of region proposels, single-stage detectors outperform their two-stage competitors with respect to speed while sacrificing a bit of detection accuracy, if at all~\cite{detectorSSD}. %TODO: Cite more sources
+This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Since the object detector implemented in the TUM-Lens App is described thouroughly in section \ref{sec:mobilessd}, the following overview of selected single-state detectors will help us to understand the mechanics of TUM-Lens object detector from other possible options.
 
 \subsubsection{RetinaNet}
 
@@ -424,10 +428,8 @@ Fast, Faster R-CNN, and other advancements like Mask-R-CNN
 
 \subsubsection{YOLO}
 
-YOLO (You Only Look Once) ; currently Yolov3 2018
+YOLO (You Only Look Once) ; \cite{detectorYOLOv4}
 
-
-\subsection{SSD}
 
 %%%%
 % Other modern and potentially interesting detectors
@@ -437,13 +439,20 @@ YOLO (You Only Look Once) ; currently Yolov3 2018
 % FBNet 2019
 %%%%
 
-\section{MobileNetSSDv2: A Single Shot MultiBox Detector}
+\section{MobileNetSSDv2: A Single Shot MultiBox Detector} \label{sec:mobilessd}
 
-\subsection{Introduction to XYZ Networks}
+\subsection{Introduction to SSD}
+
+A Single Shot Detector (SSD) consists of a backbone and the \textit{SSD Head}. The backbone can, for example, be one of the networks mentioned in section \ref{ssec:backbones}. When SSD was first introduced  in 2015, the authors used the VGG-16 network as the backbone~\cite{detectorSSD}. The backbone is first trained on publicly available image data, e.g. from a database like ImageNet\footnote{\url{https://image-net.org/}}. The final layers of the original backbone network that handled the classification are then replaced by the SSD Head.
+
+\subsection{Characteristics of SSD distinguishing it from other detectors}
+
+SSD computes category scores and box locations for a fixed set of default bounding boxes by appliying a comparatevely small convulational filter to the feature map returned by the backbone network. %TODO: Stimmt das`?
+Moreover, SDD uses feature maps of different scales and computes distinct predictions for each of its predefined aspect ratios. It then fuses the predections of the different aspect ratios and scales in order to improve detection accuracy.
 
 
-\subsection{Some Deep}
-\subsection{Dive Into}
+\subsection{Architecture of SSDv2}
+\subsection{Latest Improvements of SSDv}
 \subsection{Object Detection}
 \subsection{Theory Fun}
 
@@ -471,6 +480,7 @@ YOLO (You Only Look Once) ; currently Yolov3 2018
 \subsection{Next steps in the development of TUM-Lens}
 
 % Potential Contets: Design and architecture choices, reused patterns from exisiting application, improvements to exisiting code
+% Add model selector for different detectors as well
 
 \chapter{Results}
 
