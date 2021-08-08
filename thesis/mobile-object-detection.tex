@@ -371,13 +371,13 @@ The term \textit{backbone} in the context of \glspl{ann} might be used different
 		\hline
 		GoogLeNet			   	   & 2014 \cite{backboneGoogLeNet}			 & YOLOv1 \cite{detectorYOLOv1} \\
 		\hline
-		ResNets					  	  & 2015 \cite{backboneResNet}		   & BlitzNet512 \cite{detectorBlitzNet}, CoupleNet \cite{detectorCoupleNet}, \cite{detectorRetinaNet},  Faster R-CNN [A], R-FCN ? \\
+		ResNets					  	  & 2015 \cite{backboneResNet}		   & BlitzNet512 \cite{detectorBlitzNet}, CoupleNet \cite{detectorCoupleNet}, RetinaNet \cite{detectorRetinaNet},  Faster R-CNN [A], R-FCN ? \\
 		\hline
 		Inception-ResNet-V2   & tbd					  & Faster R-CNN G-RMI [23], Faster R-CNN with TDM [24] \\
 		\hline
 		DarkNet-19					& tbd					& YOLOv2 [J] \\
 		\hline
-		MobileNet					 & tbd					 & SSDv2 \\		
+		MobileNet					 & 2017 \cite{backboneMobileNet}					 & SSDv2 \\		
 	\end{tabularx}
 	\caption[Modern CNN Backbones and Detectors]{Overview of modern \gls{cnn} backbone networks and detectors that build upon them.}
 	\label{tab:backbonesDetectors}
@@ -399,10 +399,13 @@ J: http://arxiv.org/abs/1612.08242
 While the baseline \gls{ann} described in section \ref{ssection:ann} only connects adjacent layers, \glspl{resnet} are a special subclass of \gls{ann} that introduces \textit{shortcut conncetions}~\cite{backboneResNet}. Shortcut connection are edges in the network that skip one or more layers.
 
 \subsubsection{MobileNet}
-As the name suggests MobileNets were developed especially for computer vision applications on mobile devices with limited 
-2017
+As the name suggests, MobileNets were developed especially for mobile or embedded computer vision applications. The key innovation of the MobileNet architecture is the combination of two elements:
+\begin{enumerate}
+	\item utilisation of depth-wise separable filters~\cite{depthSep}
+	\item a network structure that enables the developer to scale the model size down by adjusting only two hyper-parameters
+\end{enumerate}
+As a MobileNet is a building block of the detection framework implemented in TUM-Lens, a more detailled description can be found in section \ref{ssec:mobilenetArchitecture}.
 
-%In der Implementierung verwendet
 
 \subsection{Two-Stage Detectors}
 
@@ -415,12 +418,12 @@ This class of detectors separates the object detection task into two distinct st
 
 R-CNN was 
 Fast, Faster R-CNN, and other advancements like Mask-R-CNN
-2014 \cite{rcnnIntro}
+2014 \cite{detectorRCNN}
 
 \subsection{Single-Stage Detectors}
 
 Detection framesworks are considered to have only a single stage when they consist of one deep neural network only and compute the objects (bounding box coordinates and category) in a single pass through that network. By eliminating the explicit generation of region proposels, single-stage detectors outperform their two-stage competitors with respect to speed while sacrificing a bit of detection accuracy, if at all~\cite{detectorSSD}. %TODO: Cite more sources
-This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Since the object detector implemented in the TUM-Lens App is described thouroughly in section \ref{sec:mobilessd}, the following overview of selected single-state detectors will help us to understand the mechanics of TUM-Lens object detector from other possible options.
+This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Since the object detector implemented in TUM-Lens is described thouroughly in section \ref{sec:mobilessd}, the following overview of selected single-state detectors will help us to understand how the app's object detector differs from other possible options.
 
 \subsubsection{RetinaNet}
 
@@ -439,38 +442,70 @@ YOLO (You Only Look Once) ; \cite{detectorYOLOv4}
 % FBNet 2019
 %%%%
 
-\section{MobileNetSSDv2: A Single Shot MultiBox Detector} \label{sec:mobilessd}
+\section{SSD MobileNet v1} \label{sec:mobilessd}
+
+The SSD MobileNet v1 is the TensorFlow-Lite model used for the new object detection functionality integrated into TUM Lens. The model is pre-trained on the COCO dataset\footnote{\url{https://cocodataset.org/}} and available on TensorFlow Hub\footnote{\url{https://tfhub.dev/tensorflow/lite-model/ssd_mobilenet_v1/1/metadata/2}}. Following the data flow through the object detection framework, we will first have a closer look at the architecture of the MobileNet used as the backbone network. Secondly, we introduce the core concepts of the Single Shot MultiBox Detector (SSD) followed by an detailed description of the SSD architecture. Finally, we conclude with an outlook on the latest improvements to MobileNets, SSDs and their combined applications.
+
+\subsection{MobilelNet Architecture} \label{ssec:mobilenetArchitecture}
+TBD More Intro \\
+Firstly, using depth-wise separable filters leads to a significantly lower number of parameters the model needs to learn during the training phase. Secondly, the easy shrinking of the model by adjusting the two hyperparameters (named \textit{width multiplier} and \textit{resolution multiplier}) allows the model-builder to scale the model down to exactly the size that is appropriate for solving the problem the model is applied to~\cite{backboneMobileNet}.
 
 \subsection{Introduction to SSD}
 
-A Single Shot Detector (SSD) consists of a backbone and the \textit{SSD Head}. The backbone can, for example, be one of the networks mentioned in section \ref{ssec:backbones}. When SSD was first introduced  in 2015, the authors used the VGG-16 network as the backbone~\cite{detectorSSD}. The backbone is first trained on publicly available image data, e.g. from a database like ImageNet\footnote{\url{https://image-net.org/}}. The final layers of the original backbone network that handled the classification are then replaced by the SSD Head.
+The SSD consists of a backbone and the \textit{SSD head}. In theory, the backbone can be any of the networks mentioned in section \ref{ssec:backbones} although the choice is not limited to this selection. When SSD was first introduced  in 2015, the authors used the VGG-16 network as the backbone~\cite{detectorSSD}. In the case of the specific SSD variant implemented in TUM-Lens, MobileNet is used as a backbone. The reasons for the particular applicability of MobileNet in our Android app use case are described in section \ref{ssec:backbones}. Independent of the specific type of backbone, it is first trained on publicly available image data, e.g. from a database like ImageNet\footnote{\url{https://image-net.org/}}. Once the network is pre-trained the final layers that originally handled the classification are then replaced by the SSD head.
 
-\subsection{Characteristics of SSD distinguishing it from other detectors}
+\subsection{The SSD Head}
 
-SSD computes category scores and box locations for a fixed set of default bounding boxes by appliying a comparatevely small convulational filter to the feature map returned by the backbone network. %TODO: Stimmt das`?
-Moreover, SDD uses feature maps of different scales and computes distinct predictions for each of its predefined aspect ratios. It then fuses the predections of the different aspect ratios and scales in order to improve detection accuracy.
+The SSD head is the part of the detector that computes category scores and box locations. It is a characteristic of SSD to work with a fixed set of default bounding boxes. To account for the different sizes in which objects might appear in an image, SSD applies a sequence of comparatevely small convulational filters to the feature map returned by the backbone network. Each of the feature maps obtained by this process represents a different receptive field and allows the network to detect objects at different scales. Consequently, SSD computes  predictions for all of these feature maps and for each of its predefined aspect ratios. It then fuses the predections of the different aspect ratios and scales in order to improve detection accuracy. The range of aspect ratios and scales, although predeterminded, enables the SSD to detect object in various shapes and sizes. Its multi-scale feature maps are a core differentiator from other single-stage detectors like YOLO~\cite{detectorSSD, detectorYOLOv1} .
 
+\begin{figure}[H] % [H] for HERE
+	\centering
+	\includegraphics[width=\textwidth]{figures/ssd_feature_maps_scaling.png}
+	\caption[Detecting Objects at Different Scales Through SSD's Feature Maps]{The combination of bounding boxes in varying aspect ratios and multi-scale feature maps allows the SSD to detect objects in different sizes and orientations.\\
+		\tiny{Source:~\cite{detectorSSD}}}
+	\label{fig:ssdFeatureMapScaling} % labels always have to be placed after the caption
+\end{figure}
 
-\subsection{Architecture of SSDv2}
-\subsection{Latest Improvements of SSDv}
-\subsection{Object Detection}
-\subsection{Theory Fun}
+\subsection{Architecture}
+
+\subsection{Latest Improvements}
+
 
 \chapter{App Development}
 
-\section{Previous State of the Application}
+\section{Previous State of the Application} \label{sec:previousState}
 
-\subsection{Use Cases}
-
-\subsection{Notable Design Decisions}
+This practical part of this work was built in top of already existing Android app TUM-Lens in its version 1.0. The core feature of this previous app version is image classification. The app is already cable of classifying the images received from the live camera stream in realtime. It can also classify images that are loaded from the disk of the Android device instead of images received from the camera stream. Moreover, the user can choose between different TensorFlow-Slim\footnote{\url{https://github.com/google-research/tf-slim}} models to classify the images. This enables the user compare the speed of similar detectors and also change the type of objects that can be detected as some of the available networks were trained on different data~\cite{maxJokel}. The most impactful design decision of the former developer of TUM-Lens was to run the entire classification locally on the Android device.
 
 \section{Development Goals}
 
 \subsection{Migration From Java to Kotlin}
 
+During their Google I/O conference 2017 Google announced that they are making the programming language Kotlin a first-class citizen in Android~\cite{googleIO17}. Two years later, Google refined this statement annunciating that Android development will "be increasingly Kotlin-first" and, at the present day, the Google Developers website recommends developers to choose Kotlin when they start building a new Android app~\cite{kotlinFirst}.
+
+\subsubsection{Advantages of Kotlin}
+Continuing the developement of TUM-Lens in Kotlin has several advantages. As it is an app currently solely developed by students, the enhanced expressiveness and concisiveness over Java makes it easier for fellow students to understand the entire application within the scope of a bachelor's or master's thesis. Moreover, students can learn more in the given amount of time they spend working on the app because they can focus more strongly on the implementation of new features instead of having to write boilerplate Java code. As students are more error prone than professional developers they surpassingly benefit from the safety features integrated into the Kotlin language. The most common cause for crashes of Java applications is the null pointer exception~\cite{nullPointerSamebug, nullPointerOverops}. With Kotlin being a stongly typed language a lot of these null pointer exceptions will be avoided because Kotlin's safety features help the developer to identify potential sources of such errors very easily. Google itself claims that Android apps are 20\% less likely to crash when they contain Kotlin code~\cite{kotlinFirst}.
+
+\subsubsection{Pitfalls of Android Studio's Automatic Code Conversion}
+
+
+\subsubsection{Code Reduction in Numbers}
+
+Using the npm distribution of a tool named Count Lines of Code (cloc)~\footnote{Original cloc project by Al Danial: \url{https://github.com/AlDanial/cloc}; cloc npm distribution by Kent C. Dodds: \url{https://www.npmjs.com/package/cloc}} we can easily count lines of Java and Kotlin code while ignoring blank lines and comment lines. This enables us to monitor how the shift from Java to Kotlin influenced the number of lines of code. We use the following command 
+
+npx cloc --by-file  --git-diff-rel  --include-lang=Java,Kotlin -csv f6a18e0f 031a26a7
+
+--by-file: reports results for every source file encountered so we can directly compare each .java with its .kt equivalent
+--git-diff-rel: interprets inputs as git targets and compares only files which have changed in either commit
+--include-lang=Java,Kotlin
+%--ignore-whitespace and --ignore-case : Turned out to be redundant as we only compare files of different languages so they are never the same
 \subsection{New Functionality: Object Detection}
 
+As mention in section \ref{sec:previousState}, the exisiting image classification does not outsource the classification task to some remote server but performs the classification offline on the device itself. We adhere to the decision and implement the object detection analogously. The detection task is carried out locally using the same TensorFlow-Lite API as the image classification. We also display our detection on top of the live-stream received from the camera so that the user of the app can experience the object detection in real-time. All the same, there is some discrepancy to the existing set of functionalities built around the image classification. Only one model for object detection is currently available within the app and the detection logic cannot be applied to images that have been loaded from the storage of the device.
+
 \section{Implementing Object Detection Based on the TensorFlow Lite Framework}
+
+Graphic showing an overview of all app flows (old and new)
 
 \subsection{Some Deep}
 \subsection{Dive Into}
@@ -506,6 +541,8 @@ Autonome Autos werden unahängig von einer Verbindung zum Internet (5G, shared m
 \appendix
 
 \chapter{Screenshots of the Application}
+
+Compare old and new
 
 \chapter{Tips With Greetings From the Chair}
 \label{sec:tips}       % labels can be put almost anywhere and can be referencef from anywhere.
