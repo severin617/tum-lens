@@ -85,7 +85,7 @@
 % Some code highlighting styles you can use with lstlistings
 % C++ code style similar to default eclipse
 \lstdefinestyle{eclipse-cpp} {
-    captionpos=bottom,
+    captionpos=b,
     language=C++,
     otherkeywords={final},
     basicstyle=\footnotesize,
@@ -103,6 +103,20 @@
 
 % If no highlighting is intended
 \lstdefinestyle{plain}{
+	basicstyle=\ttfamily\footnotesize,
+}
+
+\lstdefinestyle{cmd}
+{
+	basicstyle=\ttfamily\footnotesize,
+	captionpos=b,
+	language=bash,
+	otherkeywords={final},
+	numbers=left,
+	numberstyle=\small,
+	showstringspaces=false,
+	frame=single,
+	breaklines=true,
 }
 
 % fancy algorithms (see template)

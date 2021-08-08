@@ -1,4 +1,4 @@
-% !TeX spellcheck = de_DE
+% !TeX spellcheck = en_GB
 \documentclass[
 			   fontsize=11pt,
                paper=a4,
@@ -43,6 +43,8 @@
 % 	{One-Way Delay} 	   																				% long form
 % 	{The time a packet uses through a network from one host to another}	  % description
 %   {OWDs}																							   % abbreviation in plural
+
+\newcommand{\code}[1]{\lstinline[basicstyle = \ttfamily\small]{#1}} % wrap \lstinline because texstudio doesn't parse it properly
 
 \makeglossaries
 % -------------------------------------------------------------------------------
@@ -354,7 +356,7 @@ The instance segmentation essentially fulfils a better variant of the object det
 
 \section{Object Detection Frameworks}
 
-State of the art object detection frameworks run predominantly on deep learning architectures~\cite{dlForDetection}. The bachelor's thesis preceeding this work, \textit{Implementing a TensorFlow-Slim based Android app for image classification}~\cite{maxJokel}, already explains how \glspl{cnn} work and why they are the most important building blocks for deep learning framesworks solving perceptual tasks. This explanation will therefore not be pursued here once more. Instead, we survey a range of modern object detection frameworks. Each framework is defined by the combination of a backbone and a detector. The selection was not put together at random but is based on popularity and performance in standard object detection benchmarks~\cite{backbones}. %TODO: add reference for detection frameworks
+State of the art object detection frameworks run predominantly on deep learning architectures~\cite{dlForDetection}. The bachelor's thesis preceding this work, \textit{Implementing a TensorFlow-Slim based Android app for image classification}~\cite{maxJokel}, already explains how \glspl{cnn} work and why they are the most important building blocks for deep learning frameworks solving perceptual tasks. This explanation will therefore not be pursued here once more. Instead, we survey a range of modern object detection frameworks. Each framework is defined by the combination of a backbone and a detector. The selection was not put together at random but is based on popularity and performance in standard object detection benchmarks~\cite{backbones}. %TODO: add reference for detection frameworks
 
 \subsection{Backbones} \label{ssec:backbones}
 
@@ -383,9 +385,7 @@ The term \textit{backbone} in the context of \glspl{ann} might be used different
 	\label{tab:backbonesDetectors}
 \end{table}
 
-TODO: Quellen in Quellenverzeichnis:
-
-
+TO-DO: further sources: \\
  https://scholar.google.com/scholar?q=Dai%2C%20J.%2C%20Li%2C%20Y.%2C%20He%2C%20K.%2C%20Sun%2C%20J.%3A%20R-FCN%3A%20object%20detection%20via%20region-based%20fully%20convolutional%20networks.%20In%3A%20Lee%2C%20D.D.%2C%20Sugiyama%2C%20M.%2C%20Luxburg%2C%20U.V.%2C%20Guyon%2C%20I.%2C%20Garnett%2C%20R.%20%28eds.%29%20Advances%20in%20Neural%20Information%20Processing%20Systems%2029%2C%20pp.%20379%E2%80%93387.%20Curran%20Associates%2C%20Inc.%20%282016%29
 J: http://arxiv.org/abs/1612.08242
 %K: https://doi.org/10.1007/978-3-030-01228-1_15
@@ -396,7 +396,7 @@ J: http://arxiv.org/abs/1612.08242
 
 \subsubsection{ResNet}
 
-While the baseline \gls{ann} described in section \ref{ssection:ann} only connects adjacent layers, \glspl{resnet} are a special subclass of \gls{ann} that introduces \textit{shortcut conncetions}~\cite{backboneResNet}. Shortcut connection are edges in the network that skip one or more layers.
+While the baseline \gls{ann} described in section \ref{ssection:ann} only connects adjacent layers, \glspl{resnet} are a special subclass of \gls{ann} that introduces \textit{shortcut connections}~\cite{backboneResNet}. Shortcut connection are edges in the network that skip one or more layers.
 
 \subsubsection{MobileNet}
 As the name suggests, MobileNets were developed especially for mobile or embedded computer vision applications. The key innovation of the MobileNet architecture is the combination of two elements:
@@ -404,12 +404,12 @@ As the name suggests, MobileNets were developed especially for mobile or embedde
 	\item utilisation of depth-wise separable filters~\cite{depthSep}
 	\item a network structure that enables the developer to scale the model size down by adjusting only two hyper-parameters
 \end{enumerate}
-As a MobileNet is a building block of the detection framework implemented in TUM-Lens, a more detailled description can be found in section \ref{ssec:mobilenetArchitecture}.
+As a MobileNet is a building block of the detection framework implemented in TUM-Lens, a more detailed description can be found in section \ref{ssec:mobilenetArchitecture}.
 
 
 \subsection{Two-Stage Detectors}
 
-This class of detectors separates the object detection task into two distinct stages~\cite{12stageSYNASC2018}. The network of the first stage (named Region Proposal Network (RPN) in the context of the R-CNN detector family) uses the image data to generate region proposals. The second stage is a separate network that takes these region proposals (or ROI - short for regions of interest), potentially decreases the final number of ROI using mechanics that depend on the specific detector, and then performs the classification on each of the final regions. The classified regions are then returned as the detected objects. Two-stage detectors tend to have a higher localization and object recognition accuracy than single-stage detectors but can only achieve that at the cost of considerably slower inference speed~\cite{surveyICBDT2019}. Table \ref{tab:backbonesDetectors} shows a selection of popular detectos including R-CNN and some of its many successors, Fast-CNN and Faster-CNN.
+This class of detectors separates the object detection task into two distinct stages~\cite{12stageSYNASC2018}. The network of the first stage (named Region Proposal Network (RPN) in the context of the R-CNN detector family) uses the image data to generate region proposals. The second stage is a separate network that takes these region proposals (or ROI - short for regions of interest), potentially decreases the final number of ROI using mechanics that depend on the specific detector, and then performs the classification on each of the final regions. The classified regions are then returned as the detected objects. Two-stage detectors tend to have a higher localization and object recognition accuracy than single-stage detectors but can only achieve that at the cost of considerably slower inference speed~\cite{surveyICBDT2019}. Table \ref{tab:backbonesDetectors} shows a selection of popular detectors including R-CNN and some of its many successors, Fast-CNN and Faster-CNN.
 %TODO make sure they really do appear in the tabel
 
 
@@ -422,8 +422,8 @@ Fast, Faster R-CNN, and other advancements like Mask-R-CNN
 
 \subsection{Single-Stage Detectors}
 
-Detection framesworks are considered to have only a single stage when they consist of one deep neural network only and compute the objects (bounding box coordinates and category) in a single pass through that network. By eliminating the explicit generation of region proposels, single-stage detectors outperform their two-stage competitors with respect to speed while sacrificing a bit of detection accuracy, if at all~\cite{detectorSSD}. %TODO: Cite more sources
-This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Since the object detector implemented in TUM-Lens is described thouroughly in section \ref{sec:mobilessd}, the following overview of selected single-state detectors will help us to understand how the app's object detector differs from other possible options.
+Detection frameworks are considered to have only a single stage when they consist of one deep neural network only and compute the objects (bounding box coordinates and category) in a single pass through that network. By eliminating the explicit generation of region proposals, single-stage detectors outperform their two-stage competitors with respect to speed while sacrificing a bit of detection accuracy, if at all~\cite{detectorSSD}. %TODO: Cite more sources
+This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Since the object detector implemented in TUM-Lens is described thoroughly in section \ref{sec:mobilessd}, the following overview of selected single-state detectors will help us to understand how the app's object detector differs from other possible options.
 
 \subsubsection{RetinaNet}
 
@@ -446,9 +446,9 @@ YOLO (You Only Look Once) ; \cite{detectorYOLOv4}
 
 The SSD MobileNet v1 is the TensorFlow-Lite model used for the new object detection functionality integrated into TUM Lens. The model is pre-trained on the COCO dataset\footnote{\url{https://cocodataset.org/}} and available on TensorFlow Hub\footnote{\url{https://tfhub.dev/tensorflow/lite-model/ssd_mobilenet_v1/1/metadata/2}}. Following the data flow through the object detection framework, we will first have a closer look at the architecture of the MobileNet used as the backbone network. Secondly, we introduce the core concepts of the Single Shot MultiBox Detector (SSD) followed by an detailed description of the SSD architecture. Finally, we conclude with an outlook on the latest improvements to MobileNets, SSDs and their combined applications.
 
-\subsection{MobilelNet Architecture} \label{ssec:mobilenetArchitecture}
+\subsection{MobileNet Architecture} \label{ssec:mobilenetArchitecture}
 TBD More Intro \\
-Firstly, using depth-wise separable filters leads to a significantly lower number of parameters the model needs to learn during the training phase. Secondly, the easy shrinking of the model by adjusting the two hyperparameters (named \textit{width multiplier} and \textit{resolution multiplier}) allows the model-builder to scale the model down to exactly the size that is appropriate for solving the problem the model is applied to~\cite{backboneMobileNet}.
+Firstly, using depth-wise separable filters leads to a significantly lower number of parameters the model needs to learn during the training phase. Secondly, the easy shrinking of the model by adjusting the two hyper-parameters (named \textit{width multiplier} and \textit{resolution multiplier}) allows the model-builder to scale the model down to exactly the size that is appropriate for solving the problem the model is applied to~\cite{backboneMobileNet}.
 
 \subsection{Introduction to SSD}
 
@@ -456,7 +456,7 @@ The SSD consists of a backbone and the \textit{SSD head}. In theory, the backbon
 
 \subsection{The SSD Head}
 
-The SSD head is the part of the detector that computes category scores and box locations. It is a characteristic of SSD to work with a fixed set of default bounding boxes. To account for the different sizes in which objects might appear in an image, SSD applies a sequence of comparatevely small convulational filters to the feature map returned by the backbone network. Each of the feature maps obtained by this process represents a different receptive field and allows the network to detect objects at different scales. Consequently, SSD computes  predictions for all of these feature maps and for each of its predefined aspect ratios. It then fuses the predections of the different aspect ratios and scales in order to improve detection accuracy. The range of aspect ratios and scales, although predeterminded, enables the SSD to detect object in various shapes and sizes. Its multi-scale feature maps are a core differentiator from other single-stage detectors like YOLO~\cite{detectorSSD, detectorYOLOv1} .
+The SSD head is the part of the detector that computes category scores and box locations. It is a characteristic of SSD to work with a fixed set of default bounding boxes. To account for the different sizes in which objects might appear in an image, SSD applies a sequence of comparatively small convulational filters to the feature map returned by the backbone network. Each of the feature maps obtained by this process represents a different receptive field and allows the network to detect objects at different scales. Consequently, SSD computes  predictions for all of these feature maps and for each of its predefined aspect ratios. It then fuses the predections of the different aspect ratios and scales in order to improve detection accuracy. The range of aspect ratios and scales, although predeterminded, enables the SSD to detect object in various shapes and sizes. Its multi-scale feature maps are a core differentiator from other single-stage detectors like YOLO~\cite{detectorSSD, detectorYOLOv1} .
 
 \begin{figure}[H] % [H] for HERE
 	\centering
@@ -475,7 +475,7 @@ The SSD head is the part of the detector that computes category scores and box l
 
 \section{Previous State of the Application} \label{sec:previousState}
 
-This practical part of this work was built in top of already existing Android app TUM-Lens in its version 1.0. The core feature of this previous app version is image classification. The app is already cable of classifying the images received from the live camera stream in realtime. It can also classify images that are loaded from the disk of the Android device instead of images received from the camera stream. Moreover, the user can choose between different TensorFlow-Slim\footnote{\url{https://github.com/google-research/tf-slim}} models to classify the images. This enables the user compare the speed of similar detectors and also change the type of objects that can be detected as some of the available networks were trained on different data~\cite{maxJokel}. The most impactful design decision of the former developer of TUM-Lens was to run the entire classification locally on the Android device.
+This practical part of this work was built in top of already existing Android app TUM-Lens in its version 1.0. The core feature of this previous app version is image classification. The app is already cable of classifying the images received from the live camera stream in real-time. It can also classify images that are loaded from the disk of the Android device instead of images received from the camera stream. Moreover, the user can choose between different TensorFlow-Slim\footnote{\url{https://github.com/google-research/tf-slim}} models to classify the images. This enables the user compare the speed of similar detectors and also change the type of objects that can be detected as some of the available networks were trained on different data~\cite{maxJokel}. The most impactful design decision of the former developer of TUM-Lens was to run the entire classification locally on the Android device.
 
 \section{Development Goals}
 
@@ -484,26 +484,66 @@ This practical part of this work was built in top of already existing Android ap
 During their Google I/O conference 2017 Google announced that they are making the programming language Kotlin a first-class citizen in Android~\cite{googleIO17}. Two years later, Google refined this statement annunciating that Android development will "be increasingly Kotlin-first" and, at the present day, the Google Developers website recommends developers to choose Kotlin when they start building a new Android app~\cite{kotlinFirst}.
 
 \subsubsection{Advantages of Kotlin}
-Continuing the developement of TUM-Lens in Kotlin has several advantages. As it is an app currently solely developed by students, the enhanced expressiveness and concisiveness over Java makes it easier for fellow students to understand the entire application within the scope of a bachelor's or master's thesis. Moreover, students can learn more in the given amount of time they spend working on the app because they can focus more strongly on the implementation of new features instead of having to write boilerplate Java code. As students are more error prone than professional developers they surpassingly benefit from the safety features integrated into the Kotlin language. The most common cause for crashes of Java applications is the null pointer exception~\cite{nullPointerSamebug, nullPointerOverops}. With Kotlin being a stongly typed language a lot of these null pointer exceptions will be avoided because Kotlin's safety features help the developer to identify potential sources of such errors very easily. Google itself claims that Android apps are 20\% less likely to crash when they contain Kotlin code~\cite{kotlinFirst}.
+Continuing the development of TUM-Lens in Kotlin has several advantages. As it is an app currently solely developed by students, the enhanced expressiveness and conciseness over Java makes it easier for fellow students to understand the entire application within the scope of a bachelor's or master's thesis. Moreover, students can learn more in the given amount of time they spend working on the app because they can focus more strongly on the implementation of new features instead of having to write boilerplate Java code. As students are more error prone than professional developers they surpassingly benefit from the safety features integrated into the Kotlin language. The most common cause for crashes of Java applications is the null pointer exception~\cite{nullPointerSamebug, nullPointerOverops}. With Kotlin being a strongly typed language a lot of these null pointer exceptions will be avoided because Kotlin's safety features help the developer to identify potential sources of such errors very easily. Google itself claims that Android apps are 20\% less likely to crash when they contain Kotlin code~\cite{kotlinFirst}.
 
 \subsubsection{Pitfalls of Android Studio's Automatic Code Conversion}
 
+Android Studio offers a convenient way to convert files from Java to Kotlin. On macOS, you first have to open the Java file you want to migrate in Android Studio. Next, select \textit{Code} from the menu bar and then the menu item \textit{Convert Java File to Kotlin File}. If you have not yet configured Kotlin in your project, Android Studio will prompt you to do so or the migration will be aborted. Once Kotlin is set up Android Studio will immediately start the conversion. At the end of the process you are prompted with a dialogue asking "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?" which we confirm by clicking on the yes-button. They file has now been converted from Java to Kotlin. In some cases it works right away but in the context of TUM-Lens manual adjustments were mandatory in every file because of several reasons. \\
+For a start, Android Studio could not infer all types automatically an being strongly typed it was necessary to restructure the code so the compiler could safely cast a variable to the appropriate type (called \textit{Smart Cast} in Kotlin). Usually this fell under one of two cases. In the first case of non-critical functionality, using Kotlin's safe call operator \code{?.} to access properties that might be null was sufficient. When it came to core functions, an additional safety check was the better option so that the compiler could be certain that a mutable property had not accidentally become null before being accessed and we could also react accordingly if the safety check failed. \\
+The automatic conversion that actually introduced a bug was the replacement of getters and setters. While it Java uses \code{getVariableName()} and \code{setVariableName(variableType newValue)} to retrieve or overwrite a property of a private class from outside, Kotlin does so 
 
-\subsubsection{Code Reduction in Numbers}
 
-Using the npm distribution of a tool named Count Lines of Code (cloc)~\footnote{Original cloc project by Al Danial: \url{https://github.com/AlDanial/cloc}; cloc npm distribution by Kent C. Dodds: \url{https://www.npmjs.com/package/cloc}} we can easily count lines of Java and Kotlin code while ignoring blank lines and comment lines. This enables us to monitor how the shift from Java to Kotlin influenced the number of lines of code. We use the following command 
+\subsubsection{Measuring The Decrease of The Size of The Code Base} %TODO: Check if this should rather be moved to the Results chapter
 
-npx cloc --by-file  --git-diff-rel  --include-lang=Java,Kotlin -csv f6a18e0f 031a26a7
+Using the npm distribution of a tool named Count Lines of Code (cloc)\footnote{Original cloc project by Al Danial: \url{https://github.com/AlDanial/cloc}; cloc npm distribution by Kent C. Dodds: \url{https://www.npmjs.com/package/cloc}} we can easily count lines of Java and Kotlin code while ignoring blank lines and comment lines. This enables us to monitor how the shift from Java to Kotlin influenced the number of lines of code. With Perl, Node and npm installed on our machine,
+we run the following command which prints its output to stdout:
 
---by-file: reports results for every source file encountered so we can directly compare each .java with its .kt equivalent
---git-diff-rel: interprets inputs as git targets and compares only files which have changed in either commit
---include-lang=Java,Kotlin
-%--ignore-whitespace and --ignore-case : Turned out to be redundant as we only compare files of different languages so they are never the same
+\begin{lstlisting}[style=cmd, label=code:cloc, caption={Command line input to print analysis of lines of code before and after the Java to Kotlin conversion. The output is also saved as cloc.csv and can be found in lens-david/thesis/raw\_data.}]
+	lens-david % npx cloc --by-file --git-diff-rel  --match-d='main' --include-lang=Java,Kotlin -csv f6a18e0f 031a26a7
+\end{lstlisting}
+
+The \code{--by-file} option enables us to directly compare each Java file with Kotlin equivalent as it changes the output so that the results are returned for every source file encountered. \code{--git-diff-rel} interprets the command line arguments as git targets and compares only files which have changed in either commit which is exactly what we need to measure the change in the number of lines of code. Only files in the main directory are of our concern so we let cloc only search this directory using the option \code{--match-d='main'}. This excludes e.g. the test directory from being searched. With \code{--include-lang=Java,Kotlin} we limit the output to files written in the languages we seek to collate. Other files like Android's XML layout files are not of interest for this analysis. Finally, we provide two git commits. \code{f6a18e0f} is the last commit pushed by the previous developer of TUM-Lens and \code{bf0dbf7f} is the more recent commit that does not contain Java files anymore but replaced them with their respective Kotlin substitute.
+
+\begin{table}[h]
+	\begin{tabularx}{\columnwidth}
+		{ >{\RaggedRight}p{10cm} | C }
+		\hline
+		Files migrated from Java to Kotlin (extension omitted)	&	Delta in lines of code	\\	\hline \hline
+		CameraRoll	&	-34	\\	\hline
+		Classifier	&	4	\\	\hline
+		ListSingleton	&	-9	\\	\hline
+		PermissionDenied	&	-8	\\	\hline
+		StartScreen	&	-12	\\	\hline
+		ViewFinder	&	-7	\\	\hline
+		fragments/CameraRollPredictionsFragment	&	9	\\	\hline
+		fragments/CameraSettingsFragment	&	-15	\\	\hline
+		fragments/ModelSelectorFragment	&	5	\\	\hline
+		fragments/PredictionsFragment	&	4	\\	\hline
+		fragments/ProcessingUnitSelectorFragment	&	-7	\\	\hline
+		fragments/SmoothedPredictionsFragment	&	6	\\	\hline
+		fragments/ThreadNumberFragment	&	-6	\\	\hline
+		helpers/App	&	1	\\	\hline
+		helpers/CameraEvents	&	0	\\	\hline
+		helpers/FreezeAnalyzer	&	-6	\\	\hline
+		helpers/FreezeCallback	&	0	\\	\hline
+		helpers/ImageUtils	&	43	\\	\hline
+		helpers/Logger	&	6	\\	\hline
+		helpers/ModelConfig	&	-2	\\	\hline
+		helpers/ProcessingUnit	&	-2	\\	\hline
+		helpers/Recognition	&	-26	\\	\hline
+		helpers/ResultItem	&	-21	\\	\hline
+		helpers/ResultItemComparator	&	-2	\\	\hline
+		\fontseries{b}\selectfont{cumulative delta over all relevant files}	&	\fontseries{b}\selectfont{-79}	\\ \hline
+		\end{tabularx}
+	\caption[Java Files in TUM-Lens v1.0 And Change in Lines of Code After Their Conversion to Kotlin]{This table shows the results from the command line prompt in listing \ref{code:cloc}. Packages have been indicated as a prefix to the file name to resemble the original project structure of TUM-Lens v1.0. Overall, the total size of the codebase shrank because of the migration from Java to Kotlin. This is particularly impressive as understandably further logic needed to be added to existing classes in order to account for the new object detection functionality.}
+	\label{tab:cloc}
+\end{table}
+
 \subsection{New Functionality: Object Detection}
 
-As mention in section \ref{sec:previousState}, the exisiting image classification does not outsource the classification task to some remote server but performs the classification offline on the device itself. We adhere to the decision and implement the object detection analogously. The detection task is carried out locally using the same TensorFlow-Lite API as the image classification. We also display our detection on top of the live-stream received from the camera so that the user of the app can experience the object detection in real-time. All the same, there is some discrepancy to the existing set of functionalities built around the image classification. Only one model for object detection is currently available within the app and the detection logic cannot be applied to images that have been loaded from the storage of the device.
+As mention in section \ref{sec:previousState}, the existing image classification does not outsource the classification task to some remote server but performs the classification offline on the device itself. We adhere to the decision and implement the object detection analogously. The detection task is carried out locally using the same TensorFlow-Lite API as the image classification. We also display our detection on top of the live-stream received from the camera so that the user of the app can experience the object detection in real-time. All the same, there is some discrepancy to the existing set of functionalities built around the image classification. Only one model for object detection is currently available within the app and the detection logic cannot be applied to images that have been loaded from the storage of the device.
 
-\section{Implementing Object Detection Based on the TensorFlow Lite Framework}
+\section{Implementing Object Detection Using The TensorFlow Lite Framework}
 
 Graphic showing an overview of all app flows (old and new)
 
