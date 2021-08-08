@@ -230,7 +230,7 @@ Everybody is talking about \acrfull{ml}. It is already impossible to imagine our
 
 \subsection{Machine Learning}
 
-A popular definition of \gls{ml} is attributed to Arthur Samuel describing it as the "field of study that gives computers the ability to learn without being explicitly programmed"\footnote{Althought cited in popular machine learning material like Andrew Ng's \gls{ml} course at Stanford~\cite{mlCourseStan} the quote appears neither in Samuel's 1959~\cite{mlQuote1959} nor his 1967 paper~\cite{mlQuote1967}.}. \acrlong{ml} algorithms circumvent this need for explicit programming by improving an internal model through data. This process is called training and the data used to train the model is often regarded to as the model's experience~\cite{mlMitchell}. As depicted in figure \ref{fig:mlClassification}, \gls{ml} can be divided into the subfields supervised learning, unsupervised learning, semi-supervised learning and reinforcement learning.
+A popular definition of \gls{ml} is attributed to Arthur Samuel describing it as the "field of study that gives computers the ability to learn without being explicitly programmed"\footnote{Althought cited in popular machine learning material like Andrew Ng's \gls{ml} course at Stanford~\cite{mlCourseStan} the quote appears neither in Samuel's 1959~\cite{mlQuote1959} nor his 1967 paper~\cite{mlQuote1967}.}. \acrlong{ml} algorithms circumvent this need for explicit programming by improving an internal model through data. This process is called training and the data used to train the model is often regarded to as the model's experience~\cite{mlMitchell}. As depicted in figure \autoref{fig:mlClassification}, \gls{ml} can be divided into the subfields supervised learning, unsupervised learning, semi-supervised learning and reinforcement learning.
 
 \begin{figure}[H]
 	\centering
@@ -298,7 +298,7 @@ Reinforcement learning is "learning what to do - how to map situations to action
 
 \subsection{Artificial Neural Networks} \label{ssection:ann}
 
-An \acrlong{ann} - often just referred to as neural network - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \ref{fig:2layeredANN} and \ref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The connections between nodes are also known as \textit{edges} and typically carry a weight. In the case of \glspl{ann}, the training process that is typical for all machine learning systems is the adjustment of these connection weights. The weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. In summary, an \gls{ann} transforms an input vector into an output vector through a series of non-linear functions, where both the calculation of the output and the training process are characterised by the specific structure of the \gls{ann} and its parameters.
+An \acrlong{ann} - often just referred to as neural network - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \autoref{fig:2layeredANN} and \autoref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The connections between nodes are also known as \textit{edges} and typically carry a weight. In the case of \glspl{ann}, the training process that is typical for all machine learning systems is the adjustment of these connection weights. The weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. In summary, an \gls{ann} transforms an input vector into an output vector through a series of non-linear functions, where both the calculation of the output and the training process are characterised by the specific structure of the \gls{ann} and its parameters.
 
 %TODO: Maybe introduce a view typical ANN architectures like feed forward, convolutional, recurring, etc.
 
@@ -347,7 +347,7 @@ In semantic segmentation, each pixel of an image is assigned a class. However, t
 In image classification, the result of the detection is a single class. In rare application variants, a bounding box for one object of the detected class is also returned - as a rule, however, no spatial extent is associated with the task of classification.
 
 \subsection{Object Detection}
-Object detection deals with the identification of any number of objects within an image. For each object, a class label and its position are returned as the coordinates of a rectangle enclosing the object. It is important here that, as depicted in Figure \ref{fig:cvTasks}, several objects of the same class can also be recognised. In contrast to the  task of semantic segmentation, the different objects of the same class can be distinguished.
+Object detection deals with the identification of any number of objects within an image. For each object, a class label and its position are returned as the coordinates of a rectangle enclosing the object. It is important here that, as depicted in Figure \autoref{fig:cvTasks}, several objects of the same class can also be recognised. In contrast to the  task of semantic segmentation, the different objects of the same class can be distinguished.
 
 \subsection{Instance Segmentation}
 The instance segmentation essentially fulfils a better variant of the object detection. Again, several objects of different classes are detected and the positions of the classes are also part of the output. However, the positions are not marked by bounding boxes as in object detection, but each pixel belonging to an object receives a label of this object. The objects are therefore even more sharply separated from the image areas that do not contain an object and, in contrast to semantic segmentation, individual objects of the same class remain distinguishable.
@@ -396,7 +396,7 @@ J: http://arxiv.org/abs/1612.08242
 
 \subsubsection{ResNet}
 
-While the baseline \gls{ann} described in section \ref{ssection:ann} only connects adjacent layers, \glspl{resnet} are a special subclass of \gls{ann} that introduces \textit{shortcut connections}~\cite{backboneResNet}. Shortcut connection are edges in the network that skip one or more layers.
+While the baseline \gls{ann} described in section \autoref{ssection:ann} only connects adjacent layers, \glspl{resnet} are a special subclass of \gls{ann} that introduces \textit{shortcut connections}~\cite{backboneResNet}. Shortcut connection are edges in the network that skip one or more layers.
 
 \subsubsection{MobileNet}
 As the name suggests, MobileNets were developed especially for mobile or embedded computer vision applications. The key innovation of the MobileNet architecture is the combination of two elements:
@@ -404,12 +404,12 @@ As the name suggests, MobileNets were developed especially for mobile or embedde
 	\item utilisation of depth-wise separable filters~\cite{depthSep}
 	\item a network structure that enables the developer to scale the model size down by adjusting only two hyper-parameters
 \end{enumerate}
-As a MobileNet is a building block of the detection framework implemented in TUM-Lens, a more detailed description can be found in section \ref{ssec:mobilenetArchitecture}.
+As a MobileNet is a building block of the detection framework implemented in TUM-Lens, a more detailed description can be found in section \autoref{ssec:mobilenetArchitecture}.
 
 
 \subsection{Two-Stage Detectors}
 
-This class of detectors separates the object detection task into two distinct stages~\cite{12stageSYNASC2018}. The network of the first stage (named Region Proposal Network (RPN) in the context of the R-CNN detector family) uses the image data to generate region proposals. The second stage is a separate network that takes these region proposals (or ROI - short for regions of interest), potentially decreases the final number of ROI using mechanics that depend on the specific detector, and then performs the classification on each of the final regions. The classified regions are then returned as the detected objects. Two-stage detectors tend to have a higher localization and object recognition accuracy than single-stage detectors but can only achieve that at the cost of considerably slower inference speed~\cite{surveyICBDT2019}. Table \ref{tab:backbonesDetectors} shows a selection of popular detectors including R-CNN and some of its many successors, Fast-CNN and Faster-CNN.
+This class of detectors separates the object detection task into two distinct stages~\cite{12stageSYNASC2018}. The network of the first stage (named Region Proposal Network (RPN) in the context of the R-CNN detector family) uses the image data to generate region proposals. The second stage is a separate network that takes these region proposals (or ROI - short for regions of interest), potentially decreases the final number of ROI using mechanics that depend on the specific detector, and then performs the classification on each of the final regions. The classified regions are then returned as the detected objects. Two-stage detectors tend to have a higher localization and object recognition accuracy than single-stage detectors but can only achieve that at the cost of considerably slower inference speed~\cite{surveyICBDT2019}. Table \autoref{tab:backbonesDetectors} shows a selection of popular detectors including R-CNN and some of its many successors, Fast-CNN and Faster-CNN.
 %TODO make sure they really do appear in the tabel
 
 
@@ -423,7 +423,7 @@ Fast, Faster R-CNN, and other advancements like Mask-R-CNN
 \subsection{Single-Stage Detectors}
 
 Detection frameworks are considered to have only a single stage when they consist of one deep neural network only and compute the objects (bounding box coordinates and category) in a single pass through that network. By eliminating the explicit generation of region proposals, single-stage detectors outperform their two-stage competitors with respect to speed while sacrificing a bit of detection accuracy, if at all~\cite{detectorSSD}. %TODO: Cite more sources
-This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Since the object detector implemented in TUM-Lens is described thoroughly in section \ref{sec:mobilessd}, the following overview of selected single-state detectors will help us to understand how the app's object detector differs from other possible options.
+This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Since the object detector implemented in TUM-Lens is described thoroughly in section \autoref{sec:mobilessd}, the following overview of selected single-state detectors will help us to understand how the app's object detector differs from other possible options.
 
 \subsubsection{RetinaNet}
 
@@ -452,7 +452,7 @@ Firstly, using depth-wise separable filters leads to a significantly lower numbe
 
 \subsection{Introduction to SSD}
 
-The SSD consists of a backbone and the \textit{SSD head}. In theory, the backbone can be any of the networks mentioned in section \ref{ssec:backbones} although the choice is not limited to this selection. When SSD was first introduced  in 2015, the authors used the VGG-16 network as the backbone~\cite{detectorSSD}. In the case of the specific SSD variant implemented in TUM-Lens, MobileNet is used as a backbone. The reasons for the particular applicability of MobileNet in our Android app use case are described in section \ref{ssec:backbones}. Independent of the specific type of backbone, it is first trained on publicly available image data, e.g. from a database like ImageNet\footnote{\url{https://image-net.org/}}. Once the network is pre-trained the final layers that originally handled the classification are then replaced by the SSD head.
+The SSD consists of a backbone and the \textit{SSD head}. In theory, the backbone can be any of the networks mentioned in section \autoref{ssec:backbones} although the choice is not limited to this selection. When SSD was first introduced  in 2015, the authors used the VGG-16 network as the backbone~\cite{detectorSSD}. In the case of the specific SSD variant implemented in TUM-Lens, MobileNet is used as a backbone. The reasons for the particular applicability of MobileNet in our Android app use case are described in section \autoref{ssec:backbones}. Independent of the specific type of backbone, it is first trained on publicly available image data, e.g. from a database like ImageNet\footnote{\url{https://image-net.org/}}. Once the network is pre-trained the final layers that originally handled the classification are then replaced by the SSD head.
 
 \subsection{The SSD Head}
 
@@ -477,29 +477,33 @@ The SSD head is the part of the detector that computes category scores and box l
 
 This practical part of this work was built in top of already existing Android app TUM-Lens in its version 1.0. The core feature of this previous app version is image classification. The app is already cable of classifying the images received from the live camera stream in real-time. It can also classify images that are loaded from the disk of the Android device instead of images received from the camera stream. Moreover, the user can choose between different TensorFlow-Slim\footnote{\url{https://github.com/google-research/tf-slim}} models to classify the images. This enables the user compare the speed of similar detectors and also change the type of objects that can be detected as some of the available networks were trained on different data~\cite{maxJokel}. The most impactful design decision of the former developer of TUM-Lens was to run the entire classification locally on the Android device.
 
-\section{Development Goals}
-
-\subsection{Migration From Java to Kotlin}
+\section{Migration From Java to Kotlin}
 
 During their Google I/O conference 2017 Google announced that they are making the programming language Kotlin a first-class citizen in Android~\cite{googleIO17}. Two years later, Google refined this statement annunciating that Android development will "be increasingly Kotlin-first" and, at the present day, the Google Developers website recommends developers to choose Kotlin when they start building a new Android app~\cite{kotlinFirst}.
 
-\subsubsection{Advantages of Kotlin}
+\subsection{Advantages of Kotlin}
 Continuing the development of TUM-Lens in Kotlin has several advantages. As it is an app currently solely developed by students, the enhanced expressiveness and conciseness over Java makes it easier for fellow students to understand the entire application within the scope of a bachelor's or master's thesis. Moreover, students can learn more in the given amount of time they spend working on the app because they can focus more strongly on the implementation of new features instead of having to write boilerplate Java code. As students are more error prone than professional developers they surpassingly benefit from the safety features integrated into the Kotlin language. The most common cause for crashes of Java applications is the null pointer exception~\cite{nullPointerSamebug, nullPointerOverops}. With Kotlin being a strongly typed language a lot of these null pointer exceptions will be avoided because Kotlin's safety features help the developer to identify potential sources of such errors very easily. Google itself claims that Android apps are 20\% less likely to crash when they contain Kotlin code~\cite{kotlinFirst}.
 
-\subsubsection{Pitfalls of Android Studio's Automatic Code Conversion}
+\subsection{Converting Java Files to Kotlin Files}
 
 Android Studio offers a convenient way to convert files from Java to Kotlin. On macOS, you first have to open the Java file you want to migrate in Android Studio. Next, select \textit{Code} from the menu bar and then the menu item \textit{Convert Java File to Kotlin File}. If you have not yet configured Kotlin in your project, Android Studio will prompt you to do so or the migration will be aborted. Once Kotlin is set up Android Studio will immediately start the conversion. At the end of the process you are prompted with a dialogue asking "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?" which we confirm by clicking on the yes-button. They file has now been converted from Java to Kotlin. In some cases it works right away but in the context of TUM-Lens manual adjustments were mandatory in every file because of several reasons. \\
 For a start, Android Studio could not infer all types automatically an being strongly typed it was necessary to restructure the code so the compiler could safely cast a variable to the appropriate type (called \textit{Smart Cast} in Kotlin). Usually this fell under one of two cases. In the first case of non-critical functionality, using Kotlin's safe call operator \code{?.} to access properties that might be null was sufficient. When it came to core functions, an additional safety check was the better option so that the compiler could be certain that a mutable property had not accidentally become null before being accessed and we could also react accordingly if the safety check failed. \\
-The automatic conversion that actually introduced a bug was the replacement of getters and setters. While it Java uses \code{getVariableName()} and \code{setVariableName(variableType newValue)} to retrieve or overwrite a property of a private class from outside, Kotlin does so 
+There was one part to Android Studio's built-in code migration that actually tricked me into introducing a bug: the conversion of getters and setters. Listing \autoref{code:kotlinProperty} shows the syntax for the declaration of a property in Kotlin. Every property has default public getters and setters  if not explicitly defined otherwise. Java, on the other hand, conventionally uses \code{getVariableName()} and \code{setVariableName(variableType newValue)} methods for every variable of a private class that shall be retrieved or overwritten from outside that class. 
+
+\begin{lstlisting}[style=standard, language=Kotlin, label=code:kotlinProperty, caption={Kotlin's declaration syntax for a mutable property. Getter and setter are optional. The property type is only optional when the compiler can infer it from the context (meaning either from the initializer or from the return type of the getter)}]
+	var <propertyName>[: <PropertyType>] [= <property_initializer>]
+			[<getter>]
+			[<setter>]
+\end{lstlisting}
 
 
-\subsubsection{Measuring The Decrease of The Size of The Code Base} %TODO: Check if this should rather be moved to the Results chapter
+\subsection{Measuring The Decrease of The Size of The Code Base} %TODO: Check if this should rather be moved to the Results chapter
 
 Using the npm distribution of a tool named Count Lines of Code (cloc)\footnote{Original cloc project by Al Danial: \url{https://github.com/AlDanial/cloc}; cloc npm distribution by Kent C. Dodds: \url{https://www.npmjs.com/package/cloc}} we can easily count lines of Java and Kotlin code while ignoring blank lines and comment lines. This enables us to monitor how the shift from Java to Kotlin influenced the number of lines of code. With Perl, Node and npm installed on our machine,
 we run the following command which prints its output to stdout:
 
-\begin{lstlisting}[style=cmd, label=code:cloc, caption={Command line input to print analysis of lines of code before and after the Java to Kotlin conversion. The output is also saved as cloc.csv and can be found in lens-david/thesis/raw\_data.}]
-	lens-david % npx cloc --by-file --git-diff-rel  --match-d='main' --include-lang=Java,Kotlin -csv f6a18e0f 031a26a7
+\begin{lstlisting}[style=standard, language=bash, label=code:cloc, caption={npx cloc command with its options and arguments. Prints the lines of code analysis comapring files before and after the Java to Kotlin conversion. The output is also saved as cloc.csv and can be found in lens-david/thesis/raw\_data.}]
+	(base) david@DDs-MBP lens-david % npx cloc --by-file --git-diff-rel --match-d='main' --include-lang=Java,Kotlin -csv f6a18e0f 031a26a7
 \end{lstlisting}
 
 The \code{--by-file} option enables us to directly compare each Java file with Kotlin equivalent as it changes the output so that the results are returned for every source file encountered. \code{--git-diff-rel} interprets the command line arguments as git targets and compares only files which have changed in either commit which is exactly what we need to measure the change in the number of lines of code. Only files in the main directory are of our concern so we let cloc only search this directory using the option \code{--match-d='main'}. This excludes e.g. the test directory from being searched. With \code{--include-lang=Java,Kotlin} we limit the output to files written in the languages we seek to collate. Other files like Android's XML layout files are not of interest for this analysis. Finally, we provide two git commits. \code{f6a18e0f} is the last commit pushed by the previous developer of TUM-Lens and \code{bf0dbf7f} is the more recent commit that does not contain Java files anymore but replaced them with their respective Kotlin substitute.
@@ -535,15 +539,15 @@ The \code{--by-file} option enables us to directly compare each Java file with K
 		helpers/ResultItemComparator	&	-2	\\	\hline
 		\fontseries{b}\selectfont{cumulative delta over all relevant files}	&	\fontseries{b}\selectfont{-79}	\\ \hline
 		\end{tabularx}
-	\caption[Java Files in TUM-Lens v1.0 And Change in Lines of Code After Their Conversion to Kotlin]{This table shows the results from the command line prompt in listing \ref{code:cloc}. Packages have been indicated as a prefix to the file name to resemble the original project structure of TUM-Lens v1.0. Overall, the total size of the codebase shrank because of the migration from Java to Kotlin. This is particularly impressive as understandably further logic needed to be added to existing classes in order to account for the new object detection functionality.}
+	\caption[Java Files in TUM-Lens v1.0 And Change in Lines of Code After Their Conversion to Kotlin]{This table shows the results from the command line prompt in listing \autoref{code:cloc}. Packages have been indicated as a prefix to the file name to resemble the original project structure of TUM-Lens v1.0. Overall, the total size of the codebase shrank because of the migration from Java to Kotlin. This is particularly impressive as understandably further logic needed to be added to existing classes in order to account for the new object detection functionality.}
 	\label{tab:cloc}
 \end{table}
 
-\subsection{New Functionality: Object Detection}
-
-As mention in section \ref{sec:previousState}, the existing image classification does not outsource the classification task to some remote server but performs the classification offline on the device itself. We adhere to the decision and implement the object detection analogously. The detection task is carried out locally using the same TensorFlow-Lite API as the image classification. We also display our detection on top of the live-stream received from the camera so that the user of the app can experience the object detection in real-time. All the same, there is some discrepancy to the existing set of functionalities built around the image classification. Only one model for object detection is currently available within the app and the detection logic cannot be applied to images that have been loaded from the storage of the device.
 
 \section{Implementing Object Detection Using The TensorFlow Lite Framework}
+
+As mention in section \autoref{sec:previousState}, the existing image classification does not outsource the classification task to some remote server but performs the classification offline on the device itself. We adhere to the decision and implement the object detection analogously. The detection task is carried out locally using the same TensorFlow-Lite API as the image classification. We also display our detection on top of the live-stream received from the camera so that the user of the app can experience the object detection in real-time. All the same, there is some discrepancy to the existing set of functionalities built around the image classification. Only one model for object detection is currently available within the app and the detection logic cannot be applied to images that have been loaded from the storage of the device.
+
 
 Graphic showing an overview of all app flows (old and new)
 
@@ -558,6 +562,8 @@ Graphic showing an overview of all app flows (old and new)
 % Add model selector for different detectors as well
 
 \chapter{Results}
+
+Kotlin made the code definitely more concise
 
 \section{Performance Evaluation}
 
