@@ -396,7 +396,7 @@ J: http://arxiv.org/abs/1612.08242
 
 \subsubsection{ResNet}
 
-While the baseline \gls{ann} described in section \autoref{ssection:ann} only connects adjacent layers, \glspl{resnet} are a special subclass of \gls{ann} that introduces \textit{shortcut connections}~\cite{backboneResNet}. Shortcut connection are edges in the network that skip one or more layers.
+While the baseline \gls{ann} described in \autoref{ssection:ann} only connects adjacent layers, \glspl{resnet} are a special subclass of \gls{ann} that introduces \textit{shortcut connections}~\cite{backboneResNet}. Shortcut connection are edges in the network that skip one or more layers.
 
 \subsubsection{MobileNet}
 As the name suggests, MobileNets were developed especially for mobile or embedded computer vision applications. The key innovation of the MobileNet architecture is the combination of two elements:
@@ -404,7 +404,7 @@ As the name suggests, MobileNets were developed especially for mobile or embedde
 	\item utilisation of depth-wise separable filters~\cite{depthSep}
 	\item a network structure that enables the developer to scale the model size down by adjusting only two hyper-parameters
 \end{enumerate}
-As a MobileNet is a building block of the detection framework implemented in TUM-Lens, a more detailed description can be found in section \autoref{ssec:mobilenetArchitecture}.
+As a MobileNet is a building block of the detection framework implemented in TUM-Lens, a more detailed description can be found in \autoref{ssec:mobilenetArchitecture}.
 
 
 \subsection{Two-Stage Detectors}
@@ -423,7 +423,7 @@ Fast, Faster R-CNN, and other advancements like Mask-R-CNN
 \subsection{Single-Stage Detectors}
 
 Detection frameworks are considered to have only a single stage when they consist of one deep neural network only and compute the objects (bounding box coordinates and category) in a single pass through that network. By eliminating the explicit generation of region proposals, single-stage detectors outperform their two-stage competitors with respect to speed while sacrificing a bit of detection accuracy, if at all~\cite{detectorSSD}. %TODO: Cite more sources
-This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Since the object detector implemented in TUM-Lens is described thoroughly in section \autoref{sec:mobilessd}, the following overview of selected single-state detectors will help us to understand how the app's object detector differs from other possible options.
+This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Since the object detector implemented in TUM-Lens is described thoroughly in \autoref{sec:mobilessd}, the following overview of selected single-state detectors will help us to understand how the app's object detector differs from other possible options.
 
 \subsubsection{RetinaNet}
 
@@ -452,7 +452,7 @@ Firstly, using depth-wise separable filters leads to a significantly lower numbe
 
 \subsection{Introduction to SSD}
 
-The SSD consists of a backbone and the \textit{SSD head}. In theory, the backbone can be any of the networks mentioned in section \autoref{ssec:backbones} although the choice is not limited to this selection. When SSD was first introduced  in 2015, the authors used the VGG-16 network as the backbone~\cite{detectorSSD}. In the case of the specific SSD variant implemented in TUM-Lens, MobileNet is used as a backbone. The reasons for the particular applicability of MobileNet in our Android app use case are described in section \autoref{ssec:backbones}. Independent of the specific type of backbone, it is first trained on publicly available image data, e.g. from a database like ImageNet\footnote{\url{https://image-net.org/}}. Once the network is pre-trained the final layers that originally handled the classification are then replaced by the SSD head.
+The SSD consists of a backbone and the \textit{SSD head}. In theory, the backbone can be any of the networks mentioned in \autoref{ssec:backbones} although the choice is not limited to this selection. When SSD was first introduced  in 2015, the authors used the VGG-16 network as the backbone~\cite{detectorSSD}. In the case of the specific SSD variant implemented in TUM-Lens, MobileNet is used as a backbone. The reasons for the particular applicability of MobileNet in our Android app use case are described in \autoref{ssec:backbones}. Independent of the specific type of backbone, it is first trained on publicly available image data, e.g. from a database like ImageNet\footnote{\url{https://image-net.org/}}. Once the network is pre-trained the final layers that originally handled the classification are then replaced by the SSD head.
 
 \subsection{The SSD Head}
 
@@ -486,11 +486,9 @@ Continuing the development of TUM-Lens in Kotlin has several advantages. As the 
 
 \subsection{Converting Java Files to Kotlin Files}
 
-Android Studio offers a convenient way to convert files from Java to Kotlin. On macOS, you first have to open the Java file you want to migrate in Android Studio. Next, select \textit{Code} from the menu bar and then the menu item \textit{Convert Java File to Kotlin File}. If you have not yet configured Kotlin in your project, Android Studio will prompt you to do so or the migration will be aborted. Once Kotlin is set up Android Studio will immediately start the conversion. At the end of the process you are prompted with a dialogue asking "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?" which we confirm by clicking on the yes-button. They file has now been converted from Java to Kotlin. In some cases it works right away but in the context of TUM-Lens manual adjustments were mandatory in every file because of several reasons. \\
+Android Studio offers a convenient way to convert files from Java to Kotlin. On macOS, we first have to open the Java file we want to migrate in Android Studio. Next, we select \textit{Code} from the menu bar and then the menu item \textit{Convert Java File to Kotlin File}. If we have not yet configured Kotlin in your project, Android Studio will prompt us to ether do so or abort the migration process. Once Kotlin is set up Android Studio will immediately start the conversion. At the end of the process we are prompted with a dialogue asking "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?" which we confirm by clicking on the yes-button. They file has now been converted from Java to Kotlin. In some cases the resulting Kotlin code works right away but in the context of TUM-Lens manual adjustments were mandatory in every file because of several reasons. \\
 
-For a start, Android Studio could not infer all types automatically. With Kotlin being strongly typed it was necessary to restructure the code so that the compiler could know each variable's type or safely cast a variable to the appropriate type (called \textit{Smart Cast} in Kotlin). We solved this situation using two different approaches distinguished by the importance of the successful execution of the respective piece of code. In the case of non-critical functionality, using Kotlin's safe call operator \code{?.} to access properties that might be null was sufficient. When it came to core functions, wrapping such functionality in an additional safety check was the better option. This not only capacitates the compiler to be certain that a mutable property had not accidentally become null before being accessed. It also enables us to react appropriately if the safety check fails. \\
-
-There was one part to Android Studio's built-in code migration that actually tricked me into introducing a bug: the conversion of getters and setters. Listing \autoref{code:kotlinProperty} shows the syntax for the declaration of a property in Kotlin. Every property has default public getters and setters if not explicitly defined otherwise. Java, on the other hand, conventionally uses \code{getVariableName()} and \code{setVariableName(variableType newValue)} methods for every variable of a private class that shall be retrieved or overwritten from outside that class. 
+For a start, Android Studio could not always infer all types automatically. With Kotlin being strongly typed it was necessary to restructure the code so that the compiler could know each variable's type or safely cast a variable to the appropriate type (called \textit{Smart Cast} in Kotlin). We solved this situation using two different approaches distinguished by the importance of the successful execution of the respective code block. In the case of non-critical functionality, using Kotlin's safe call operator \code{?.} to access properties that might be null was sufficient. When it came to core functions, wrapping such functionality in an additional safety check was the better option. This not only capacitates the compiler to be certain that a mutable property had not accidentally become null before being accessed. It also enables us to react appropriately if the safety check fails. \\
 
 \begin{lstlisting}[style=standard, language=Kotlin, label=code:kotlinProperty, caption={Kotlin's declaration syntax for a mutable property. Getter and setter are optional. The property type is only optional when the compiler can infer it from the context (meaning either from the initializer or from the return type of the getter).}]
 var <propertyName>[: <PropertyType>] [= <property_initializer>]
@@ -498,11 +496,12 @@ var <propertyName>[: <PropertyType>] [= <property_initializer>]
 	[<setter>]
 \end{lstlisting}
 
-Listing \autoref{code:bugSourceJava} contains the original Java code and listing \autoref{code:bugSolutionKotlin} shows the correct translation to Kotlin. The default Kotlin getter is not enough here as it would omit the crucial conversion task. However, this is exactly what happened during the auto-conversion. As a result, other parts of the logic broke because the \code{rgbBytes} object could not be properly processed which lead to the application not working as expected. In this special case some accessors of the property were in need of the image conversion and others were not. Therefore, we did not put the image conversion into a custom accessor because we did not want to call \code{imageConverter!!.run()} every time the property was used. Placing it in the separate method \code{getConvertedRgbBytes()} has been a good decision.
+Apart from type inference, there was one part to Android Studio's built-in code migration that actually tricked us into introducing a bug: the conversion of getters and setters. \autoref{code:kotlinProperty} shows the syntax for the declaration of a property in Kotlin. Every property has default public getters and setters if not explicitly defined otherwise. Java, on the other hand, conventionally defines methods like \code{public variableType getVariableName()} and \code{public void setVariableName(variableType newValue)} for every variable of a private class that shall be retrieved or overwritten from outside that class. \\
 
+\autoref{code:bugSourceJava} contains the original Java code and listing \autoref{code:bugSolutionKotlin} shows the final solution that implemented in addition to Kotlin's property accessors. The default Kotlin getter is not enough here as it would omit the crucial conversion task. However, this is exactly what happened during the auto-conversion. As a result, other parts of the logic broke because the \code{rgbBytes} object could not be properly processed which lead to the application not working as expected. In this special case some accessors of the property were in need of the image conversion and others were not. Therefore, we did not put the image conversion into a custom accessor because we did not want to call \code{imageConverter!!.run()} every time the property was used. Placing it in the separate method \code{getConvertedRgbBytes()} has therefore been a good decision for us.
 
 \begin{minipage}[t]{0.41\linewidth}
-	\begin{lstlisting}[style=standard, language=Java, label=code:bugSourceJava, caption={Java code that introduced a bug after using Android Studio's built-in Java to Kotlin converter.}]
+	\begin{lstlisting}[style=standard, language=Java, label=code:bugSourceJava, caption={Java code that lead to the introduction of a bug after using Android Studio's built-in Java to Kotlin converter.}]
 protected int[] getRgbBytes() {
 	imageConverter.run();
 	return rgbBytes;
@@ -521,10 +520,10 @@ protected fun getConvertedRgbBytes(): IntArray? {
 
 \subsection{Measuring The Decrease of The Size of The Code Base} %TODO: Check if this should rather be moved to the Results chapter
 
-Using the npm distribution of a tool named Count Lines of Code (cloc)\footnote{Original cloc project by Al Danial: \url{https://github.com/AlDanial/cloc}\\cloc npm distribution by Kent C. Dodds: \url{https://www.npmjs.com/package/cloc}} we can easily count lines of Java and Kotlin code while ignoring blank lines and comment lines. This enables us to monitor how the shift from Java to Kotlin influenced the number of lines of code. With Perl, Node and npm installed on our machine,
+Using the npm distribution of the tool Count Lines of Code (cloc)\footnote{Original cloc project by Al Danial: \url{https://github.com/AlDanial/cloc}\\cloc npm distribution by Kent C. Dodds: \url{https://www.npmjs.com/package/cloc}} we can easily count lines of Java and Kotlin code while ignoring blank lines and comment lines. This enables us to monitor how the shift from Java to Kotlin influenced the number of lines of code. With Perl, Node and npm installed on our machine,
 we run the following command which prints its output to stdout:
 
-\begin{lstlisting}[style=standard, language=bash, label=code:cloc, caption={npx cloc command with its options and arguments. Prints the lines of code analysis comapring files before and after the Java to Kotlin conversion. The output is also saved as cloc.csv and can be found in lens-david/thesis/raw\_data.}]
+\begin{lstlisting}[style=standard, language=bash, label=code:cloc, caption={npx cloc command with its options and arguments. Prints the lines of code analysis comapring files before and after the Java to Kotlin conversion. The output was also saved as cloc.csv and can be found in lens-david/thesis/raw\_data.}]
 	(base) david@DDs-MBP lens-david % npx cloc --by-file --git-diff-rel --match-d='main' --include-lang=Java,Kotlin -csv f6a18e0f 031a26a7
 \end{lstlisting}
 
@@ -534,7 +533,7 @@ The \code{--by-file} option enables us to directly compare each Java file with K
 	\begin{tabularx}{\columnwidth}
 		{ >{\RaggedRight}p{10cm} | C }
 		\hline
-		Files migrated from Java to Kotlin (extension omitted)	&	Delta in lines of code	\\	\hline \hline
+		Files in TUM-Lens v1.0 migrated from Java to Kotlin	&	Delta in lines of code	\\	\hline \hline
 		CameraRoll	&	-34	\\	\hline
 		Classifier	&	4	\\	\hline
 		ListSingleton	&	-9	\\	\hline
@@ -558,22 +557,27 @@ The \code{--by-file} option enables us to directly compare each Java file with K
 		helpers/ProcessingUnit	&	-2	\\	\hline
 		helpers/Recognition	&	-26	\\	\hline
 		helpers/ResultItem	&	-21	\\	\hline
-		helpers/ResultItemComparator	&	-2	\\	\hline
+		helpers/ResultItemComparator	&	-2	\\	\hline \hline
 		\fontseries{b}\selectfont{cumulative delta over all relevant files}	&	\fontseries{b}\selectfont{-79}	\\ \hline
 		\end{tabularx}
-	\caption[Java Files in TUM-Lens v1.0 And Change in Lines of Code After Their Conversion to Kotlin]{This table shows the results from the command line prompt in listing \autoref{code:cloc}. Packages have been indicated as a prefix to the file name to resemble the original project structure of TUM-Lens v1.0. Overall, the total size of the codebase shrank because of the migration from Java to Kotlin. This is particularly impressive as understandably further logic needed to be added to existing classes in order to account for the new object detection functionality.}
+	\caption[Java Files in TUM-Lens v1.0 And Change in Lines of Code After Their Conversion to Kotlin]{This table shows the results from the command line prompt in \autoref{code:cloc}. Packages have been indicated as a prefix to the file name to resemble the original project structure of TUM-Lens v1.0 and file extension have been omitted. Overall, the total size of the codebase shrank because of the migration from Java to Kotlin. This is particularly impressive as understandably further logic was added to existing classes in order to account for the new object detection functionality.}
 	\label{tab:cloc}
 \end{table}
 
 
 \section{Implementing Object Detection Using The TensorFlow Lite Framework}
 
-As described in section \autoref{sec:previousState} the core feature of TUM-Lens v1.0 is image classification and the classification task is not outsourced to some remote server but performed offline on the device itself. We adhere to the decision and implement the object detection analogously. The detection task is carried out locally using the same TensorFlow-Lite API as the image classification. We also display our detection on top of the live-stream received from the camera so that the user of the app can experience the object detection in real-time. All the same, there is some discrepancy to the existing set of functionalities built around the image classification. Only one model for object detection is currently available within the app and the detection logic cannot be applied to images that have been loaded from the storage of the device.
+As described in \autoref{sec:previousState} the core feature of TUM-Lens v1.0 is image classification. Most notably, the classification task is not outsourced to some remote server but performed offline on the device itself. We adhere to this decision and built our logic on top of Google's TensorFlow Lite example app for object detection~\cite{tfSampleAppGuide, tfSampleAppRepo}. The detection task is therefore carried out locally using the same TensorFlow-Lite API as the image classification. We also integrate our detection results into the images received from the camera live-stream so that the user of the app can experience the object detection in real-time. This being said, there is some discrepancy to the existing set of functionalities built around the image classification. Only one model for object detection is currently available within the app and the detection logic cannot be applied to images that have been loaded from the storage of the device.
+
+
+\subsection{Expansion of The Existing App Architecture}
+
+In order to make the structure of the app more accessible to new developers we put the core classes responsible for image classification and object detection into two distinct packages. The project now includes the four packages \code{classification}, \code{detection}, \code{fragments} and \code{helpers}. Only the two base activities \code{StartScreenActivity} and \code{PermissionDeniedActivity} remained on the top-level.
 
 
 Graphic showing an overview of all app flows (old and new)
 
-\subsection{Some Deep}
+
 \subsection{Dive Into}
 \subsection{Object Detection}
 \subsection{Implementation Fun}
@@ -599,8 +603,15 @@ Organisation von Fotos auf dem Smartphone, ohne dass diese an die Server von App
 
 Autonome Autos werden unahängig von einer Verbindung zum Internet (5G, shared medium, bleibt das Auto im Tunnel dann stehen?)
 
+\section{Future Work}
 
+Replace depracted functionalities
 
+Add more models to chose from for object detection
+
+Apple object detection to files loaded from storage
+
+Change the apps infrastructure so that models (don't forget the labels though) can be loaded from a server (suitable as they tend to be rather small). This would make it easier to add new models on the fly.
 
 % -------------------------------------------------------------------------------
 % ----------------------------------- APPENDIX --------------------------------
