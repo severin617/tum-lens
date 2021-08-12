@@ -53,23 +53,23 @@
 
 \newacronym{nnapi}{NNAPI}{Neural Networks API}
 
-\newacronym{cv}{CV}{Computer Vision}
+\newacronym{cv}{cv}{computer vision}
 
-\newacronym{cnn}{CNN}{Convolutional Neural Network}
+\newacronym{cnn}{cnn}{convolutional neural network}
 
-\newacronym{resnet}{ResNet}{Residual Neural Network}
+\newacronym{resnet}{ResNet}{residual neural network}
 
-\newacronym{relu}{ReLU}{Rectified Linear Unit}
+%\newacronym{relu}{ReLU}{Rectified Linear Unit}
 
-\newacronym{ml}{ML}{Machine Learning}
+\newacronym{ml}{ml}{machine learning}
 
-\newacronym{ann}{ANN}{Artificial Neural Network}
+\newacronym{ann}{ann}{artificial neural network}
 	
 \newdualentry{api} %oxford dictionary
-	{API}
+	{api}
 	{application programming interface}
 	{set of functions and procedures allowing the creation of applications that access the features or data of an operating system, application, or other service}
-	{APIs}
+	{apis}
 
 \newglossaryentry{diff_privacy} %https://oconnell.fas.harvard.edu/files/salil/files/differential_privacy_primer_nontechnical_audience.pdf
 {
@@ -185,7 +185,7 @@ Munich, \date \hspace{5cm} \author
 \end{center}
 \vspace{1cm}
 
-We migrate the entire codebase of the Android application TUM-Lens from Java to Kotlin. This facilitates the future development of the app as it makes the code more concise and error-proof. We elaborate on further advantages of the Kotlin language over Java and analyse how this migration lowered the lines of the existing code. Moreover, we expand the functionalities of the app by an object detection feature based on Google's open source deep learning framework TensorFlow Lite. The implementation follows in the previous TUM-Lens developer's footsteps and integrates the detection to entirely work on-device so that no data needs to be exchanged with external servers. On the object detection theory side, we distinguish object detection from other visual machine learning tasks and survey a selection of modern deep learning architectures - both for backbone and detector networks. In addition, we study the mechanics of a specific model, the SSD MobileNet v1, in detail as this is the model applied to the object detection task in TUM-Lens. This thesis expands Maximilian Jokel's previous work \textit{Implementing a TensorFlow-Slim based Android app for image classification} (2020).
+We migrate the entire code base of the Android application TUM-Lens from Java to Kotlin. This facilitates the future development of the app as it makes the code more concise and error-proof. Consequently, we elaborate on further advantages of the Kotlin language over Java and analyse how this migration lowered the lines of the existing code. Moreover, we expand the functionalities of the app by an object detection feature based on Google's open source deep learning framework TensorFlow Lite. The implementation follows in the previous TUM-Lens developer's footsteps and integrates the object detection to entirely work on-device so that no data needs to be exchanged with external servers. On the object detection theory side, we distinguish object detection from other visual machine learning tasks and survey a selection of modern deep learning architectures - both for backbone and detector networks. In addition, we study the mechanics of a specific model in detail, the SSD MobileNet v1, as this is the model applied to the object detection task in TUM-Lens. This thesis expands Maximilian Jokel's previous work \textit{Implementing a TensorFlow-Slim based Android app for image classification} (2020).
 
 \cleardoublepage
 
@@ -202,33 +202,35 @@ We migrate the entire codebase of the Android application TUM-Lens from Java to 
 % -------------------------------------------------------------------------------
 
 \mainmatter
+
 \chapter{Motivation}
 
-The aim of this work was to further develop the Android app TUM-Lens \cite{lensApp}. The core functions of the app include the analysis of images that are captured via the camera of the Android device and transmitted to the app as a live feed. For an optimal user experience, the analysis of the images must take place in near real time. This is the only way to ensure that the analysis results displayed always match the current content of the camera feed, which can change very quickly due to panning of the camera by its user. While in many applications the analysis of image data can take place decentrally in powerful data centres, in the case of TUM-Lens the image analysis runs on the mobile device itself. With the completion of this work, image analysis now also includes object detection in addition to the classification of images.
+The aim of this work was to further develop the Android app TUM-Lens \cite{lensApp}. Its core function is the analysis of images that are captured by the camera of the Android device and transmitted to the app as a live feed. With the completion of this work, the pre-existing image classification capabilities of the app are now complemented with object detection.
+
+For an optimal user experience, the analysis of the images must take place in near real time. This is the only way to ensure that the analysis results displayed always match the current content of the camera feed, which can change very quickly due to panning of the camera by its user. While in many applications the analysis of image data can take place decentrally in powerful data centres, in the case of TUM-Lens the image analysis runs on the mobile device itself.
 
 %\section{Increasing Computation Power on Mobile Devices} %TODO: will probably not elaborate here as 3 topics for motivation might be enough
 
-\section{Growing Support for Running Machine Learning Operations on Mobile Platforms}
+\section{Growing Support for On-Device Machine Learning}
 
-Support for the development of \gls{ml} and also in particular deep learning applications for smartphones is growing steadily and from different directions at the same time. Developer-friendly frameworks such as TensorFlow, developed by Google Brain, or PyTorch, developed by Facebook's AI Research Lab, are among the best-known deep learning frameworks~\cite{dl_ranking_2018}. The release of TensorFlow Lite\footnote{\url{https://www.tensorflow.org/lite}} 2017~\cite{tflite_release_verge_2017} and PyTorch Mobile 2019~\cite{pytorch_release_2019} show that mobile platforms increasingly come into focus of companies providing \acrlong{ml} software. In recent year, device manufacturers and operating system developers also started to provide dedicated hardware and software components for mobile machine learning. Examples include Apple's Neural Engine~\cite{neural_engine_verge_2017}, unveiled in 2017, or Android's \gls{nnapi}~\cite{nnapi_devguide_2021}. Apple's Neural Engine is a hardware component optimised for \acrlong{ml} requirements. Android's \gls{nnapi}, on the other hand, is an Android C \gls{api} for efficient computation of \gls{ml} operations and provides a basic set of functions for higher-level \gls{ml} frameworks. As a result of these developments, it is becoming easier for developers to build \gls{ml} applications that run efficiently on mobile devices. This support was a major catalyst for the initial and further development of TUM-Lens in the context of two bachelor theses.
+Support for the development of \gls{ml} and also in particular deep learning applications for mobile platforms is growing steadily and from different directions at the same time. Developer-friendly frameworks such as TensorFlow\footnote{\url{https://www.tensorflow.org/}}, developed by Google Brain, or PyTorch\footnote{\url{https://pytorch.org/}}, developed by Facebook's AI Research Lab, are among the best-known deep learning frameworks~\cite{dl_ranking_2018}. The releases of TensorFlow Lite\footnote{\url{https://www.tensorflow.org/lite}} 2017~\cite{tflite_release_verge_2017} and PyTorch Mobile\footnote{\url{https://pytorch.org/mobile/home/}} 2019~\cite{pytorch_release_2019} show that mobile platforms increasingly come into focus of companies providing \acrlong{ml} software. In recent years, device manufacturers and operating system developers also started to provide dedicated hardware and software components for mobile machine learning. Examples include Apple's Neural Engine~\cite{neural_engine_verge_2017}, unveiled in 2017, or Android's \gls{nnapi}~\cite{nnapi_devguide_2021}. Apple's Neural Engine is a hardware component optimised for \acrlong{ml} requirements. Android's \gls{nnapi}, on the other hand, is an Android C \gls{api} for efficient computation of \gls{ml} operations and provides a basic set of functions for higher-level \gls{ml} frameworks. As a result of these developments, it is becoming easier for developers to build \gls{ml} applications that run efficiently on mobile devices. This support was a major catalyst for the initial and further development of TUM-Lens in the context of two bachelor theses.
 
 \section{Offline Usability}
 
-TUM-Lens is more independent compared to many other \acrlong{ml} based apps as it does not require an internet connection to use it. Often, apps and services by definition need a connection to the internet to perform their task. The Amazon voice assistant Alexa can answer simple voice commands to control smart home devices or check the time without an internet connection and thus already uses on-device \acrlong{ml}. But even if Alexa could analyse and understand all voice commands locally, the request would still have to be forwarded to the Amazon servers in most cases. Due to the large number of possible queries, not all answers can be kept on the device, but must be retrieved from the Internet. Such queries include daily topics such as the weather report, traffic or the result of a sporting event. However, an internet connection is not required to use the full range of functions of TUM-Lens. All the information needed for image classfification and object detection is stored locally on the device in the form of various already trained \gls{ann}. With the integration of the corresponding mobile frameworks, the image analysis can therefore be carried out locally on the device, making the app independent of an internet connection.
+TUM-Lens is more independent compared to many other \acrlong{ml} based apps as it does not require an internet connection to use it. Often, apps and services require a connection to the internet because of the nature of the task they are meant to perform. The Amazon voice assistant Alexa can answer simple voice commands to control smart home devices or check the time without having access to the world wide web and thus already uses on-device \acrlong{ml}. But even if Alexa could analyse and understand all voice commands locally, the request would still have to be forwarded to the Amazon servers in most cases. Due to the large number of possible queries, not all answers can be kept on the device, but must be retrieved from a data centre that has more storage capacity. Such queries include daily topics such as the weather report, traffic or the result of a sporting event. However, an internet connection is not required to use the full range of functions of TUM-Lens. All the information needed for image classification and object detection is stored locally on the device in the form of various already trained \gls{ann}. With the integration of the corresponding mobile frameworks, the image analysis can therefore be carried out locally on the device, making the app independent of an internet connection.
 
 \section{Improved Privacy}
 
-The use of on-device \gls{ml} provides another mechanism for protecting personal data in the context of machine learning in addition to existing methods such as \gls{diff_privacy}. Due to the growing support for mobile \gls{ml} applications mentioned above, but also due to the independently increasing power of mobile devices~\cite{mobile_cpu_power}, not only the use of pre-trained \glspl{ann} becomes possible, but also the training of new \glspl{ann} on the mobile device itself becomes more and more relevant~\cite{liu19}. If the training process takes place locally on the device itself, no data needs to be transferred to external instances such as a company's servers. This makes it possible to develop applications that adapt more and more individually to the user as they are used, while guaranteeing maximum data protection. An example of the development of such an application is DeepType~\cite{deepType}. DeepType attempts to predict the next word used when the user enters the keyboard. While every user initially starts with the same pre-trained version of the \gls{ann} used by DeepType, the application continues to train this \gls{ann} with each input and thus adapts more and more to the characteristic input behaviour of the user without the text inputs ever leaving the device.
+The use of on-device \gls{ml} provides a further mechanism for protecting personal data in the context of machine learning in addition to existing methods such as \gls{diff_privacy}. Due to the growing support for mobile \gls{ml} applications mentioned above, but also due to the continually increasing power of mobile devices~\cite{mobile_cpu_power}, not only the use of pre-trained \glspl{ann} becomes possible, but also the training of new \glspl{ann} on the mobile device itself becomes more and more feasible and relevant~\cite{liu19}. If the training process takes place locally on the device itself, no data needs to be transferred to external instances such as a company's servers. This makes it possible to develop applications that adapt more and more individually to the user as they are used, while guaranteeing a maximum level of data protection. An example of the development of such an application is DeepType~\cite{deepType}. DeepType attempts to predict the next word used when the user enters the keyboard. While every user initially starts with the same pre-trained version of the \gls{ann} used by DeepType, the application continues to train this \gls{ann} with each input and thus adapts more and more to the characteristic input behaviour of the user - all without the text inputs ever leaving the device.
 
-\chapter{Background Theory}
 
-\section{Important Concepts}
+\chapter{Important Concepts}
 
-Everybody is talking about \acrfull{ml}. It is already impossible to imagine our everyday life without the use of the term. Due to the multitude of contexts in which \acrfull{ml} is spoken of, some justifiably and some unjustifiably, it is important to create a common understanding for the theoretical content of this work.
+Everyone is talking about machine learning. It is already impossible to imagine our everyday life without the use of the term. Due to the multitude of contexts in which machine learning is spoken of, some justifiably and some unjustifiably, it is important to create a common understanding of some machine learning-related concepts in order to ensure a common understanding of the theoretical contents of this work.
 
 %TODO: Maybe outline the different concepts that will be explained as their connection is loser than the other parts of the thesis.
 
-\subsection{Machine Learning}
+\section{Machine Learning}
 
 A popular definition of \gls{ml} is attributed to Arthur Samuel describing it as the "field of study that gives computers the ability to learn without being explicitly programmed"\footnote{Althought cited in popular machine learning material like Andrew Ng's \gls{ml} course at Stanford~\cite{mlCourseStan} the quote appears neither in Samuel's 1959~\cite{mlQuote1959} nor his 1967 paper~\cite{mlQuote1967}.}. \acrlong{ml} algorithms circumvent this need for explicit programming by improving an internal model through data. This process is called training and the data used to train the model is often regarded to as the model's experience~\cite{mlMitchell}. As depicted in figure \autoref{fig:mlClassification}, \gls{ml} can be divided into the subfields supervised learning, unsupervised learning, semi-supervised learning and reinforcement learning.
 
@@ -282,27 +284,27 @@ A popular definition of \gls{ml} is attributed to Arthur Samuel describing it as
 	\label{fig:mlClassification}
 \end{figure}
 
-\subsubsection{Supervised Learning}
+\subsection{Supervised Learning}
 In supervised learning, the learning machine is provided with input data as well as the output that is expected for the given input~\cite{introSupervised}. In the classical case of spam filtering, the input can be a collection of emails and the expected output is a label attached to each email that either classifies it as spam or as non-spam. The learning machine is then fed all e-mails as input data and learns to recognise which information in the input is important to produce the correct classification. As the system knows the correct answer for each training input, it can process an email, predict whether or not it is spam, and then use the known answer to change its weights in a way that will make it more likely to lead to a correct prediction and less likely to lead to a false prediction the next time it is presented with similar input.
 
-\subsubsection{Unsupervised Learning}
+\subsection{Unsupervised Learning}
 Detecting hidden patterns and structuring data is where unsupervised learning comes into play. Learners of this type don't need to be provided with an expected output while being trained~\cite{introUnsupervised}. A scenario for the application of unsupervised learning is the problem of dividing a customer base into subgroups in order to treat every subgroup according to their specific needs. An employee might help the machine learning system by providing the number of subgroups she wants the system to generate. The learner then builds up its representation of the internal structure of the entire data set with every input it processes. After having processed enough customers, it will most likely have identified the key metrics that distinguish customers into the different groups. 
 
-\subsubsection{Semi-Supervised Learning}
+\subsection{Semi-Supervised Learning}
 One use for semi-supervised learning is cluster analysis, which was already used as an example in the previous paragraph. In the case of semi-supervised learning, the system no longer has to work out the different groups (also known as \textit{clusters}) from the unlabelled data alone. Instead, it can use a small set of already labelled customers as a reference and build its internal representation of the entire dataset (labelled and unlabelled) around the clusters indicated by the pre-labelled data. This is especially useful because in many domains collecting or creating labelled data is difficult, expensive, or both~\cite{introSemiSup}.
 
-\subsubsection{Reinforcement Learning}
+\subsection{Reinforcement Learning}
 
 Reinforcement learning is "learning what to do - how to map situations to actions - so as to maximize a numerical reward signal"~\cite{introRL}. Systems are trained via reinforcement learning to learn how to behave in dynamic environments. The tasks in these environments can stretch from playing a video game~\cite{rlStarCraft} to driving an autonomous car~\cite{rlCars}. These exemplary tasks show two characteristics that distinguish reinforcement learning from the other subfields of \gls{ml}: The reward signal is often delayed and attribution to single actions is difficult. Only once a game is won or the car has arrived safely at its destination the system knows if all the decisions it made along the way lead to a positive outcome. \textit{Trial-and-error} is therefore a term that summarises this learning paradigm quite precisely.
 
 
-\subsection{Artificial Neural Networks} \label{ssection:ann}
+\section{Artificial Neural Networks} \label{ssection:ann}
 
 An \acrlong{ann} - often just referred to as neural network - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \autoref{fig:2layeredANN} and \autoref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The connections between nodes are also known as \textit{edges} and typically carry a weight. In the case of \glspl{ann}, the training process that is typical for all machine learning systems is the adjustment of these connection weights. The weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. In summary, an \gls{ann} transforms an input vector into an output vector through a series of non-linear functions, where both the calculation of the output and the training process are characterised by the specific structure of the \gls{ann} and its parameters.
 
 %TODO: Maybe introduce a view typical ANN architectures like feed forward, convolutional, recurring, etc.
 
-\subsection{Deep Learning}
+\section{Deep Learning}
 
 Deep learning is a subarea of machine learning. Deep learning is characterised by the use of \glspl{ann} with many hidden layers. The more hidden layers a network has, the deeper it is. The deeper a network is and the more nodes the network has per layer, the more complex the computations that the \gls{ann} can successfully perform~\cite{dlBookGoodf}. As the number of layers and nodes grows, so does the number of parameters. Their large number is the reason deep learning requires extensive amounts of data to provide adequate results compared to other sub-disciplines of machine learning. Networks of this genus have been given the ability to perform extraordinarily complex computations at the expense of a resource-intensive training process.
 
@@ -328,7 +330,7 @@ Deep learning is a subarea of machine learning. Deep learning is characterised b
 
 \chapter{Object Detection}
 
-\section{How Object Detection Differs From Related Tasks}
+\section{How Object Detection Differs From Related Tasks} \label{sec:cvtasks}
 
 The field of \gls{cv} encompasses numerous distinct problems and an even larger number of potential solutions. In the following, object detection as a typical task in the \gls{cv} context is distinguished from other \gls{cv} tasks that are closest to it in terms of learning objectives.
 
@@ -577,10 +579,32 @@ In order to make the structure of the app more accessible to new developers we p
 
 Graphic showing an overview of all app flows (old and new)
 
+\subsection{DetectionActivity}
+
+Just as \code{ClassificationActivity} is the core activity that handles the image classification of the camera feed, the new \code{DetectionActivity} is the central activity for object detection. The user can easily switch between the different mode of image analysis by using a toggle button on top of the screen. We decided to use a toggle switch here since there are exactly two operating modes (classification and detection) and they are working mutually exclusive in order to best utilise the computation power of the device. This design decision may be revised later when the scope of the app is expanded to cover more visual tasks (see \autoref{sec:cvtasks} for examples of such tasks). Another reason for a rework can be the fact that mobile devices might have enough computing power so that solving multiple tasks in parallel does not make a noticeable difference for the app user, meaning images are still processed in real-time.
+
+\subsubsection{Inheritance}
+
+\code{DetectionActivity} inherits from the abstract class \code{CameraActivity} and implements the \code{OverlayView.DrawCallback} interface. The \code{CameraActivity} handles all communication with Androids camera API and implements the proper setup and behaviour of the elements in the bottom sheet. The \code{DrawCallback} provides a single function definition that the \code{DetectionAcitivty} overrides in order to render the detected objects as rectangles in a layer on top of the preview of the camera image stream.
+
+\subsubsection{Bitmap Conversion}
+
+Since TUM-Lens can run on a multitude of devices with varying combinations of camera and display resolution, the \code{DetectionActivity} sets parameters such as font sizes and matrices to convert the image data back and forth between the different formats the data is needed in. This is important as in contemporary Android devices, the resolution of the camera is usually above the resolution of the display. This is also the case for the Xiaomi Mi 9 on which we tested the application during its development (see \autoref{chap:specs} for its technical specifications). Sticking to the example of Xiaomi Mi 9, the images captured by the camera have 20 (selfie camera) or 45 (main camera) megapixels and are scaled down to 2.5 megapixel to be displayed on the device screen. After that, they are again scaled down to a bitmap of 300x300 pixels\footnote{The image received by the detector might indeed be even smaller than 300x300 pixels as the camera input is usually not square and the aspect ratio is kept throughout the image conversion pipeline. Therefore, the 300 pixels denote the larger dimension (width or height) of the input bitmap.} as this is the appropriate input size for the implemented detection framework described in \autoref{sec:mobilessd}. Once the detector returns bounding boxes for the objects detected in its input image the coordinates of these rectangles in turn are scaled back up to mark the corresponding areas in the higher resolution image shown on the device display.
+
+\subsubsection{Processing Images}
+
+The cropped image is 
+
+
+
 
 \subsection{Dive Into}
 \subsection{Object Detection}
 \subsection{Implementation Fun}
+
+Don't forget to mention
+
+Threshold of detection confidence can be set (currently set to 0.5)
 
 \subsection{Next steps in the development of TUM-Lens}
 
@@ -622,6 +646,35 @@ Change the apps infrastructure so that models (don't forget the labels though) c
 \chapter{Screenshots of the Application}
 
 Compare old and new
+
+\chapter{Test Device Specifications} \label{chap:specs}
+
+The development of TUM-Lens v2.0 was tested on a Xiaomi Mi 9. Development and testing occurred April to August 2021. The most relevant specifications are as follows. 
+
+\begin{table}[h]
+	\begin{tabularx}{\columnwidth}
+		{ >{\RaggedRight}p{4cm} | L }
+		\hline
+		Brand and name	&	Xiaomi Mi 9	\\	\hline
+		CPU	&	Octa-core: 8 Kryo 485 cores with respective clock speeds of 1x2.84 GHz, 3x2.42 GHz and 4x1.78 GHz	\\	\hline
+		GPU	&	Adreno 640	\\	\hline
+		RAM	&	6.00 GB	\\	\hline
+		Screen resolution	&	1080 x 2340 pixels ($\approx$ 2.5 MP)	\\	\hline
+		Screen aspect ratio	&	19.5:9 \\ \hline
+		Screen size (diagonal)	&	6.39 inches	\\	\hline
+		Main camera (triple)	&	48 MP, f/1.8, 27mm (wide), 1/2.0", 0.8µm, PDAF \newline 12 MP, f/2.2, 54mm (telephoto), 1/3.6", 1.0µm, PDAF \newline 16 MP, f/2.2, 13mm (ultrawide), 1/3.0", 1.0µm, PDAF	\\	\hline
+		Selfie camera (single)	& 20 MP, f/2.0, (wide), 1/3", 0.9µm \\ \hline
+		Model identifier	&	M1902F1G	\\	\hline
+		MIUI version	&	MIUI Global 12.0.5 (QFAEUXM)	\\	\hline
+		Android version	&	10 QKQ1.190825.002	\\	\hline
+		Release Date	&	25th of March 2019	\\	\hline
+	\end{tabularx}
+	\caption[Test Device Specifications]{Test Device Specifications}
+	\label{tab:specs}
+\end{table}
+
+
+
 
 \chapter{Tips With Greetings From the Chair}
 \label{sec:tips}       % labels can be put almost anywhere and can be referencef from anywhere.
