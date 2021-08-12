@@ -20,6 +20,7 @@ import android.graphics.Bitmap
 import android.graphics.RectF
 import android.os.Trace
 import android.util.Log
+import com.maxjokel.lens.helpers.Recognition
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.metadata.MetadataExtractor
 import java.io.BufferedReader
@@ -77,7 +78,7 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
     private var tfLiteOptions: Interpreter.Options? = null
     private var tfLite: Interpreter? = null
 
-    override fun recognizeImage(bitmap: Bitmap?): List<Detector.Recognition?> {
+    override fun recognizeImage(bitmap: Bitmap?): List<Recognition?> {
         // Log this method so that it can be analyzed with systrace.
         Trace.beginSection("recognizeImage")
         Trace.beginSection("preprocessBitmap")
@@ -129,7 +130,7 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
         // If you don't use the output's numDetections, you'll get nonsensical data
         val numDetectionsOutput =
             NUM_DETECTIONS.coerceAtMost(numDetections[0].toInt()) // cast from float to integer
-        val recognitions = ArrayList<Detector.Recognition?>(numDetectionsOutput)
+        val recognitions = ArrayList<Recognition?>(numDetectionsOutput)
         for (i in 0 until numDetectionsOutput) {
             val detection = RectF(
                 outputLocations[0][i][1] * inputSize,
@@ -137,11 +138,9 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
                 outputLocations[0][i][3] * inputSize,
                 outputLocations[0][i][2] * inputSize
             )
-            recognitions.add(
-                Detector.Recognition(
-                    "" + i, labels[outputClasses[0][i].toInt()], outputScores[0][i], detection
-                )
-            )
+            recognitions.add(Recognition(
+                "" + i, labels[outputClasses[0][i].toInt()], outputScores[0][i], detection
+            ))
         }
         Trace.endSection() // "recognizeImage"
         return recognitions

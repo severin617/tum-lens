@@ -23,6 +23,7 @@ import android.util.Pair
 import android.util.TypedValue
 import com.maxjokel.lens.helpers.ImageUtils.getTransformationMatrix
 import com.maxjokel.lens.helpers.Logger
+import com.maxjokel.lens.helpers.Recognition
 import java.util.*
 
 /** A tracker that handles non-max suppression and matches existing objects to new detections.  */
@@ -65,7 +66,7 @@ class MultiBoxTracker(context: Context) {
     }
 
     @Synchronized
-    fun trackResults(results: List<Detector.Recognition>, timestamp: Long) {
+    fun trackResults(results: List<Recognition>, timestamp: Long) {
         logger.i("Processing %d results from %d", results.size, timestamp)
         processResults(results)
     }
@@ -104,16 +105,12 @@ class MultiBoxTracker(context: Context) {
         }
     }
 
-    private fun processResults(results: List<Detector.Recognition>) {
-        val rectsToTrack: MutableList<Pair<Float, Detector.Recognition>> = LinkedList()
+    private fun processResults(results: List<Recognition>) {
+        val rectsToTrack: MutableList<Pair<Float, Recognition>> = LinkedList()
         screenRects.clear()
-        val rgbFrameToScreen = Matrix(
-            frameToCanvasMatrix
-        )
+        val rgbFrameToScreen = Matrix(frameToCanvasMatrix)
         for (result in results) {
-            if (result.location == null) {
-                continue
-            }
+            if (result.location == null) continue
             val detectionFrameRect = RectF(result.location)
             val detectionScreenRect = RectF()
             rgbFrameToScreen.mapRect(detectionScreenRect, detectionFrameRect)

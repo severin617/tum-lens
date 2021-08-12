@@ -34,6 +34,7 @@ import java.io.IOException
 import java.util.*
 import com.maxjokel.lens.R
 import com.maxjokel.lens.classification.ClassificationActivity
+import com.maxjokel.lens.helpers.Recognition
 
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
@@ -135,11 +136,10 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
             paint.color = Color.RED
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = 2.0f
-            var minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API
-            minimumConfidence = when (MODE) {
+            var minimumConfidence = when (MODE) {
                 DetectorMode.TF_OD_API -> MINIMUM_CONFIDENCE_TF_OD_API
             }
-            val mappedRecognitions: MutableList<Detector.Recognition> = ArrayList()
+            val mappedRecognitions: MutableList<Recognition> = ArrayList()
             if (results != null) {
                 for (result in results) {
                     val location = result?.location

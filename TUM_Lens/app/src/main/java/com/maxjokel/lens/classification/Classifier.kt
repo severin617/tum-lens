@@ -31,8 +31,8 @@ import java.util.concurrent.CountDownLatch
  * This 'classifier' implementation is based around the idea that a single "classifier instance"
  * is sufficient for both, ViewFinder and CameraRoll activity;
  *
- * By exposing the 'classifier' as static class it can be accessed very efficiently from both
- * both activities, resulting in a much improved user experience;
+ * By exposing the 'classifier' as an object it can be accessed very efficiently from both
+ * activities, resulting in a much improved user experience;
  */
 object Classifier {
 
