@@ -591,20 +591,18 @@ Just as \code{ClassificationActivity} is the core activity that handles the imag
 
 Since TUM-Lens can run on a multitude of devices with varying combinations of camera and display resolution, the \code{DetectionActivity} sets parameters such as font sizes and matrices to convert the image data back and forth between the different formats the data is needed in. This is important as in contemporary Android devices, the resolution of the camera is usually above the resolution of the display. This is also the case for the Xiaomi Mi 9 on which we tested the application during its development (see \autoref{chap:specs} for its technical specifications). Sticking to the example of Xiaomi Mi 9, the images captured by the camera have 20 (selfie camera) or 45 (main camera) megapixels and are scaled down to 2.5 megapixel to be displayed on the device screen. After that, they are again scaled down to a bitmap of 300x300 pixels\footnote{The image received by the detector might indeed be even smaller than 300x300 pixels as the camera input is usually not square and the aspect ratio is kept throughout the image conversion pipeline. Therefore, the 300 pixels denote the larger dimension (width or height) of the input bitmap.} as this is the appropriate input size for the implemented detection framework described in \autoref{sec:mobilessd}. Once the detector returns bounding boxes for the objects detected in its input image the coordinates of these rectangles in turn are scaled back up to mark the corresponding areas in the higher resolution image shown on the device display.
 
-\subsubsection{Processing Images}
+\subsubsection{Detection and Tracking}
 
-The cropped image is 
+The \code{DetectionActivity} also orchestrates the two most fundamental tasks of the object detection process: object detection and, since the images are derived from a continuos camera stream, object tracking. It instantiates the object \code{detector} of the class \code{TFLiteObjectDetectionAPIModel} to handle the interactions with the TensorFlow Lite \gls{api} and a \code{MultiBoxTracker} object \code{tracker} that tries to assign each rectangle drawn on the screen to its related recognition result across successive input images. This is important because the bounding boxes that are drawn as an overlay on the camera view use different colours for different objects. If no tracking would happen, the colour that is assigned to an object will change randomly with every new image the detector processes. This would be very confusing for the user. Therefore, the recognition results returned by the detector are not directly rendered on the screen but first processed by the \code{tracker}. \\
 
+The \code{tracker} guarantees two properties: Firstly, empty or degenerated recognition results are skipped and not tried to be displayed. Secondly, the 15 colours the \code{tracker} can assign to the remaining objects are  allocated in the same order every time the old drawings are cleared from the canvas and new ones are drawn. This process of detecting objects, clearing old rectangles from the screen and drawing new ones happens with every image the detector processes. While the tracking is far from perfect, the order in which recognitions are returned by the detector stays roughly the same. This happens because they are ordered by the coordinates of their bounding boxes. Depending on the camera settings, the camera can usually stream 30 to 60 frames per second. If the user doesn't move the camera surpassingly fast, the coordinates of the recognition results stay close enough together so that they get assigned the same colour across the changing camera images. New  objects appearing in the scene (or existing ones becoming larger as the user gets closer) are currently the major cause for inconsistent object colouring. However, as long as no new objects are recognised, the existing ones tend to keep their colours. This is already a great achievement given the tracking is purely based on properties of the TensorFlow Lite \gls{api} and does therefore add effectively non-existent overhead to the object detection pipeline. \\
 
+The detection threshold is set to 0.5 in order to display the most relevant objects. Hence, only recognition results received from the \code{detector} that have a confidence score of 0.5 or higher are handed to the \code{tracker}. This further improves the user experience supplementary to the object tracking.
 
 
 \subsection{Dive Into}
 \subsection{Object Detection}
 \subsection{Implementation Fun}
-
-Don't forget to mention
-
-Threshold of detection confidence can be set (currently set to 0.5)
 
 \subsection{Next steps in the development of TUM-Lens}
 
@@ -637,6 +635,7 @@ Apple object detection to files loaded from storage
 
 Change the apps infrastructure so that models (don't forget the labels though) can be loaded from a server (suitable as they tend to be rather small). This would make it easier to add new models on the fly.
 
+Use real tracking to track objects across consecutive input images 
 % -------------------------------------------------------------------------------
 % ----------------------------------- APPENDIX --------------------------------
 % -------------------------------------------------------------------------------
