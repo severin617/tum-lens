@@ -135,7 +135,7 @@ class LegacyCameraConnectionFragment : Fragment() {
         val index = cameraId
         camera = Camera.open(index)
         try {
-            val parameters = camera!!.getParameters()
+            val parameters = camera!!.parameters
             val focusModes = parameters.supportedFocusModes
             if (focusModes != null
                 && focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
@@ -153,13 +153,13 @@ class LegacyCameraConnectionFragment : Fragment() {
             )
             parameters.setPreviewSize(previewSize.width, previewSize.height)
             camera!!.setDisplayOrientation(90)
-            camera!!.setParameters(parameters)
+            camera!!.parameters = parameters
             camera!!.setPreviewTexture(availableSurfaceTexture)
         } catch (exception: IOException) {
             camera?.release()
         }
         camera!!.setPreviewCallbackWithBuffer(imageListener)
-        val s = camera!!.getParameters().previewSize
+        val s = camera!!.parameters.previewSize
         camera!!.addCallbackBuffer(ByteArray(getYUVByteSize(s.height, s.width)))
         textureView!!.setAspectRatio(s.height, s.width)
         camera!!.startPreview()

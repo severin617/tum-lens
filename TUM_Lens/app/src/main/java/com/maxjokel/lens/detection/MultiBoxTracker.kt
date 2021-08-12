@@ -26,7 +26,8 @@ import com.maxjokel.lens.helpers.Logger
 import com.maxjokel.lens.helpers.Recognition
 import java.util.*
 
-/** A tracker that handles non-max suppression and matches existing objects to new detections.  */
+/** A tracker that draws different objects in different colors
+ *  and tries to map corresponding objects from successive screens  */
 class MultiBoxTracker(context: Context) {
 
     private val logger = Logger()

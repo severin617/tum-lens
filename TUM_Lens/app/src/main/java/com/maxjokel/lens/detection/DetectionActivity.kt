@@ -53,17 +53,11 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
     private var frameToCropTransform: Matrix? = null
     private var cropToFrameTransform: Matrix? = null
     private var tracker: MultiBoxTracker? = null
-    private var borderedText: BorderedText? = null
 
     override val layoutId = R.layout.activity_detection_cam_fragment_tracking
     override val desiredPreviewFrameSize = DESIRED_PREVIEW_SIZE
 
     public override fun onPreviewSizeChosen(size: Size?, rotation: Int) {
-        val textSizePx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, resources.displayMetrics
-        )
-        borderedText = BorderedText(textSizePx)
-        borderedText!!.setTypeface(Typeface.MONOSPACE)
         tracker = MultiBoxTracker(this)
         var cropSize = TF_OD_API_INPUT_SIZE
         try {
@@ -228,6 +222,5 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
         private const val MAINTAIN_ASPECT = false
         private val DESIRED_PREVIEW_SIZE = Size(640, 240)
         private const val SAVE_PREVIEW_BITMAP = false
-        private const val TEXT_SIZE_DIP = 10f
     }
 }
