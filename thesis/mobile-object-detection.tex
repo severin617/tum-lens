@@ -62,18 +62,24 @@
 \newacronym{ml}{ml}{machine learning}
 
 \newacronym{ann}{ann}{artificial neural network}
-
-\newdualentry{ecg}
-	{ecg}
-	{electrocardiogram}
-	{time-voltage-graph of the electrical activity of the heart measured by electrodes touching the skin}
-	{ecgs}
 	
 \newdualentry{api}
 	{api}
 	{application programming interface}
 	{set of functions and procedures allowing the creation of applications that access the features or data of an operating system, application, or other service (Oxford Dictionary)}
 	{apis}
+
+\newdualentry{ecg}
+	{ecg}
+	{electrocardiogram}
+	{time-voltage-graph of the electrical activity of the heart measured by electrodes touching the skin}
+	{ecgs}
+
+\newdualentry{eeg}
+	{eeg}
+	{electroencephalography}
+	{measures electrical signals emitted by the brain to observe brain activity}
+	{eegs}
 
 \newglossaryentry{diff_privacy}
 {
@@ -209,7 +215,7 @@ We migrate the entire code base of the Android application TUM-Lens from Java to
 
 \part{Introduction and Background Theory}
 
-\chapter{Motivation}
+\chapter{Motivation} \label{chap:motivation}
 
 The aim of this work was to further develop the Android app TUM-Lens \cite{lensApp}. Its core function is the analysis of images that are captured by the camera of the Android device and transmitted to the app as a live feed. With the completion of this work, the pre-existing image classification capabilities of the app are now complemented with object detection.
 
@@ -221,7 +227,7 @@ For an optimal user experience, the analysis of the images must take place in ne
 
 Support for the development of \gls{ml} and also in particular deep learning applications for mobile platforms is growing steadily and from different directions at the same time. Developer-friendly frameworks such as TensorFlow\footnote{\url{https://www.tensorflow.org/}}, developed by Google Brain, or PyTorch\footnote{\url{https://pytorch.org/}}, developed by Facebook's AI Research Lab, are among the best-known deep learning frameworks~\cite{dl_ranking_2018}. The releases of TensorFlow Lite\footnote{\url{https://www.tensorflow.org/lite}} 2017~\cite{tflite_release_verge_2017} and PyTorch Mobile\footnote{\url{https://pytorch.org/mobile/home/}} 2019~\cite{pytorch_release_2019} show that mobile platforms increasingly come into focus of companies providing \acrlong{ml} software. In recent years, device manufacturers and operating system developers also started to provide dedicated hardware and software components for mobile machine learning. Examples include Apple's Neural Engine~\cite{neural_engine_verge_2017}, unveiled in 2017, or Android's \gls{nnapi}~\cite{nnapi_devguide_2021}. Apple's Neural Engine is a hardware component optimised for \acrlong{ml} requirements. Android's \gls{nnapi}, on the other hand, is an Android C \gls{api} for efficient computation of \gls{ml} operations and provides a basic set of functions for higher-level \gls{ml} frameworks. As a result of these developments, it is becoming easier for developers to build \gls{ml} applications that run efficiently on mobile devices. This support was a major catalyst for the initial and further development of TUM-Lens in the context of two bachelor theses.
 
-\section{Offline Usability}
+\section{Offline Usability} \label{sec:offline_usability}
 
 TUM-Lens is more independent compared to many other \acrlong{ml} based apps as it does not require an internet connection to use it. Often, apps and services require a connection to the internet because of the nature of the task they are meant to perform. The Amazon voice assistant Alexa can answer simple voice commands to control smart home devices or check the time without having access to the world wide web and thus already uses on-device \acrlong{ml}. But even if Alexa could analyse and understand all voice commands locally, the request would still have to be forwarded to the Amazon servers in most cases. Due to the large number of possible queries, not all answers can be kept on the device, but must be retrieved from a data centre that has more storage capacity. Such queries include daily topics such as the weather report, traffic or the result of a sporting event. However, an internet connection is not required to use the full range of functions of TUM-Lens. All the information needed for image classification and object detection is stored locally on the device in the form of various already trained \gls{ann}. With the integration of the corresponding mobile frameworks, the image analysis can therefore be carried out locally on the device, making the app independent of an internet connection.
 
@@ -634,17 +640,30 @@ Kotlin made the code definitely more concise
 
 \section{Possible Applications}
 
-There's a wide range of possible applications centred around the idea of on-device machine learning. We've already touched on the example of DeepType in \autoref{sec:privacy} and protecting the sphere of privacy will definitively be major driver for the development of apps utilising offline \gls{ml}.
+As touched upon in \autoref{chap:motivation}, there are at least two major drivers that will fuel future development efforts. Protecting the sphere of privacy will definitively be a major motivation to build apps running machine learning frameworks locally. We've already introduced this idea by alleging the example of DeepType in \autoref{sec:privacy}. The second driver for an increase in on-device machine learning applications has been introduced in \autoref{sec:offline_usability}. It is the need for machine learners that can act independently of an internet connection. This is important as it is simply impossibly to guarantee such a connection in some circumstances. We will expand this line of thought by adding the requirement for increased speed that some problems have. We will use the following paragraphs to introduce a wide range of potential applications centred around the idea of on-device machine learning partitioned by their major drivers.
 
-Some company like Apple and Snap\footnote{Snap Inc. (\url{https://www.snapchat.com}) is the developer of the mobile app Snapchat.} are leading by example - at least in specific areas of their business practices. Apple's Face ID is a well-known security feature of Apple's smartphone division. It relies purely on on-device machine learning to pick up all the important details that make a face unique thereby successfully securing the device without transferring sensitive user data to the cloud. Snapchat\footnote{Snapchat is a mobile app known for its various and peculiar filters that its users can apply to manipulate the images captured by the smartphone camera.} uses on-device machine learning to power its manifold filters so that user data only gets transmitted once the user actively shares a photo or video via the app.
+\subsection{Privacy Inspired Use Cases}
 
-Since smartphones are just a subcategory of mobile devices, different hardware opens the door for new types of applications. Health care is one industry that can greatly benefit from on-device machine learning as health data is among the data categories that are most worthy of protection. Today, there're already lots of different devices that capture health data like smart watches, portable ecg\footnote{text} devices,    can happen on different hardware. In the domain of public security, CCTV in public places is a
+\subsubsection{Protecting Biometric Data}
+Some company like Apple and Snap\footnote{Snap Inc. is the developer of Snapchat, a mobile app known for its various and peculiar filters that users can apply to manipulate the images captured by the smartphone camera.} are already heavily influenced by privacy concerns - at least in specific areas of their business practices. Apple's Face ID is a well-known security feature of Apple's smartphone division. It relies purely on on-device machine learning to pick up all the important details that make a face unique thereby successfully securing the device without transferring sensitive user data to the cloud. Snapchat uses on-device machine learning to power its manifold filters so that user data only gets transmitted once the user actively shares a photo or video via the app. Protecting biometric user data has already become a mainstream use case for big tech companies. However, these large firms can afford to employ a considerable amount of machine learning experts to ensure their artificial neural networks can also run on mobile devices with their limited storage and computing capabilities. Smaller firms, on the other hand, often don't have the capacity to hire many machine learning engineers. It is these firms that exceedingly benefit from on-device machine learning getting ever more accessible and increasingly easy to implement even for small teams.
 
-A second important factor 
+\subsubsection{Keeping Health Data Private}
+Since smartphones are just a subcategory of mobile devices, different hardware opens the door for new types of applications. Health care is one industry that can greatly benefit from on-device machine learning as health data is among the data categories that are most worthy of protection. Today, there's already an astonishing variety of devices that capture health data - each of which also comes in a "smart" version that not only collects this data but also sends it to decentralised servers for storage and processing: smart watches, scales, portable \gls{ecg} and \gls{eeg} devices, blood pressure monitors, glucometers, thermometers and many more. Future developments might combine more and more of such tools into personal health companion devices that can capture and track every aspect of our health condition. Combining these various inputs to a coherent assessment of one's health status is an ideal use case for the application of machine learning. Since the data is sensitive and can easily tell a story people might want to keep private, it is a reasonable assumption that there will be a market for health companions that perform their analysis offline without sharing any data with a third party.
 
-  to latencyDie Anwendungsbereiche von Computer Vision sind zahlreich. Zu den regelmäßigen Aufgaben im Bereich 
+\subsubsection{Further Dimensions}
+Listing all application domains of on-device machine learning would exceed the scope of this work. It can be observed, however, that there's not only the dimension of machine learning task along which different applications can be found (image classification, object detection, natural language processing, ...) but also other dimensions such as hardware on which the machine learning algorithm is deployed (smartphones, gadgets, robots, ...) or industries benefiting from customers being less scared about privacy breaches (entertainment, media, public sector, ...). \\
 
-Organisation von Fotos auf dem Smartphone, ohne dass diese an die Server von Apple, \& Google Co geschickt werden müssen (Gruppieren von Fotos, die zu einem Urlaub gehören, Gesichtserkennung, Objekterkennung)
+%Organisation von Fotos auf dem Smartphone, ohne dass diese an die Server von Apple, \& Google Co geschickt werden müssen (Gruppieren von Fotos, die zu einem Urlaub gehören, Gesichtserkennung, Objekterkennung)
+
+\subsection{Autonomy and Speed Inspired Use Cases}
+
+\subsubsection{Autonomous Navigation}
+Many applications in the field of autonomous navigation will greatly benefit from both aspects of autonomy and speed. Driving an autonomous vehicle is the showpiece of on-device machine learning. Firstly, it needs the fast reaction time provided by algorithms running on embedded hardware to minimise the distance data has to travel when it's capture by the cars myriad of sensors. The car's decision engine is thereby enabled to make decisions in real-time. Given the high speed at which cars can travel and the unpredictability of other traffic participants, it is of utmost importance to react to changes in the environment in real-time. Secondly, a connection to some other instance that analyses data online might not be given in all situations. Cars must pass tunnels, rural areas might have poor network coverage or the network itself might have an outage due to unforeseen events such as climate catastrophes, terrorist attacks or cyber attacks. In any of these cases, the car must not lose control but be able to continue to navigate smoothly and safely. The core of its data processing and machine learning pipeline must therefore function decoupled form all external networks. Having said this, autonomous cars are not the only use case for navigation relying on on-device machine learning. We can also conceive other areas such as deep see exploration, drone navigation and even space travelling where either offline usage, minimal latency or both is required for successful autonomous navigation.
+
+\subsubsection{Big Data}
+
+
+
 
 Autonome Autos werden unahängig von einer Verbindung zum Internet (5G, shared medium, bleibt das Auto im Tunnel dann stehen?)
 
