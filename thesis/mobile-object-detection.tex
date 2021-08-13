@@ -59,22 +59,26 @@
 
 \newacronym{resnet}{ResNet}{residual neural network}
 
-%\newacronym{relu}{ReLU}{Rectified Linear Unit}
-
 \newacronym{ml}{ml}{machine learning}
 
 \newacronym{ann}{ann}{artificial neural network}
+
+\newdualentry{ecg}
+	{ecg}
+	{electrocardiogram}
+	{time-voltage-graph of the electrical activity of the heart measured by electrodes touching the skin}
+	{ecgs}
 	
-\newdualentry{api} %oxford dictionary
+\newdualentry{api}
 	{api}
 	{application programming interface}
-	{set of functions and procedures allowing the creation of applications that access the features or data of an operating system, application, or other service}
+	{set of functions and procedures allowing the creation of applications that access the features or data of an operating system, application, or other service (Oxford Dictionary)}
 	{apis}
 
-\newglossaryentry{diff_privacy} %https://oconnell.fas.harvard.edu/files/salil/files/differential_privacy_primer_nontechnical_audience.pdf
+\newglossaryentry{diff_privacy}
 {
 	name={differential privacy},
-	description={protects an individual’s information essentially as if her information were not used in the analysis at all, in the sense that the outcome of a differentially private algorithm is approximately the same whether the individual’s information was used or not}
+	description={property of a learnign algorithm that uses personal data for training while guarateeing that an individual's data cannot be reverse engineered by analysing the algorithm while potentially even having access to the data of all the other individuals. In other words, the differentially private algorithm behaves very similar (if not entirely identical) regardless of whether a particular personal information was used during training.}
 }
 
 % -------------------------------------------------------------------------------
@@ -203,6 +207,8 @@ We migrate the entire code base of the Android application TUM-Lens from Java to
 
 \mainmatter
 
+\part{Introduction and Background Theory}
+
 \chapter{Motivation}
 
 The aim of this work was to further develop the Android app TUM-Lens \cite{lensApp}. Its core function is the analysis of images that are captured by the camera of the Android device and transmitted to the app as a live feed. With the completion of this work, the pre-existing image classification capabilities of the app are now complemented with object detection.
@@ -219,7 +225,7 @@ Support for the development of \gls{ml} and also in particular deep learning app
 
 TUM-Lens is more independent compared to many other \acrlong{ml} based apps as it does not require an internet connection to use it. Often, apps and services require a connection to the internet because of the nature of the task they are meant to perform. The Amazon voice assistant Alexa can answer simple voice commands to control smart home devices or check the time without having access to the world wide web and thus already uses on-device \acrlong{ml}. But even if Alexa could analyse and understand all voice commands locally, the request would still have to be forwarded to the Amazon servers in most cases. Due to the large number of possible queries, not all answers can be kept on the device, but must be retrieved from a data centre that has more storage capacity. Such queries include daily topics such as the weather report, traffic or the result of a sporting event. However, an internet connection is not required to use the full range of functions of TUM-Lens. All the information needed for image classification and object detection is stored locally on the device in the form of various already trained \gls{ann}. With the integration of the corresponding mobile frameworks, the image analysis can therefore be carried out locally on the device, making the app independent of an internet connection.
 
-\section{Improved Privacy}
+\section{Improved Privacy} \label{sec:privacy}
 
 The use of on-device \gls{ml} provides a further mechanism for protecting personal data in the context of machine learning in addition to existing methods such as \gls{diff_privacy}. Due to the growing support for mobile \gls{ml} applications mentioned above, but also due to the continually increasing power of mobile devices~\cite{mobile_cpu_power}, not only the use of pre-trained \glspl{ann} becomes possible, but also the training of new \glspl{ann} on the mobile device itself becomes more and more feasible and relevant~\cite{liu19}. If the training process takes place locally on the device itself, no data needs to be transferred to external instances such as a company's servers. This makes it possible to develop applications that adapt more and more individually to the user as they are used, while guaranteeing a maximum level of data protection. An example of the development of such an application is DeepType~\cite{deepType}. DeepType attempts to predict the next word used when the user enters the keyboard. While every user initially starts with the same pre-trained version of the \gls{ann} used by DeepType, the application continues to train this \gls{ann} with each input and thus adapts more and more to the characteristic input behaviour of the user - all without the text inputs ever leaving the device.
 
@@ -473,20 +479,20 @@ The SSD head is the part of the detector that computes category scores and box l
 \subsection{Latest Improvements}
 
 
-\chapter{App Development}
+\part{App Development}
 
-\section{Previous State of the Application} \label{sec:previousState}
+\chapter{Previous State of the Application} \label{sec:previousState}
 
 The practical part of this work was built in top of the already existing Android application TUM-Lens in its version 1.0. The app is already cable of classifying images received from the live camera stream in real-time. It can also classify images that are loaded from the disk of the Android as an alternative operational mode to the camera stream classification. Moreover, the user can choose between different TensorFlow-Slim\footnote{\url{https://github.com/google-research/tf-slim}} models to classify the images. This enables the user to do two things: she can compare the speed of similar detectors and she can also change the type of objects that can be detected as some of the available networks were trained on different data~\cite{maxJokel} and with different class labels. The most impactful design decision of the former developer of TUM-Lens was to run the entire classification locally on the Android device.
 
-\section{Migration From Java to Kotlin}
+\chapter{Migration From Java to Kotlin}
 
 During the Google I/O conference 2017 Google announced that they are making the programming language Kotlin a first-class citizen in Android~\cite{googleIO17}. Two years later, Google refined this statement annunciating that Android development will "be increasingly Kotlin-first" and, at the present day, the Google Developers website recommends developers to choose Kotlin when they start building a new Android app~\cite{kotlinFirst}. This alone can be reason enough to migrate an application to Kotlin - especially as long as its code base is still as manageable as the code base of TUM-Lens. To provide further explanations for the soundness of such a step we will first look at the advantages of Kotlin over Java - with particular emphasis on the context of TUM-Lens being developed by students as part of their final theses. After that, we look at the code conversion process from Java to Kotlin which is backed by powerful functionality integrated into Android Studio. We will also see an example for a pitfall that can be easily overlooked in such a semi-automated conversion process. Finally, we analyse how the number of lines of code changed from the Java files in app version 1.0 compare to their current state being fully migrated to Kotlin.
 
-\subsection{Advantages of Kotlin}
+\section{Advantages of Kotlin}
 Continuing the development of TUM-Lens in Kotlin has several advantages. As the is app currently exclusively developed by students, Kotlin's enhanced expressiveness and conciseness over Java makes it easier for fellow students to understand the entire application within the scope of a bachelor's or master's thesis. Moreover, students can learn more in the given amount of time they spend working on the app because they can focus more strongly on the implementation of new features instead of having to write boilerplate Java code. As students are more error prone than professional developers they surpassingly benefit from the safety features integrated into the Kotlin language. The most common cause for crashes of Java applications is the null pointer exception~\cite{nullPointerSamebug, nullPointerOverops}. With Kotlin being a strongly typed language a lot of these null pointer exceptions will be avoided because Kotlin's safety features help the developer to identify potential sources of such errors very easily. Google itself claims that Android apps are 20\% less likely to crash when they contain Kotlin code~\cite{kotlinFirst}.
 
-\subsection{Converting Java Files to Kotlin Files}
+\section{Converting Java Files to Kotlin Files}
 
 Android Studio offers a convenient way to convert files from Java to Kotlin. On macOS, we first have to open the Java file we want to migrate in Android Studio. Next, we select \textit{Code} from the menu bar and then the menu item \textit{Convert Java File to Kotlin File}. If we have not yet configured Kotlin in your project, Android Studio will prompt us to ether do so or abort the migration process. Once Kotlin is set up Android Studio will immediately start the conversion. At the end of the process we are prompted with a dialogue asking "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?" which we confirm by clicking on the yes-button. They file has now been converted from Java to Kotlin. In some cases the resulting Kotlin code works right away but in the context of TUM-Lens manual adjustments were mandatory in every file because of several reasons. \\
 
@@ -520,7 +526,7 @@ protected fun getConvertedRgbBytes(): IntArray? {
 	\end{lstlisting}
 \end{minipage}
 
-\subsection{Measuring The Decrease of The Size of The Code Base} %TODO: Check if this should rather be moved to the Results chapter
+\section{Measuring The Decrease of The Size of The Code Base} %TODO: Check if this should rather be moved to the Results chapter
 
 Using the npm distribution of the tool Count Lines of Code (cloc)\footnote{Original cloc project by Al Danial: \url{https://github.com/AlDanial/cloc}\\cloc npm distribution by Kent C. Dodds: \url{https://www.npmjs.com/package/cloc}} we can easily count lines of Java and Kotlin code while ignoring blank lines and comment lines. This enables us to monitor how the shift from Java to Kotlin influenced the number of lines of code. With Perl, Node and npm installed on our machine,
 we run the following command which prints its output to stdout:
@@ -567,12 +573,12 @@ The \code{--by-file} option enables us to directly compare each Java file with K
 \end{table}
 
 
-\section{Implementing Object Detection Using The TensorFlow Lite Framework}
+\chapter{Implementing Object Detection Using The TensorFlow Lite Framework}
 
 As described in \autoref{sec:previousState} the core feature of TUM-Lens v1.0 is image classification. Most notably, the classification task is not outsourced to some remote server but performed offline on the device itself. We adhere to this decision and built our logic on top of Google's TensorFlow Lite example app for object detection~\cite{tfSampleAppGuide, tfSampleAppRepo}. The detection task is therefore carried out locally using the same TensorFlow-Lite API as the image classification. We also integrate our detection results into the images received from the camera live-stream so that the user of the app can experience the object detection in real-time. This being said, there is some discrepancy to the existing set of functionalities built around the image classification. Only one model for object detection is currently available within the app and the detection logic cannot be applied to images that have been loaded from the storage of the device.
 
 
-\subsection{Expansion of The Existing App Architecture}
+\section{Expansion of The Existing App Architecture}
 
 In order to make the structure of the app more accessible to new developers we put the core classes responsible for image classification and object detection into two distinct packages. The project now includes the four packages \code{classification}, \code{detection}, \code{fragments} and \code{helpers}. Only the two base activities \code{StartScreenActivity} and \code{PermissionDeniedActivity} remained on the top-level.
 
@@ -584,19 +590,19 @@ In order to make the structure of the app more accessible to new developers we p
 \end{figure}
 
 
-\subsection{DetectionActivity}
+\section{DetectionActivity}
 
 Just as \code{ClassificationActivity} is the core activity that handles the image classification of the camera feed, the new \code{DetectionActivity} is the central activity for object detection. The user can easily switch between the different mode of image analysis by using a toggle button on top of the screen. We decided to use a toggle switch here since there are exactly two operating modes (classification and detection) and they are working mutually exclusive in order to best utilise the computation power of the device. This design decision may be revised later when the scope of the app is expanded to cover more visual tasks (see \autoref{sec:cvtasks} for examples of such tasks). Another reason for a rework can be the fact that mobile devices might have enough computing power so that solving multiple tasks in parallel does not make a noticeable difference for the app user, meaning images are still processed in real-time.
 
-\subsubsection{Inheritance}
+\subsection{Inheritance}
 
 \code{DetectionActivity} inherits from the abstract class \code{CameraActivity} and implements the \code{OverlayView.DrawCallback} interface. The \code{CameraActivity} handles all communication with Androids camera API and implements the proper setup and behaviour of the elements in the bottom sheet. The \code{DrawCallback} provides a single function definition that the \code{DetectionAcitivty} overrides in order to render the detected objects as rectangles in a layer on top of the preview of the camera image stream.
 
-\subsubsection{Bitmap Conversion}
+\subsection{Bitmap Conversion}
 
 Since TUM-Lens can run on a multitude of devices with varying combinations of camera and display resolution, the \code{DetectionActivity} sets parameters such as font sizes and matrices to convert the image data back and forth between the different formats the data is needed in. This is important as in contemporary Android devices, the resolution of the camera is usually above the resolution of the display. This is also the case for the Xiaomi Mi 9 on which we tested the application during its development (see \autoref{chap:specs} for its technical specifications). Sticking to the example of Xiaomi Mi 9, the images captured by the camera have 20 (selfie camera) or 45 (main camera) megapixels and are scaled down to 2.5 megapixel to be displayed on the device screen. After that, they are again scaled down to a bitmap of 300x300 pixels\footnote{The image received by the detector might indeed be even smaller than 300x300 pixels as the camera input is usually not square and the aspect ratio is kept throughout the image conversion pipeline. Therefore, the 300 pixels denote the larger dimension (width or height) of the input bitmap.} as this is the appropriate input size for the implemented detection framework described in \autoref{sec:mobilessd}. Once the detector returns bounding boxes for the objects detected in its input image the coordinates of these rectangles in turn are scaled back up to mark the corresponding areas in the higher resolution image shown on the device display.
 
-\subsubsection{Detection and Tracking}
+\subsection{Detection and Tracking}
 
 The \code{DetectionActivity} also orchestrates the two most fundamental tasks of the object detection process: object detection and, since the images are derived from a continuos camera stream, object tracking. It instantiates the object \code{detector} of the class \code{TFLiteObjectDetectionAPIModel} to handle the interactions with the TensorFlow Lite \gls{api} and a \code{MultiBoxTracker} object \code{tracker} that tries to assign each rectangle drawn on the screen to its related recognition result across successive input images. This is important because the bounding boxes that are drawn as an overlay on the camera view use different colours for different objects. If no tracking would happen, the colour that is assigned to an object will change randomly with every new image the detector processes. This would be very confusing for the user. Therefore, the recognition results returned by the detector are not directly rendered on the screen but first processed by the \code{tracker}. \\
 
@@ -605,26 +611,38 @@ The \code{tracker} guarantees two properties: Firstly, empty or degenerated reco
 The detection threshold is set to 0.5 in order to display the most relevant objects. Hence, only recognition results received from the \code{detector} that have a confidence score of 0.5 or higher are handed to the \code{tracker}. This further improves the user experience supplementary to the object tracking.
 
 
-\subsection{Dive Into}
-\subsection{Object Detection}
-\subsection{Implementation Fun}
+\section{Dive Into}
+\section{Object Detection}
+\section{Implementation Fun}
 
-\subsection{Next steps in the development of TUM-Lens}
+\section{Next steps in the development of TUM-Lens}
 
 % Potential Contets: Design and architecture choices, reused patterns from exisiting application, improvements to exisiting code
 % Add model selector for different detectors as well
 
-\chapter{Results}
+\part{Results}
 
 Kotlin made the code definitely more concise
 
-\section{Performance Evaluation}
+\chapter{Evaluation}
+
+\section{Performance }
 
 \section{Accuracy}
 
-\section{Possible Applications} % Can also be named "Future Work" depending on the contents of this section
+\chapter{Outlook}
 
-Die Anwendungsbereiche von Computer Vision sind zahlreich. Zu den regelmäßigen Aufgaben im Bereich 
+\section{Possible Applications}
+
+There's a wide range of possible applications centred around the idea of on-device machine learning. We've already touched on the example of DeepType in \autoref{sec:privacy} and protecting the sphere of privacy will definitively be major driver for the development of apps utilising offline \gls{ml}.
+
+Some company like Apple and Snap\footnote{Snap Inc. (\url{https://www.snapchat.com}) is the developer of the mobile app Snapchat.} are leading by example - at least in specific areas of their business practices. Apple's Face ID is a well-known security feature of Apple's smartphone division. It relies purely on on-device machine learning to pick up all the important details that make a face unique thereby successfully securing the device without transferring sensitive user data to the cloud. Snapchat\footnote{Snapchat is a mobile app known for its various and peculiar filters that its users can apply to manipulate the images captured by the smartphone camera.} uses on-device machine learning to power its manifold filters so that user data only gets transmitted once the user actively shares a photo or video via the app.
+
+Since smartphones are just a subcategory of mobile devices, different hardware opens the door for new types of applications. Health care is one industry that can greatly benefit from on-device machine learning as health data is among the data categories that are most worthy of protection. Today, there're already lots of different devices that capture health data like smart watches, portable ecg\footnote{text} devices,    can happen on different hardware. In the domain of public security, CCTV in public places is a
+
+A second important factor 
+
+  to latencyDie Anwendungsbereiche von Computer Vision sind zahlreich. Zu den regelmäßigen Aufgaben im Bereich 
 
 Organisation von Fotos auf dem Smartphone, ohne dass diese an die Server von Apple, \& Google Co geschickt werden müssen (Gruppieren von Fotos, die zu einem Urlaub gehören, Gesichtserkennung, Objekterkennung)
 
@@ -647,9 +665,15 @@ Use real tracking to track objects across consecutive input images
 
 \appendix
 
+\addtocontents{toc}{\protect\setcounter{tocdepth}{-2}}
+
+\part{Appendix}
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+
 \chapter{Screenshots of the Application}
 
-Compare old and new
+%TODO: Insert screenshots. Potentially even with the respective old version of a screen to see the development.
 
 \chapter{Test Device Specifications} \label{chap:specs}
 
@@ -677,193 +701,6 @@ The development of TUM-Lens v2.0 was tested on a Xiaomi Mi 9. Development and te
 	\label{tab:specs}
 \end{table}
 
-
-
-
-\chapter{Tips With Greetings From the Chair}
-\label{sec:tips}       % labels can be put almost anywhere and can be referencef from anywhere.
-Here are tips along the way:
-
-\section{Tips}
-\subsection{How to Describe}
-% optional: set the spacing between columns
-\setlength{\columnsep}{30 pt}
-When listing several points you have three basic options:
-\begin{multicols}{3}
-	\begin{itemize}
-		\item itemize
-		\item enumerate
-		\item description
-	\end{itemize}
-	
-	\vfill\null
-	\columnbreak
-	
-	\begin{enumerate}
-		\item itemize
-		\item enumerate
-		\item description
-	\end{enumerate}
-	
-	\vfill\null
-	\columnbreak
-	
-	\begin{description}
-		\item[itemize] short, unordered
-		\item[enumerate] short ordered
-		\item[description] listing of descriptions. Also nice for longer ones.
-	\end{description}
-	
-\end{multicols}
-
-
-\subsection{How to Quote}
-
-\begin{quote}
-	"This is a quote!"
-\end{quote}
-
-\begin{itemize}
-	\item Citations to a source can be made like this \verb|\cite{gratl17task}| =~\cite{gratl17task}
-	\subitem Always join text and the citation with a non-breaking space: \verb|text~\cite{foo}|.
-	\item Referencing Sections, Figures, Tables, Formulas: \verb|\autoref{sec:tips}| = \autoref{sec:tips}.
-	\item Footnotes for url or further notes: \verb|\footnote{\url{https://www.top500.org}}| = \footnote{\url{https://www.top500.org}}
-\end{itemize}
-
-\subsection{How to Math}
-
-Use the align environment for equations especially if you want to align them somehow.
-
-\begin{align}
-	1 + 1 &\ne 3\\
-	\left(\dfrac{10}{1}\right) - 9 &= 1
-\end{align}
-
-% if you need a pagebreak because figure placement is broken:
-\clearpage
-
-\section{Environments}
-
-\subsection{How to Figure}
-
-Anything can also be put in multiple columns.
-
-\begin{multicols}{2} % defines an environment with two columns
-	\begin{figure}[H] % [H] for HERE
-		\centering
-		\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}
-		\caption[Example Figure]{Some Caption. Always also include a source if it wasn't created by you!\\
-			\tiny{Source:~\cite{gratl17task}}}
-		\label{fig:exampleLabel1} % labels always have to be placed after the caption
-	\end{figure}
-	
-	\columnbreak    % start next column
-	
-	\begin{figure}[H]
-		\centering
-		\begin{tikzpicture}
-			\node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}};
-			\begin{scope}[x={(image.south east)},y={(image.north west)}]
-				\draw[red, thin,rounded corners] (.42,.42) rectangle (.58,.6);
-			\end{scope}
-		\end{tikzpicture}
-		\caption[Figure with tikz]{Figures can be drawn on or completely generated with tikz.}
-		\label{fig:exampleLabel2}
-	\end{figure}
-\end{multicols}
-
-\paragraph{Subfigures}
-If grouping of several pictures seems reasonable, think about using subfigures. This often comes in handy with plots.
-
-\begin{figure}[H]
-	\centering
-	\begin{subfigure}[b]{0.33\textwidth}
-		\includegraphics[width=\textwidth]{example-image-a}
-		\caption{example-image-a}
-		\label{fig:example-image-a}
-	\end{subfigure}
-	\begin{subfigure}[b]{0.33\textwidth}
-		\includegraphics[width=\textwidth]{example-image-b}
-		\caption{example-image-b}
-		\label{fig:example-image-b}
-	\end{subfigure}
-	\begin{subfigure}[b]{0.33\textwidth}
-		\includegraphics[width=\textwidth]{example-image-c}
-		\caption{example-image-c}
-		\label{fig:example-image-c}
-	\end{subfigure}
-	\caption{One caption to describe them all.}
-\end{figure}
-
-\subsection{How to Algorithm}
-
-\begin{figure}
-	\begin{algorithm}[H]
-		
-		% Define custom keywords
-		\SetKwFunction{KwNot}{not}
-		% Define custom Functions
-		\SetKwFunction{Fissorted}{is\_sorted}
-		\SetKwFunction{Fbogosort}{bogosort}
-		\SetKwFunction{Fshuffle}{shuffle}
-		\SetKwProg{Fn}{Function}{:}{}
-		\KwIn{\tabto{2cm}data array}
-		\KwOut{\tabto{2cm} data sorted}
-		\BlankLine
-		
-		\tcp{Checks if array is sorted}
-		\Fn{\Fissorted{data}}{
-			\For{i $\leftarrow$ 0 \KwTo data.size() - 1}{
-				\label{algo:for}            % labels can also be put in the algorithm
-				\If{data[i] $>$ data[i+1]}{
-					\Return false
-				}
-			}
-			\Return true
-		}
-		
-		\tcp{actual algorithm}
-		\Fn{\Fbogosort{data}}{
-			\While{\KwNot \Fissorted{data}}{
-				random.\Fshuffle{data}
-			}
-		}
-		
-		\caption[Bogosort]{Bogosort}
-		\label{algo:example}
-	\end{algorithm}
-	\caption{some description what is happening}
-\end{figure}
-
-\clearpage
-
-\subsection{How to Code}
-\begin{lstlisting}[style=eclipse-cpp, caption=General form of a typical runner() function., label=code:runner]
-	void runner(int type, void *data){
-		switch(type)
-		case taskType1:
-		// do stuff using data
-		case taskType2:
-		// do other stuff using data
-	}
-\end{lstlisting}
-
-\subsection{How to Table}
-\begin{table}[H]
-	\begin{tabularx}{\columnwidth}{L | C | R}
-		\hline
-		\hline
-		bla left & bla centered\newline over two lines &  bla right\\
-		\hline
-		bla left & bla centered & \multirow[c]{2}{\hsize}{cell spanning two rows} \\
-		\cline{1-2}
-		\multicolumn{2}{c|}{cell spanning two columns} & \\
-	\end{tabularx}
-	\caption[Some Table]{Fancy table that can contain line breaks and extended cells.}
-	\label{tab:example}
-\end{table}
-
-%TODO: Insert screenshots. Potentially even with the respective old version of a screen to see the development.
 
 \listoffigures
 
