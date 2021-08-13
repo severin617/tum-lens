@@ -576,8 +576,13 @@ As described in \autoref{sec:previousState} the core feature of TUM-Lens v1.0 is
 
 In order to make the structure of the app more accessible to new developers we put the core classes responsible for image classification and object detection into two distinct packages. The project now includes the four packages \code{classification}, \code{detection}, \code{fragments} and \code{helpers}. Only the two base activities \code{StartScreenActivity} and \code{PermissionDeniedActivity} remained on the top-level.
 
+\begin{figure}[H] % [H] for HERE
+	\centering
+	\includegraphics[width=\textwidth]{figures/uml_detection_package.png}
+	\caption[UML Class Diagram of The New Detection Package]{UML class diagram of the new detection package. Only public properties and methods are shown.}
+	\label{fig:umlDetectionPackage} % labels always have to be placed after the caption
+\end{figure}
 
-Graphic showing an overview of all app flows (old and new)
 
 \subsection{DetectionActivity}
 
