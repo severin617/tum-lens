@@ -62,6 +62,8 @@
 \newacronym{ml}{ml}{machine learning}
 
 \newacronym{ann}{ann}{artificial neural network}
+
+\newacronym{adb}{adb}{android-developer-tools}
 	
 \newdualentry{api}
 	{api}
@@ -84,7 +86,7 @@
 \newglossaryentry{diff_privacy}
 {
 	name={differential privacy},
-	description={property of a learnign algorithm that uses personal data for training while guarateeing that an individual's data cannot be reverse engineered by analysing the algorithm while potentially even having access to the data of all the other individuals. In other words, the differentially private algorithm behaves very similar (if not entirely identical) regardless of whether a particular personal information was used during training.}
+	description={property of a learning algorithm that uses personal data for training while guaranteeing that an individual's data cannot be reverse engineered by analysing the algorithm while potentially even having access to the data of all the other individuals. In other words, the differentially private algorithm behaves very similar (if not entirely identical) regardless of whether a particular personal information was used during training.}
 }
 
 % -------------------------------------------------------------------------------
@@ -195,7 +197,9 @@ Munich, \date \hspace{5cm} \author
 \end{center}
 \vspace{1cm}
 
-We migrate the entire code base of the Android application TUM-Lens from Java to Kotlin. This facilitates the future development of the app as it makes the code more concise and error-proof. Consequently, we elaborate on further advantages of the Kotlin language over Java and analyse how this migration lowered the lines of the existing code. Moreover, we expand the functionalities of the app by an object detection feature based on Google's open source deep learning framework TensorFlow Lite. The implementation follows in the previous TUM-Lens developer's footsteps and integrates the object detection to entirely work on-device so that no data needs to be exchanged with external servers. On the object detection theory side, we distinguish object detection from other visual machine learning tasks and survey a selection of modern deep learning architectures - both for backbone and detector networks. In addition, we study the mechanics of a specific model in detail, the SSD MobileNet v1, as this is the model applied to the object detection task in TUM-Lens. This thesis expands Maximilian Jokel's previous work \textit{Implementing a TensorFlow-Slim based Android app for image classification} (2020).
+We migrate the entire code base of the Android application TUM-Lens from Java to Kotlin. This facilitates the future development of the app as it makes the code more concise and error-proof. Consequently, we elaborate on further advantages of the Kotlin language over Java and analyse how this migration lowered the lines of the existing code. Moreover, we expand the functionalities of the app by an object detection feature based on Google's open source deep learning framework TensorFlow Lite. The implementation follows in the previous TUM-Lens developer's footsteps and integrates the object detection to entirely work on-device so that no data needs to be exchanged with external servers. On the object detection theory side, we distinguish object detection from other visual machine learning tasks and survey a selection of modern deep learning architectures - both for backbone and detector networks. In addition, we study the mechanics of a specific model in detail, the SSD MobileNet v1, as this is the model applied to the object detection task in TUM-Lens. This thesis expands Maximilian Jokel's previous work \textit{Implementing a TensorFlow-Slim based Android app for image classification} (2020). \\
+
+\noindent The repository containing the source code belonging to this thesis can be found here: \url{https://gitlab.lrz.de/dvrws/lens}
 
 \cleardoublepage
 
@@ -342,9 +346,9 @@ Deep learning is a subarea of machine learning. Deep learning is characterised b
 
 \chapter{Object Detection}
 
-\section{How Object Detection Differs From Related Tasks} \label{sec:cvtasks}
+The field of \gls{cv} encompasses numerous distinct problems and an even larger number of potential solutions. In the following, object detection as a typical task in the \gls{cv} context is distinguished from other \gls{cv} tasks that are closest to it in terms of learning objectives. We then give an overview of a selection of modern object detectors including their internal structures and differentiating factors. We close this chapter with a detailed description of the model applied to the object detection task in TUM-Lens.
 
-The field of \gls{cv} encompasses numerous distinct problems and an even larger number of potential solutions. In the following, object detection as a typical task in the \gls{cv} context is distinguished from other \gls{cv} tasks that are closest to it in terms of learning objectives.
+\section{How Object Detection Differs From Related Tasks} \label{sec:cvtasks}
 
 \begin{figure}[H] % [H] for HERE
 	\centering
@@ -365,8 +369,6 @@ Object detection deals with the identification of any number of objects within a
 
 \subsection{Instance Segmentation}
 The instance segmentation essentially fulfils a better variant of the object detection. Again, several objects of different classes are detected and the positions of the classes are also part of the output. However, the positions are not marked by bounding boxes as in object detection, but each pixel belonging to an object receives a label of this object. The objects are therefore even more sharply separated from the image areas that do not contain an object and, in contrast to semantic segmentation, individual objects of the same class remain distinguishable.
-
-%\section{Computer Vision on Mobile Devices}
 
 \section{Object Detection Frameworks}
 
@@ -496,7 +498,7 @@ The practical part of this work was built in top of the already existing Android
 During the Google I/O conference 2017 Google announced that they are making the programming language Kotlin a first-class citizen in Android~\cite{googleIO17}. Two years later, Google refined this statement annunciating that Android development will "be increasingly Kotlin-first" and, at the present day, the Google Developers website recommends developers to choose Kotlin when they start building a new Android app~\cite{kotlinFirst}. This alone can be reason enough to migrate an application to Kotlin - especially as long as its code base is still as manageable as the code base of TUM-Lens. To provide further explanations for the soundness of such a step we will first look at the advantages of Kotlin over Java - with particular emphasis on the context of TUM-Lens being developed by students as part of their final theses. After that, we look at the code conversion process from Java to Kotlin which is backed by powerful functionality integrated into Android Studio. We will also see an example for a pitfall that can be easily overlooked in such a semi-automated conversion process. Finally, we analyse how the number of lines of code changed from the Java files in app version 1.0 compare to their current state being fully migrated to Kotlin.
 
 \section{Advantages of Kotlin}
-Continuing the development of TUM-Lens in Kotlin has several advantages. As the is app currently exclusively developed by students, Kotlin's enhanced expressiveness and conciseness over Java makes it easier for fellow students to understand the entire application within the scope of a bachelor's or master's thesis. Moreover, students can learn more in the given amount of time they spend working on the app because they can focus more strongly on the implementation of new features instead of having to write boilerplate Java code. As students are more error prone than professional developers they surpassingly benefit from the safety features integrated into the Kotlin language. The most common cause for crashes of Java applications is the null pointer exception~\cite{nullPointerSamebug, nullPointerOverops}. With Kotlin being a strongly typed language a lot of these null pointer exceptions will be avoided because Kotlin's safety features help the developer to identify potential sources of such errors very easily. Google itself claims that Android apps are 20\% less likely to crash when they contain Kotlin code~\cite{kotlinFirst}.
+Continuing the development of TUM-Lens in Kotlin has several advantages. As the is app currently exclusively developed by students, Kotlin's enhanced expressiveness and conciseness over Java makes it easier for students to understand the entire application within the scope of a bachelor's or master's thesis. Moreover, students can learn more in the given amount of time they spend working on the app because they can focus more strongly on the implementation of new features instead of having to write boilerplate Java code. As students are more error prone than professional developers they surpassingly benefit from the safety features integrated into the Kotlin language. The most common cause for crashes of Java applications is the null pointer exception~\cite{nullPointerSamebug, nullPointerOverops}. With Kotlin being a strongly typed language a lot of these null pointer exceptions will be avoided because Kotlin's safety features help the developer to identify potential sources of such errors very easily. Google itself claims that Android apps are 20\% less likely to crash when they contain Kotlin code~\cite{kotlinFirst}.
 
 \section{Converting Java Files to Kotlin Files}
 
@@ -512,7 +514,7 @@ var <propertyName>[: <PropertyType>] [= <property_initializer>]
 
 Apart from type inference, there was one part to Android Studio's built-in code migration that actually tricked us into introducing a bug: the conversion of getters and setters. \autoref{code:kotlinProperty} shows the syntax for the declaration of a property in Kotlin. Every property has default public getters and setters if not explicitly defined otherwise. Java, on the other hand, conventionally defines methods like \code{public variableType getVariableName()} and \code{public void setVariableName(variableType newValue)} for every variable of a private class that shall be retrieved or overwritten from outside that class. \\
 
-\autoref{code:bugSourceJava} contains the original Java code and listing \autoref{code:bugSolutionKotlin} shows the final solution that implemented in addition to Kotlin's property accessors. The default Kotlin getter is not enough here as it would omit the crucial conversion task. However, this is exactly what happened during the auto-conversion. As a result, other parts of the logic broke because the \code{rgbBytes} object could not be properly processed which lead to the application not working as expected. In this special case some accessors of the property were in need of the image conversion and others were not. Therefore, we did not put the image conversion into a custom accessor because we did not want to call \code{imageConverter!!.run()} every time the property was used. Placing it in the separate method \code{getConvertedRgbBytes()} has therefore been a good decision for us.
+\autoref{code:bugSourceJava} contains the original Java code and \autoref{code:bugSolutionKotlin} shows the final solution that implemented in addition to Kotlin's property accessors. The default Kotlin getter is not enough here as it would omit the crucial conversion task. However, this is exactly what happened during the auto-conversion. As a result, other parts of the logic broke because the \code{rgbBytes} object could not be properly processed which lead to the application not working as expected. In this special case some accessors of the property were in need of the image conversion and others were not. Therefore, we did not put the image conversion into a custom accessor because we did not want to call \code{imageConverter!!.run()} every time the property was used. Placing it in the separate method \code{getConvertedRgbBytes()} has therefore been a good decision for us.
 
 \begin{minipage}[t]{0.41\linewidth}
 	\begin{lstlisting}[style=standard, language=Java, label=code:bugSourceJava, caption={Java code that lead to the introduction of a bug after using Android Studio's built-in Java to Kotlin converter.}]
@@ -531,52 +533,6 @@ protected fun getConvertedRgbBytes(): IntArray? {
 }
 	\end{lstlisting}
 \end{minipage}
-
-\section{Measuring The Decrease of The Size of The Code Base} %TODO: Check if this should rather be moved to the Results chapter
-
-Using the npm distribution of the tool Count Lines of Code (cloc)\footnote{Original cloc project by Al Danial: \url{https://github.com/AlDanial/cloc}\\cloc npm distribution by Kent C. Dodds: \url{https://www.npmjs.com/package/cloc}} we can easily count lines of Java and Kotlin code while ignoring blank lines and comment lines. This enables us to monitor how the shift from Java to Kotlin influenced the number of lines of code. With Perl, Node and npm installed on our machine,
-we run the following command which prints its output to stdout:
-
-\begin{lstlisting}[style=standard, language=bash, label=code:cloc, caption={npx cloc command with its options and arguments. Prints the lines of code analysis comapring files before and after the Java to Kotlin conversion. The output was also saved as cloc.csv and can be found in lens-david/thesis/raw\_data.}]
-	(base) david@DDs-MBP lens-david % npx cloc --by-file --git-diff-rel --match-d='main' --include-lang=Java,Kotlin -csv f6a18e0f 031a26a7
-\end{lstlisting}
-
-The \code{--by-file} option enables us to directly compare each Java file with Kotlin equivalent as it changes the output so that the results are returned for every source file encountered. \code{--git-diff-rel} interprets the command line arguments as git targets and compares only files which have changed in either commit which is exactly what we need to measure the change in the number of lines of code. Only files in the main directory are of our concern so we let cloc only search this directory using the option \code{--match-d='main'}. This excludes e.g. the test directory from being searched. With \code{--include-lang=Java,Kotlin} we limit the output to files written in the languages we seek to collate. Other files like Android's XML layout files are not of interest for this analysis. Finally, we provide two git commits. \code{f6a18e0f} is the last commit pushed by the previous developer of TUM-Lens and \code{bf0dbf7f} is the more recent commit that does not contain Java files anymore but replaced them with their respective Kotlin substitute.
-
-\begin{table}[h]
-	\begin{tabularx}{\columnwidth}
-		{ >{\RaggedRight}p{10cm} | C }
-		\hline
-		Files in TUM-Lens v1.0 migrated from Java to Kotlin	&	Delta in lines of code	\\	\hline \hline
-		CameraRoll	&	-34	\\	\hline
-		Classifier	&	4	\\	\hline
-		ListSingleton	&	-9	\\	\hline
-		PermissionDenied	&	-8	\\	\hline
-		StartScreen	&	-12	\\	\hline
-		ViewFinder	&	-7	\\	\hline
-		fragments/CameraRollPredictionsFragment	&	9	\\	\hline
-		fragments/CameraSettingsFragment	&	-15	\\	\hline
-		fragments/ModelSelectorFragment	&	5	\\	\hline
-		fragments/PredictionsFragment	&	4	\\	\hline
-		fragments/ProcessingUnitSelectorFragment	&	-7	\\	\hline
-		fragments/SmoothedPredictionsFragment	&	6	\\	\hline
-		fragments/ThreadNumberFragment	&	-6	\\	\hline
-		helpers/App	&	1	\\	\hline
-		helpers/CameraEvents	&	0	\\	\hline
-		helpers/FreezeAnalyzer	&	-6	\\	\hline
-		helpers/FreezeCallback	&	0	\\	\hline
-		helpers/ImageUtils	&	43	\\	\hline
-		helpers/Logger	&	6	\\	\hline
-		helpers/ModelConfig	&	-2	\\	\hline
-		helpers/ProcessingUnit	&	-2	\\	\hline
-		helpers/Recognition	&	-26	\\	\hline
-		helpers/ResultItem	&	-21	\\	\hline
-		helpers/ResultItemComparator	&	-2	\\	\hline \hline
-		\fontseries{b}\selectfont{cumulative delta over all relevant files}	&	\fontseries{b}\selectfont{-79}	\\ \hline
-		\end{tabularx}
-	\caption[Java Files in TUM-Lens v1.0 And Change in Lines of Code After Their Conversion to Kotlin]{This table shows the results from the command line prompt in \autoref{code:cloc}. Packages have been indicated as a prefix to the file name to resemble the original project structure of TUM-Lens v1.0 and file extension have been omitted. Overall, the total size of the codebase shrank because of the migration from Java to Kotlin. This is particularly impressive as understandably further logic was added to existing classes in order to account for the new object detection functionality.}
-	\label{tab:cloc}
-\end{table}
 
 
 \chapter{Implementing Object Detection Using The TensorFlow Lite Framework}
@@ -616,23 +572,96 @@ The \code{tracker} guarantees two properties: Firstly, empty or degenerated reco
 
 The detection threshold is set to 0.5 in order to display the most relevant objects. Hence, only recognition results received from the \code{detector} that have a confidence score of 0.5 or higher are handed to the \code{tracker}. This further improves the user experience supplementary to the object tracking.
 
-
-\section{Dive Into}
-\section{Object Detection}
-\section{Implementation Fun}
-
-\section{Next steps in the development of TUM-Lens}
-
-% Potential Contets: Design and architecture choices, reused patterns from exisiting application, improvements to exisiting code
-% Add model selector for different detectors as well
-
 \part{Results}
-
-Kotlin made the code definitely more concise
 
 \chapter{Evaluation}
 
-\section{Performance }
+At the beginning of this chapter, we will have a look at the impact of changing the programming language from Java to Kotlin with regards to the number of lines of code. Next, the performance of the application is evaluated based on the goals that were set before we took on this thesis topic. Lastly, we showcase some real footage of the application indicating in which areas the object detection performs well and where it has its week points.
+
+\section{Project Size After The Kotlin Migration}
+
+Using the npm distribution of the tool Count Lines of Code (cloc)\footnote{Original cloc project by Al Danial: \url{https://github.com/AlDanial/cloc} \\ cloc npm distribution by Kent C. Dodds: \url{https://www.npmjs.com/package/cloc}} we can easily count lines of Java and Kotlin code while ignoring blank lines and comment lines. This enables us to monitor how the shift from Java to Kotlin influenced the number of lines of code. With Perl, Node and npm installed on our machine, we run the following command which prints its output to stdout:
+
+\begin{lstlisting}[style=standard, language=bash, label=code:cloc, caption={npx cloc command with its options and arguments. Prints the lines of code analysis comapring files before and after the Java to Kotlin conversion. The output was also saved as cloc.csv and can be found in lens-david/thesis/raw\_data.}]
+	(base) david@DDs-MBP lens-david % npx cloc --by-file --git-diff-rel --match-d='main' --include-lang=Java,Kotlin -csv f6a18e0f 031a26a7
+\end{lstlisting}
+
+\noindent The \code{--by-file} option enables us to directly compare each Java file with Kotlin equivalent as it changes the output so that the results are returned for every source file encountered. \code{--git-diff-rel} interprets the command line arguments as git targets and compares only files which have changed in either commit which is exactly what we need to measure the change in the number of lines of code. Only files in the main directory are of our concern so we let cloc only search this directory using the option \code{--match-d='main'}. This excludes e.g. the test directory from being searched. With \code{--include-lang=Java,Kotlin} we limit the output to files written in the languages we seek to collate. Other files like Android's XML layout files are not of interest for this analysis. Finally, we provide two git commits. \code{f6a18e0f} is the last commit pushed by the previous developer of TUM-Lens and \code{bf0dbf7f} is the more recent commit that does not contain Java files anymore but replaced them with their respective Kotlin substitute. \autoref{tab:cloc} shows the results of the cloc output. Overall, the total size of the original Java codebase shrank because of the migration to Kotlin. This is particularly impressive as understandably further logic was added to existing classes in order to account for the new object detection functionality.
+
+\begin{table}[h]
+	\begin{tabularx}{\columnwidth}
+		{ >{\RaggedRight}p{10cm} | C }
+		\hline
+		Files in TUM-Lens v1.0 migrated from Java to Kotlin	&	Delta in lines of code	\\	\hline \hline
+		CameraRoll	&	-34	\\	\hline
+		Classifier	&	4	\\	\hline
+		ListSingleton	&	-9	\\	\hline
+		PermissionDenied	&	-8	\\	\hline
+		StartScreen	&	-12	\\	\hline
+		ViewFinder	&	-7	\\	\hline
+		fragments/CameraRollPredictionsFragment	&	9	\\	\hline
+		fragments/CameraSettingsFragment	&	-15	\\	\hline
+		fragments/ModelSelectorFragment	&	5	\\	\hline
+		fragments/PredictionsFragment	&	4	\\	\hline
+		fragments/ProcessingUnitSelectorFragment	&	-7	\\	\hline
+		fragments/SmoothedPredictionsFragment	&	6	\\	\hline
+		fragments/ThreadNumberFragment	&	-6	\\	\hline
+		helpers/App	&	1	\\	\hline
+		helpers/CameraEvents	&	0	\\	\hline
+		helpers/FreezeAnalyzer	&	-6	\\	\hline
+		helpers/FreezeCallback	&	0	\\	\hline
+		helpers/ImageUtils	&	43	\\	\hline
+		helpers/Logger	&	6	\\	\hline
+		helpers/ModelConfig	&	-2	\\	\hline
+		helpers/ProcessingUnit	&	-2	\\	\hline
+		helpers/Recognition	&	-26	\\	\hline
+		helpers/ResultItem	&	-21	\\	\hline
+		helpers/ResultItemComparator	&	-2	\\	\hline \hline
+		\fontseries{b}\selectfont{cumulative delta over all relevant files}	&	\fontseries{b}\selectfont{-79}	\\ \hline
+	\end{tabularx}
+	\caption[Java Files in TUM-Lens v1.0 And Change in Lines of Code After Their Conversion to Kotlin]{This table shows the results from the command line prompt in \autoref{code:cloc}. Packages have been indicated as a prefix to the file name to resemble the original project structure of TUM-Lens v1.0 and file extension have been omitted.}
+	\label{tab:cloc}
+\end{table}
+
+\section{Performance}
+
+One of the goals of this work is the expansion of TUM-Lens by integrating a real-time object detection feature running entirely on the device itself. With that in mind and judging by the updated version of the app we have produced, this goal is fully achieved. The updated version of the app can be installed on an Android device or run in the emulator by cloning our GitLab repository\footnote{\url{https://gitlab.lrz.de/dvrws/lens}}. We are also intending to release the updated version 2.0 to the Google PlayStore\footnote{\url{https://play.google.com/store/apps/details?id=com.maxjokel.lens}} to make it accessible for a broader audience.
+
+\subsection{Test Environment}
+We measure the real-time characteristic of our implementation not only subjectively by assessing what we see on the screen when we run the app. We also track the time it takes the app between the moment the camera \gls{api} returns a new image and the bounding boxes of the recognitions returned by the detector are actually drawn on top of that image. While the detection time can vary based on the input data it needs to process, we did not try to measure this influence. However, we conduct our test in a private home which actually matches the types of categories the SSD MobileNet can detect quite well (e.g. bottle, cup, chair, couch, bed, dining table, tv, refrigerator, ...). This makes us confident of our analysis being viable for the assessment of the real-time quality of the object detection we implemented.
+
+\subsection{Measuring Performance Using The Android System Trace}
+We log the system trace on the test device directly\footnote{\url{https://developer.android.com/topic/performance/tracing/on-device}} (specs in \autoref{tab:specs}) because it allows us to walk around and capture different scenes without having to be attached to a computer. Once we are done collecting input, we attach the test phone to our computer and retrieve the data with the following command:
+
+\begin{lstlisting}[style=standard, language=bash, label=code:adb, caption={The \gls{adb} offer a convenient way to retreive trace files saved on a Android device. This command transfers the system trace from our test device to the development machine it is attached to via an usb cable.}]
+	(base) david@DDs-MBP lens-david % cd thesis/raw_data && adb pull /data/local/traces/ .
+\end{lstlisting}
+
+\noindent The command creates a new open source folder \textit{traces} in the given directory if it does not already exist. Since our device runs Android 10, the trace files saved in the new folder have the \code{.perfetto-trace} format. We use Google's open source trace analysis platform Perfetto\footnote{\url{https://perfetto.dev/}} to open and process the trace file we recorded while walking through the apartment. The Perfetto UI\footnote{\url{https://ui.perfetto.dev/}} offers a powerful and convenient tool to visualise the data stored in the trace file. Moreover, it also allows to query the data using SQL commands. Executed within the Perfetto UI, the query in \autoref{code:perfettoSql} returns a list of the two types of events \code{imageAvailable} and \code{recogniseImage} including their ids, names, a timestamp indicating the beginning of their execution (ts) and their entire duration (dur).
+
+\begin{lstlisting}[style=standard, language=sql, label=code:perfettoSql, caption={SQL command to query object detection related events tracked with Android's system tracing.}]
+	SELECT id, name, ts, dur
+	FROM slice
+	WHERE type = 'internal_slice' and
+	(name = 'imageAvailable' or name = 'recognizeImage')
+\end{lstlisting}
+
+\noindent The source code includes carefully placed \code{Trace.beginSection([SectionName])} and \code{Trace.endSection()} function calls so that these events are properly tracked. All timings were measured with the default configuration of using 4 CPU-cores for the object detection which can also be seen in \autoref{fig:perfetto}. The \textit{recognizeImage} slice is traced in the main detection thread and three further threads support it. While the 
+
+\begin{figure}[H] % [H] for HERE
+	\centering
+	\includegraphics[width=\textwidth]{figures/perfetto_visualisation.png}
+	\caption[Screenshot of visual systrace analysis with Perfetto UI]{The screenshot shows a systrace visualisation using the Perfetto UI. The horizontal axis shows the time starting at 0 seconds and the vertical axes lists important types of events. These events are sorted to reflect their chronology as close as possible.}
+	\label{fig:perfetto}
+\end{figure}
+
+\noindent The code which starts the \code{imageAvailable} section will only be entered if no image is currently being processed. Thus it only appears in between \code{recognizeImage} sections.
+
+Query
+
+
+
+
 
 \section{Accuracy}
 
@@ -666,7 +695,7 @@ Listing all application domains of on-device machine learning would exceed the s
 
 \section{Future Work}
 
-To finish this work, we want to suggest a variety of topics that have not been covered by this thesis or its predecessor and might be of interest to students at TUM. By doing so, we hope to other student inspire fellow students to continue the development of TUM-Lens. In the eyes of the author, this app is a fertile ground for students striving for both challenging and interesting tasks ranging from state of the art mobile development up to training custom neural networks for mobile devices.
+To finish this work, we want to suggest a variety of topics that have not been covered by this thesis or its predecessor and might be of interest to students at TUM. By doing so, we hope to inspire other students to continue the development of TUM-Lens. In the eyes of the author, this app is a fertile ground for students striving for both challenging and interesting tasks ranging from state of the art mobile development up to training custom neural networks for mobile devices.
 
 \subsubsection{Replace Deprecated Code And Fix Bugs}
 A first improvement can be the replacement of deprecated code. We have already achieved great progress in modernising the app by migrating it to Kotlin but there is still a significant number of outdated code that can be modernised by the next student working on the TUM-Lens project. Unfortunately, the app is also not entirely bug free. One bug we have found in version 1.0 that we weren't able to fix is the changeability of models once an image has been loaded from storage. This does currently not trigger a re-classification with the newly selected network and should be fixes in a future release.
@@ -679,9 +708,11 @@ This might sound counter-intuitive to the goal of this thesis but downloading mo
 
 \subsubsection{Expand The Set of Features of TUM-Lens}
 
-The final tip is the expansion of the features of the app. With image classification and object detection we already cover to major disciplines in computer vision. In a next project, instance segmentation could be implemented to further increase the capabilities of TUM-Lens. While this would add a new feature, improvements to existing function are also possible. Another project might therefore be the implementation of better tracking than the mechanism currently implemented and described in \autoref{ssec:detectionAndTracking}. \\
+The final tip is the expansion of the features of the app. With image classification and object detection we already cover to major disciplines in computer vision. In a follow-up project, instance segmentation could be implemented to further increase the capabilities of TUM-Lens. While this would add a entirely new feature, improvements to existing function are also possible. On the easier side of the enhancement spectrum are further customisation options for the user. While he can currently adjust the number of threads to perform the object detection tasks on, more options like changing the minimum confidence threshold a detection must have to be displayed are conceivable. Ranked among the more difficult advancements is the implementation of better tracking than the mechanism currently implemented and described in \autoref{ssec:detectionAndTracking}. \\
 
-With every new contribution, the number of new directions in which one can take the TUM-Lens project is only growing.
+%TODO: Think about including customisation features such as changing the number of maximum returned object or the 
+
+With every new contribution to TUM-Lens, the number of new directions in which one can take the app is only growing. We therefore encourage fellow students to follow suit and continue to evolve this project.
 
 
 
