@@ -544,7 +544,7 @@ As described in \autoref{sec:previousState} the core feature of TUM-Lens v1.0 is
 
 In order to make the structure of the app more accessible to new developers we put the core classes responsible for image classification and object detection into two distinct packages. The project now includes the four packages \code{classification}, \code{detection}, \code{fragments} and \code{helpers}. Only the two base activities \code{StartScreenActivity} and \code{PermissionDeniedActivity} remained on the top-level.
 
-\begin{figure}[H] % [H] for HERE
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth]{figures/uml_detection_package.png}
 	\caption[UML Class Diagram of The New Detection Package]{UML class diagram of the new detection package. Only public properties and methods are shown.}
@@ -646,16 +646,21 @@ We log the system trace on the test device directly\footnote{\url{https://develo
 	(name = 'imageAvailable' or name = 'recognizeImage')
 \end{lstlisting}
 
-\noindent The source code includes carefully placed \code{Trace.beginSection([SectionName])} and \code{Trace.endSection()} function calls so that these events are properly tracked. All timings were measured with the default configuration of using 4 CPU-cores for the object detection which can also be seen in \autoref{fig:perfetto}. The \textit{recognizeImage} slice is traced in the main detection thread and three further threads support it. While the 
+\noindent The source code includes carefully placed \code{Trace.beginSection([SectionName])} and \code{Trace.endSection()} function calls so that these events are properly tracked. All timings were measured with the default configuration of using 4 CPU-cores for the object detection which can also be seen in \autoref{fig:perfetto}. The \textit{recognizeImage} slice is traced in the main detection thread and three further threads support it.
 
 \begin{figure}[H] % [H] for HERE
 	\centering
 	\includegraphics[width=\textwidth]{figures/perfetto_visualisation.png}
-	\caption[Screenshot of visual systrace analysis with Perfetto UI]{The screenshot shows a systrace visualisation using the Perfetto UI. The horizontal axis shows the time starting at 0 seconds and the vertical axes lists important types of events. These events are sorted to reflect their chronology as close as possible.}
+	\caption[Screenshot of visual systrace analysis with Perfetto UI]{The image shows a systrace visualisation using the Perfetto UI. The horizontal axis shows the relative time ()starting at 0 seconds) and the vertical axes lists important types of events. These events are sorted to reflect their chronology as close as possible.}
 	\label{fig:perfetto}
 \end{figure}
 
-\noindent The code which starts the \code{imageAvailable} section will only be entered if no image is currently being processed. Thus it only appears in between \code{recognizeImage} sections.
+\noindent Three observations are important to understand put the performance measurements into context. Firstly, the device renders images at a fixed rate taking whatever input is currently available. 
+
+
+
+
+The code which starts the \code{imageAvailable} section will only be entered if no image is currently being processed. Thus it only appears in between \code{recognizeImage} sections.
 
 Query
 
@@ -675,8 +680,8 @@ As touched upon in \autoref{chap:motivation}, there are at least two major drive
 
 We will not go into too much detail in this section as this work emphasizes the importance of low latency performance for object detection on Android devices in multiple occasions already. Still, we want to highlight the case of on-device machine learning application requiring both autonomy and speed that will change our life in the most profound way.
 
-\paragraph{Autonomous Navigation}
-Many applications in the field of autonomous navigation will greatly benefit from both aspects of autonomy and speed. Driving (or rather being chauffeured by) an autonomous vehicle is the showpiece of on-device machine learning. Firstly, it needs the fast reaction time provided by algorithms running on embedded hardware to minimise the distance and thereby time the data needs to travel when it's capture by the cars myriad of sensors. This facilitates the car's decision engine to make decisions in real-time. Given the high speed at which cars can travel and the unpredictability of other traffic participants, it is of utmost importance to react to changes in the environment in real-time. Secondly, a connection to some remote instance that analyses data online might not be given in all situations. Cars must pass tunnels, rural areas might have poor network coverage or the network itself might have an outage due to unforeseen events such as climate catastrophes, terrorist attacks or cyber attacks. In any of these cases, the car must not lose control but be able to continue to navigate smoothly and safely. The core of its data processing and machine learning pipeline must therefore function decoupled form all external networks.
+\subsubsection{Autonomous Navigation}
+Many applications in the field of autonomous navigation will greatly benefit from both aspects of autonomy and speed. Driving (or rather being chauffeured by) an autonomous vehicle is the showpiece of on-device machine learning. Firstly, it needs the fast reaction time provided by algorithms running on embedded hardware to minimise the distance and thereby time the data needs to travel when it's capture by the cars myriad of sensors. This facilitates the car's decision engine to make decisions in real-time. Given the high speed at which cars can travel and the unpredictability of other traffic participants, it is of utmost importance to react to changes in the environment in real-time. Secondly, a connection to some remote instance that analyses data online might not be given in all situations. Cars must pass tunnels, rural areas might have poor network coverage or the network itself might have an outage due to unforeseen events such as climate catastrophes, terrorist attacks or cyber attacks. In any of these cases, the car must not lose control but be able to continue to navigate smoothly and safely. The core of its data processing and machine learning pipeline must therefore function decoupled form all external networks. \\
 
 Having said this, autonomous cars are not the only use case for navigation relying on on-device machine learning. We can also conceive other areas such as deep see exploration, drone navigation and even space travelling where either offline usage, minimal latency or both is required for successful autonomous navigation.
 
