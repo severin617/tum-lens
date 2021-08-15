@@ -5,9 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/black">
 
-    <FrameLayout
+    <androidx.camera.view.PreviewView
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,7 +21,7 @@
         android:id="@+id/activity_detection_bottom_sheet_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:alpha="1"
+        android:alpha="0.85"
         android:background="@drawable/rounded_corners"
         app:behavior_hideable="false"
         app:behavior_peekHeight="140dp"

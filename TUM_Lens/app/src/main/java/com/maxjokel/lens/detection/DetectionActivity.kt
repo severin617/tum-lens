@@ -22,6 +22,7 @@ import android.os.SystemClock
 import android.util.Size
 import android.view.HapticFeedbackConstants
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
 import com.google.android.material.button.MaterialButtonToggleGroup
@@ -186,14 +187,9 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
         }
     }
 
- /*   override fun onBackPressed() {
-        val intent = Intent(this@DetectionActivity, ClassificationActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-    }*/
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         analysisToggleGroup = findViewById(R.id.analysisToggleGroup)
         btnClassification = findViewById(R.id.btn_classification)
         btnDetection = findViewById(R.id.btn_detection)
@@ -229,7 +225,7 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
         private const val MINIMUM_CONFIDENCE_TF_OD_API = 0.5f
 
         private const val MAINTAIN_ASPECT = false
-        private val DESIRED_PREVIEW_SIZE = Size(640, 240)
+        private val DESIRED_PREVIEW_SIZE = Size(1440, 720)
         private const val SAVE_PREVIEW_BITMAP = false
     }
 }

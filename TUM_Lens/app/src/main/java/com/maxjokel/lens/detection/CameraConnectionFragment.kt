@@ -132,22 +132,13 @@ class CameraConnectionFragment private constructor
 
     /** [TextureView.SurfaceTextureListener] handles several lifecycle events on a [ ]. */
     private val surfaceTextureListener: SurfaceTextureListener = object : SurfaceTextureListener {
-        override fun onSurfaceTextureAvailable(
-            texture: SurfaceTexture, width: Int, height: Int
-        ) {
+        override fun onSurfaceTextureAvailable(texture: SurfaceTexture, width: Int, height: Int) {
             openCamera(width, height)
         }
-
-        override fun onSurfaceTextureSizeChanged(
-            texture: SurfaceTexture, width: Int, height: Int
-        ) {
+        override fun onSurfaceTextureSizeChanged(texture: SurfaceTexture, width: Int, height: Int) {
             configureTransform(width, height)
         }
-
-        override fun onSurfaceTextureDestroyed(texture: SurfaceTexture): Boolean {
-            return true
-        }
-
+        override fun onSurfaceTextureDestroyed(texture: SurfaceTexture) = true
         override fun onSurfaceTextureUpdated(texture: SurfaceTexture) {}
     }
 

@@ -88,9 +88,6 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         // prevent display from being dimmed down
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        // set status bar background to black
-        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-
         // set corresponding layout
         setContentView(R.layout.activity_classification)
 
