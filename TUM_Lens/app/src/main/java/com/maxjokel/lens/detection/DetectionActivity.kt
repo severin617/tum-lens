@@ -22,18 +22,17 @@ import android.os.SystemClock
 import android.util.Size
 import android.view.HapticFeedbackConstants
 import android.view.View
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.Toast
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.maxjokel.lens.R
+import com.maxjokel.lens.classification.ClassificationActivity
 import com.maxjokel.lens.helpers.ImageUtils.getTransformationMatrix
 import com.maxjokel.lens.helpers.ImageUtils.saveBitmap
 import com.maxjokel.lens.helpers.Logger
+import com.maxjokel.lens.helpers.Recognition
 import java.io.IOException
 import java.util.*
-import com.maxjokel.lens.R
-import com.maxjokel.lens.classification.ClassificationActivity
-import com.maxjokel.lens.helpers.Recognition
 
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
