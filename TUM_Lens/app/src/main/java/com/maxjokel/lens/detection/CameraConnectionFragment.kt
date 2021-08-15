@@ -47,8 +47,10 @@ import java.util.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 
+
 @SuppressLint("ValidFragment")
-class CameraConnectionFragment private constructor(
+class CameraConnectionFragment private constructor
+    (
     private val cameraConnectionCallback: ConnectionCallback,
     /** A [OnImageAvailableListener] to receive frames as they are available.  */
     private val imageListener: ImageReader.OnImageAvailableListener,
@@ -56,7 +58,7 @@ class CameraConnectionFragment private constructor(
     private val layout: Int,
     /** The input size in pixels desired by TensorFlow (width and height of a square bitmap).  */
     private val inputSize: Size
-) : Fragment() {
+    ) : Fragment() {
 
     /** A [Semaphore] to prevent the app from exiting before closing the camera.  */
     private val cameraOpenCloseLock = Semaphore(1)
@@ -510,6 +512,7 @@ class CameraConnectionFragment private constructor(
                 choices[0]
             }
         }
+
 
         fun newInstance(callback: ConnectionCallback,
                         imageListener: ImageReader.OnImageAvailableListener,
