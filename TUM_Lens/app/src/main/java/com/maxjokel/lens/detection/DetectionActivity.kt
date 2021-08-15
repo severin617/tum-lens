@@ -17,11 +17,9 @@ package com.maxjokel.lens.detection
 
 import android.content.Intent
 import android.graphics.*
-import android.media.ImageReader
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Size
-import android.util.TypedValue
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.Button
@@ -53,6 +51,11 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
     private var frameToCropTransform: Matrix? = null
     private var cropToFrameTransform: Matrix? = null
     private var tracker: MultiBoxTracker? = null
+
+    // Buttons from toggle button group
+    private lateinit var analysisToggleGroup: MaterialButtonToggleGroup
+    private lateinit var btnDetection: Button
+    private lateinit var btnClassification: Button
 
     override val layoutId = R.layout.activity_detection_cam_fragment_tracking
     override val desiredPreviewFrameSize = DESIRED_PREVIEW_SIZE
@@ -191,10 +194,11 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val btnDetectionModeToggle = findViewById<MaterialButtonToggleGroup>(R.id.analysisToggleGroup)
-        val btnClassification = findViewById<Button>(R.id.btn_classification)
+        analysisToggleGroup = findViewById(R.id.analysisToggleGroup)
+        btnClassification = findViewById(R.id.btn_classification)
+        btnDetection = findViewById(R.id.btn_detection)
 
-        btnDetectionModeToggle.addOnButtonCheckedListener { group, checkedId, _ ->
+        analysisToggleGroup.addOnButtonCheckedListener { group, checkedId, _ ->
             if (checkedId == btnClassification.id) {
                 group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
                 val intent = Intent(this, ClassificationActivity::class.java)
@@ -203,6 +207,12 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
                 startActivity(intent)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // check() also unchecks all other buttons because group is defined in single selection mode
+        analysisToggleGroup.check(R.id.btn_detection)
     }
 
 

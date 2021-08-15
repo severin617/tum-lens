@@ -17,20 +17,20 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-import androidx.camera.view.PreviewView
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.common.util.concurrent.ListenableFuture
 import com.maxjokel.lens.R
+import com.maxjokel.lens.detection.DetectionActivity
 import com.maxjokel.lens.fragments.*
 import com.maxjokel.lens.helpers.CameraEvents
 import com.maxjokel.lens.helpers.FreezeAnalyzer
 import com.maxjokel.lens.helpers.FreezeCallback
 import com.maxjokel.lens.helpers.ImageUtils.toCroppedBitmap
 import com.maxjokel.lens.helpers.Logger
-import com.maxjokel.lens.detection.DetectionActivity
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -95,10 +95,8 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         setContentView(R.layout.activity_classification)
 
         analysisToggleGroup = findViewById(R.id.analysisToggleGroup)
-        btnDetection = findViewById(R.id.btn_detection)
         btnClassification = findViewById(R.id.btn_classification)
-        analysisToggleGroup.check(R.id.btn_classification)
-        analysisToggleGroup.uncheck(R.id.btn_detection)
+        btnDetection = findViewById(R.id.btn_detection)
 
         // [source: https://developer.android.com/training/gestures/detector#java]
         // Set up and instantiate the gesture detector with the application context
@@ -442,6 +440,8 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
 
     override fun onResume() {
         super.onResume()
+        // check() also unchecks all other buttons because group is defined in single selection mode
+        analysisToggleGroup.check(R.id.btn_classification)
         isClassificationPaused = false
     }
 
