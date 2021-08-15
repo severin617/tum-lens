@@ -651,7 +651,7 @@ We log the system trace on the test device directly\footnote{\url{https://develo
 \begin{figure}[H] % [H] for HERE
 	\centering
 	\includegraphics[width=\textwidth]{figures/perfetto_visualisation.png}
-	\caption[Screenshot of visual systrace analysis with Perfetto UI]{The image shows a systrace visualisation using the Perfetto UI. The horizontal axis shows the relative time ()starting at 0 seconds) and the vertical axes lists important types of events. These events are sorted to reflect their chronology as close as possible.}
+	\caption[Screenshot of Visual Systrace Analysis With Perfetto UI]{The image shows a systrace visualisation using the Perfetto UI. The horizontal axis shows the relative time ()starting at 0 seconds) and the vertical axes lists important types of events. These events are sorted to reflect their chronology as close as possible.}
 	\label{fig:perfetto}
 \end{figure}
 
@@ -666,9 +666,6 @@ Query
 
 
 
-
-
-\section{Accuracy}
 
 \chapter{Outlook}
 
@@ -735,7 +732,56 @@ With every new contribution to TUM-Lens, the number of new directions in which o
 
 \chapter{Screenshots of the Application}
 
-%TODO: Insert screenshots. Potentially even with the respective old version of a screen to see the development.
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.23\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/app_class_old.png}
+		\caption[Screenshots of the previous app in version 1.0 showing the classification activity]{Classification v1.0}
+		\label{fig:appImage11}
+	\end{subfigure}
+	\hfil
+	\begin{subfigure}{.23\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/app_class_new.png}
+		\caption[Screenshots of the new app in version 2.0 showing the classification activity]{Classification v2.0}
+		\label{fig:appImage12}
+	\end{subfigure}
+	\hfil
+	\begin{subfigure}{.23\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/app_detection_new.png}
+		\caption[Screenshots of the new app in version 2.0 showing the detection activity]{Detection v2.0}
+		\label{fig:appImage13}
+	\end{subfigure}
+
+	\bigskip
+	\begin{subfigure}{.23\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/app_class_sheet_old.png}
+		\caption[Screenshots of the previous app in version 1.0 showing the classification activity with its bottom sheet expanded]{Bottom sheet in classification v1.0}
+		\label{fig:appImage21}
+	\end{subfigure}
+	\hfil
+	\begin{subfigure}{.23\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/app_class_sheet_new.png}
+		\caption[Screenshots of the new app in version 2.0 showing the classification activity with its bottom sheet expanded]{Bottom sheet in classification v2.0}
+		\label{fig:appImage22}
+	\end{subfigure} 
+	\hfil
+	\begin{subfigure}{.23\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/app_detection_sheet_new.png}
+		\caption[Screenshots of the new app in version 2.0 showing the detection activity with its bottom sheet expanded]{Bottom sheet in detection v2.0}
+		\label{fig:appImage23}
+	\end{subfigure}
+	\RawCaption{
+		\caption[App visuals comparing version 1.0 and 2.0]{Development of app visuals from version 1.0 to 2.0. The bottom sheet is now slightly transparent and the camera preview stretches into the status bar.}
+		\label{fig:appImages}
+	}
+\end{figure}
+
 
 \chapter{Test Device Specifications} \label{chap:specs}
 
