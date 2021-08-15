@@ -48,10 +48,12 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".classification.ClassificationActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTask" />
         <activity
             android:name=".detection.DetectionActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTask" />
         <activity
             android:name=".StartScreenActivity"
             android:theme="@style/AppTheme.Launcher">

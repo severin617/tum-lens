@@ -169,8 +169,8 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             if (checkedId == btnDetection.id) {
                 group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
                 val intent = Intent(this, DetectionActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 startActivity(intent)
+                finish()
             }
         }
 
@@ -203,6 +203,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             val intent = Intent(this@ClassificationActivity, CameraRollActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             startActivity(intent)
+            finish()
         }
     }
 
@@ -452,11 +453,13 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
 
     override fun onStop() {
         super.onStop()
+        _cameraProvider!!.unbindAll()
         isClassificationPaused = true
     }
 
     override fun onRestart() {
         super.onRestart()
+        initCameraX()
         isClassificationPaused = false
     }
 

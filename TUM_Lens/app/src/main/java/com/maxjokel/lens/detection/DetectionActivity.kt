@@ -186,11 +186,11 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
         }
     }
 
-    override fun onBackPressed() {
+ /*   override fun onBackPressed() {
         val intent = Intent(this@DetectionActivity, ClassificationActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -202,9 +202,8 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
             if (checkedId == btnClassification.id) {
                 group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
                 val intent = Intent(this, ClassificationActivity::class.java)
-                // TODO: add AcitivtyOptions (see same fun in ClassificationActivity) for smooth transition
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 startActivity(intent)
+                finish()
             }
         }
     }
