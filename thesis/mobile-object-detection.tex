@@ -242,52 +242,53 @@ The use of on-device \gls{ml} provides a further mechanism for protecting person
 
 \chapter{Important Concepts}
 
-Everyone is talking about machine learning. It is already impossible to imagine our everyday life without the use of the term. Due to the multitude of contexts in which machine learning is spoken of, some justifiably and some unjustifiably, it is important to create a common understanding of some machine learning-related concepts in order to ensure a common understanding of the theoretical contents of this work.
-
-%TODO: Maybe outline the different concepts that will be explained as their connection is loser than the other parts of the thesis.
+It is nearly impossible to imagine our everyday life without the use of the term machine learning. Due to the multitude of contexts in which machine learning is spoken of - some justifiably and some unjustifiably - it is important to create a common understanding of some machine learning-related concepts used throughout the theoretical chapters of this work. Therefore, we first introduce the term machine learning and explore a common and helpful division of the \acrlong{ml} field into different subdomains. Next, we explain the concept of an \acrlong{ann} followed by the description of a deep learning, a special class of both \acrfull{ml} as a discipline and \glspl{ann} as a type of data processing tool.
 
 \section{Machine Learning}
 
-A popular definition of \gls{ml} is attributed to Arthur Samuel describing it as the "field of study that gives computers the ability to learn without being explicitly programmed"\footnote{Althought cited in popular machine learning material like Andrew Ng's \gls{ml} course at Stanford~\cite{mlCourseStan} the quote appears neither in Samuel's 1959~\cite{mlQuote1959} nor his 1967 paper~\cite{mlQuote1967}.}. \acrlong{ml} algorithms circumvent this need for explicit programming by improving an internal model through data. This process is called training and the data used to train the model is often regarded to as the model's experience~\cite{mlMitchell}. As depicted in figure \autoref{fig:mlClassification}, \gls{ml} can be divided into the subfields supervised learning, unsupervised learning, semi-supervised learning and reinforcement learning.
+A popular definition of \acrlong{ml} is attributed to Arthur Samuel describing it as the "field of study that gives computers the ability to learn without being explicitly programmed"\footnote{Althought cited in popular machine learning material like Andrew Ng's \gls{ml} course at Stanford~\cite{mlCourseStan} the quote appears neither in Samuel's 1959~\cite{mlQuote1959} nor his 1967 paper~\cite{mlQuote1967}.}. \acrlong{ml} algorithms circumvent this need for explicit programming by improving an internal model through data. This process is called training and the data used to train the model is often regarded to as the model's experience~\cite{mlMitchell}. As depicted in figure \autoref{fig:mlClassification}, \gls{ml} can be divided into the subfields supervised learning, unsupervised learning, semi-supervised learning and reinforcement learning.
+
+\subsection{Supervised Learning}
+In supervised learning, the learning machine is provided with input data as well as the output that is expected for the given input~\cite{introSupervised}. In the classical example of spam filtering, the input can be a collection of emails and the expected output is a label attached to each email that either classifies it as spam or as non-spam. The learning machine is then fed all e-mails as input data and learns to recognise which information in the input is important to produce the correct classification. As the system knows the correct answer for each training input, it can process an email, predict whether or not it is spam, and then use the known answer to change its structure in a way that will make it more likely to lead to a correct prediction and less likely to lead to a false prediction the next time it is presented with similar input (more on this adaptation process in \autoref{ssection:ann}).
 
 \begin{figure}[H]
 	\centering
 	\begin{tikzpicture}[node distance=4cm]
-		\node[box] (ml) {\large{\textbf{Classification of Machine Learning}}};
+		\node[box] (ml) {\textbf{Classification of Machine Learning}};
 		\node[box, above left of = ml] (supervised) {
 			\begin{minipage}{5cm}
-				\centering\textbf{Supervised Learning}
+				\centering\small\textbf{Supervised Learning}
 				\begin{itemize}
-					\item \texttt{Regression}
-					\item \texttt{Classification}
+					\item \small\texttt{Regression}
+					\item \small\texttt{Classification}
 				\end{itemize}
 			\end{minipage}
 		};
 		\node[box, above right of = ml] (unsupervised) {
 			\begin{minipage}{5cm}
-				\centering\textbf{Unsupervised Learning}
+				\centering\small\textbf{Unsupervised Learning}
 				\begin{itemize}
-					\item \texttt{Clustering}
-					\item \texttt{Association}
+					\item \small\texttt{Clustering}
+					\item \small\texttt{Association}
 				\end{itemize}
 			\end{minipage}
 		};
 		\node[box,  below right of = ml] (semisupervised) {
 			\begin{minipage}{5cm}
-				\centering\textbf{Semi-supervised Learning}
+				\centering\small\textbf{Semi-supervised Learning}
 				\begin{itemize}
-					\item \texttt{Classification}
-					\item \texttt{Clustering}
+					\item \small\texttt{Classification}
+					\item \small\texttt{Clustering}
 				\end{itemize}
 			\end{minipage}
 		};
 
 		\node[box, below left of = ml] (reinforcement) {
 			\begin{minipage}{5cm}
-				\centering\textbf{Reinformcement Learning}
+				\centering\small\textbf{Reinformcement Learning}
 				\begin{itemize}
-					\item \texttt{Classification}
-					\item \texttt{Control}
+					\item \small\texttt{Classification}
+					\item \small\texttt{Control}
 				\end{itemize}
 			\end{minipage}
 		};
@@ -299,9 +300,6 @@ A popular definition of \gls{ml} is attributed to Arthur Samuel describing it as
 	\caption[Classification of Machine Learning]{The field of \acrlong{ml} divided into subfields by the characteristics of the underlying learning process. Also indicates the learning problems that are typically tried to be solved by applying the respective learning process.}
 	\label{fig:mlClassification}
 \end{figure}
-
-\subsection{Supervised Learning}
-In supervised learning, the learning machine is provided with input data as well as the output that is expected for the given input~\cite{introSupervised}. In the classical case of spam filtering, the input can be a collection of emails and the expected output is a label attached to each email that either classifies it as spam or as non-spam. The learning machine is then fed all e-mails as input data and learns to recognise which information in the input is important to produce the correct classification. As the system knows the correct answer for each training input, it can process an email, predict whether or not it is spam, and then use the known answer to change its weights in a way that will make it more likely to lead to a correct prediction and less likely to lead to a false prediction the next time it is presented with similar input.
 
 \subsection{Unsupervised Learning}
 Detecting hidden patterns and structuring data is where unsupervised learning comes into play. Learners of this type do not need to be provided with an expected output while being trained~\cite{introUnsupervised}. A scenario for the application of unsupervised learning is the problem of dividing a customer base into subgroups in order to treat every subgroup according to their specific needs. An employee might help the machine learning system by providing the number of subgroups she wants the system to generate. The learner then builds up its representation of the internal structure of the entire data set with every input it processes. After having processed enough customers, it will most likely have identified the key metrics that distinguish customers into the different groups. 
@@ -316,13 +314,7 @@ Reinforcement learning is "learning what to do - how to map situations to action
 
 \section{Artificial Neural Networks} \label{ssection:ann}
 
-An \acrlong{ann} - often just referred to as neural network - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \autoref{fig:2layeredANN} and \autoref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The connections between nodes are also known as \textit{edges} and typically carry a weight. In the case of \glspl{ann}, the training process that is typical for all machine learning systems is the adjustment of these connection weights. The weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. In summary, an \gls{ann} transforms an input vector into an output vector through a series of non-linear functions, where both the calculation of the output and the training process are characterised by the specific structure of the \gls{ann} and its parameters.
-
-%TODO: Maybe introduce a view typical ANN architectures like feed forward, convolutional, recurring, etc.
-
-\section{Deep Learning}
-
-Deep learning is a subarea of machine learning. Deep learning is characterised by the use of \glspl{ann} with many hidden layers. The more hidden layers a network has, the deeper it is. The deeper a network is and the more nodes the network has per layer, the more complex the computations that the \gls{ann} can successfully perform~\cite{dlBookGoodf}. As the number of layers and nodes grows, so does the number of parameters. Their large number is the reason deep learning requires extensive amounts of data to provide adequate results compared to other sub-disciplines of machine learning. Networks of this genus have been given the ability to perform extraordinarily complex computations at the expense of a resource-intensive training process.
+An \acrlong{ann} - often just referred to as neural network - is a data processing concept that is inspired by biological neurons and their interconnectivity. As figures \autoref{fig:2layeredANN} and \autoref{fig:3layeredANN} show the artificial neurons (also called \textit{nodes}) in an \gls{ann} are grouped in \textit{layers}. There are three important types of layers: The \textit{input layer}\footnote{Note that the input layer is usually not counted towards the total number of layers in an \gls{ann}.}, the \textit{output layer} and an arbitrary number of \textit{hidden layers} in between the input and output layer. Similar to neurons in human brains, nodes of different layers can be connected. In \glspl{ann}, the nodes exchange signals in the form of numbers. Each node outputs a number that is computed by applying a non-linear function to its inputs. The output signal can then be a new input for other nodes or it can be part of the result returned by the output layer. The connections between nodes are also known as \textit{edges} and typically carry a weight. When a signal travels from one node to the next, it is typically multiplied and thereby changed by the weight of that edge. In the case of \glspl{ann}, the training process that is typical for all machine learning systems is the adjustment of these connection weights. The weights and other variables of the \gls{ann} are grouped under the term \textit{parameters}. In summary, an \gls{ann} transforms an input vector into an output vector through a series of non-linear functions, where both the calculation of the output and the training process are characterised by the specific structure of the \gls{ann} and its parameters.
 
 \begin{multicols}{2} % defines an environment with two columns
 	\begin{figure}[H] % [H] for EXACTLY HERE
@@ -344,9 +336,15 @@ Deep learning is a subarea of machine learning. Deep learning is characterised b
 	\end{figure}
 \end{multicols}
 
+\newpage
+
+\section{Deep Learning}
+
+Deep learning is a sub area of machine learning. Deep learning is characterised by the use of \glspl{ann} with many hidden layers. The more hidden layers a network has, the deeper it is. The deeper a network is and the more nodes the network has per layer, the more complex the computations that the \gls{ann} can successfully perform~\cite{dlBookGoodf}. As the number of layers and nodes grows, so does the number of parameters. Their large number is the reason deep learning requires extensive amounts of data to provide adequate results compared to other sub-disciplines of machine learning. Networks of this genus have the ability to perform extraordinarily complex computations at the expense of a resource-intensive training process.
+
 \chapter{Object Detection}
 
-The field of \gls{cv} encompasses numerous distinct problems and an even larger number of potential solutions. In the following, object detection as a typical task in the \gls{cv} context is distinguished from other \gls{cv} tasks that are closest to it in terms of learning objectives. We then give an overview of a selection of modern object detectors including their internal structures and differentiating factors. We close this chapter with a detailed description of the model applied to the object detection task in TUM-Lens.
+The field of \gls{cv} encompasses numerous distinct problems and an even larger number of potential solutions. In the following, object detection as a typical task in the \gls{cv} context is distinguished from other \gls{cv} tasks that are closest to it in terms of learning objectives. We then give an overview of a selection of modern object detectors including their internal structures and differentiating factors. We close this chapter with a description of the model applied to the object detection task in TUM-Lens.
 
 \section{How Object Detection Differs from Related Tasks} \label{sec:cvtasks}
 
@@ -359,24 +357,20 @@ The field of \gls{cv} encompasses numerous distinct problems and an even larger 
 \end{figure}
 
 \subsection{Semantic Segmentation}
-In semantic segmentation, each pixel of an image is assigned a class. However, there are no objects. This means that if there are several objects of the same class in the image, all the associated pixels receive the same class label. Therefore, the different objects cannot be differentiated based on the result of the semantic segmentation.
+In semantic segmentation, each pixel of an image is assigned a class. However, there are no objects. This means that if there are several objects of the same class in the image, all the associated pixels receive the same class label. Therefore, the different objects cannot be distinguished based on the result of the semantic segmentation.
 
 \subsection{Image Classification}
 In image classification, the result of the detection is a single class. In rare application variants, a bounding box for one object of the detected class is also returned - as a rule, however, no spatial extent is associated with the task of classification.
 
 \subsection{Object Detection}
-Object detection deals with the identification of any number of objects within an image. For each object, a class label and its position are returned as the coordinates of a rectangle enclosing the object. It is important here that, as depicted in Figure \autoref{fig:cvTasks}, several objects of the same class can also be recognised. In contrast to the  task of semantic segmentation, the different objects of the same class can be distinguished.
+Object detection deals with the identification of any number of objects within an image. For each object, a class label and its position are returned as the coordinates of a rectangle enclosing the object. It is noteworthy that, as depicted in Figure \autoref{fig:cvTasks}, several objects of the same class can also be recognised. In contrast to the  task of semantic segmentation, the different objects of the same class can be differentiated.
 
 \subsection{Instance Segmentation}
 The instance segmentation essentially fulfils a better variant of the object detection. Again, several objects of different classes are detected and the positions of the classes are also part of the output. However, the positions are not marked by bounding boxes as in object detection, but each pixel belonging to an object receives a label of this object. The objects are therefore even more sharply separated from the image areas that do not contain an object and, in contrast to semantic segmentation, individual objects of the same class remain distinguishable.
 
 \section{Object Detection Frameworks}
 
-State of the art object detection frameworks run predominantly on deep learning architectures~\cite{dlForDetection}. The bachelor's thesis preceding this work, \textit{Implementing a TensorFlow-Slim based Android app for image classification}~\cite{maxJokel}, already explains how \glspl{cnn} work and why they are the most important building blocks for deep learning frameworks solving perceptual tasks. This explanation will therefore not be pursued here once more. Instead, we survey a range of modern object detection frameworks. Each framework is defined by the combination of a backbone and a detector. The selection was not put together at random but is based on popularity and performance in standard object detection benchmarks~\cite{backbones}. %TODO: add reference for detection frameworks
-
-\subsection{Backbones} \label{ssec:backbones}
-
-The term \textit{backbone} in the context of \glspl{ann} might be used differently depending on the task pursued. In the case of visual tasks and this thesis, the backbone is the part of an object detection framework that extracts features from the input data. This encapsulation of the feature extraction task in its own set of \glspl{cnn} allows the designer of the object detection pipeline to swap and test different backbones for the task at hand~\cite{backbones}.
+State of the art object detection frameworks run predominantly on deep learning architectures~\cite{dlForDetection}. The bachelor's thesis preceding this work, \textit{Implementing a TensorFlow-Slim based Android app for image classification}~\cite{maxJokel}, already explains how \glspl{cnn} work and why they are the most important building blocks for deep learning frameworks solving perceptual tasks. This explanation will therefore not be pursued here once more. Instead, we survey a range of modern object detection frameworks. Each framework is defined by the combination of a backbone and a detector. Table \autoref{tab:backbonesDetectors} shows a selection of popular detectors. The selection was not put together at random but is based on popularity and performance in standard object detection benchmarks~\cite{backbones}. 
 
 \begin{table}[H]
 	\begin{tabularx}{\columnwidth}{C | C | C}
@@ -389,66 +383,44 @@ The term \textit{backbone} in the context of \glspl{ann} might be used different
 		\hline
 		GoogLeNet			   	   & 2014 \cite{backboneGoogLeNet}			 & YOLOv1 \cite{detectorYOLOv1} \\
 		\hline
-		ResNets					  	  & 2015 \cite{backboneResNet}		   & BlitzNet512 \cite{detectorBlitzNet}, CoupleNet \cite{detectorCoupleNet}, RetinaNet \cite{detectorRetinaNet},  Faster R-CNN [A], R-FCN ? \\
+		ResNets					  	  & 2015 \cite{backboneResNet}		   & BlitzNet512 \cite{detectorBlitzNet}, CoupleNet \cite{detectorCoupleNet}, RetinaNet \cite{detectorRetinaNet},  Faster R-CNN \cite{ren2015faster} \\
 		\hline
-		Inception-ResNet-V2   & tbd					  & Faster R-CNN G-RMI [23], Faster R-CNN with TDM [24] \\
-		\hline
-		DarkNet-19					& tbd					& YOLOv2 [J] \\
-		\hline
-		MobileNet					 & 2017 \cite{backboneMobileNet}					 & SSDv2 \\		
+		MobileNet					 & 2017 \cite{backboneMobileNet}					 & SSD \cite{detectorSSD} \\		
 	\end{tabularx}
-	\caption[Modern CNN Backbones and Detectors]{Overview of modern \gls{cnn} backbone networks and detectors that build upon them.}
+	\caption[Modern CNN Backbones and Detectors]{Overview of a few modern \gls{cnn} backbone networks and detectors that build upon them. The number of backbones and detectors is steadily increasing because existing architectures get improved over time or entirely radically new architectures are invented.}
 	\label{tab:backbonesDetectors}
 \end{table}
 
-TO-DO: further sources: \\
- https://scholar.google.com/scholar?q=Dai%2C%20J.%2C%20Li%2C%20Y.%2C%20He%2C%20K.%2C%20Sun%2C%20J.%3A%20R-FCN%3A%20object%20detection%20via%20region-based%20fully%20convolutional%20networks.%20In%3A%20Lee%2C%20D.D.%2C%20Sugiyama%2C%20M.%2C%20Luxburg%2C%20U.V.%2C%20Guyon%2C%20I.%2C%20Garnett%2C%20R.%20%28eds.%29%20Advances%20in%20Neural%20Information%20Processing%20Systems%2029%2C%20pp.%20379%E2%80%93387.%20Curran%20Associates%2C%20Inc.%20%282016%29
-J: http://arxiv.org/abs/1612.08242
-%K: https://doi.org/10.1007/978-3-030-01228-1_15
 
-\subsubsection{AlexNet}
+\subsection{Backbones} \label{ssec:backbones}
 
-
+The term \textit{backbone} in the context of \glspl{ann} might be used differently depending on the task pursued. In the case of visual tasks and this thesis, the backbone is the part of an object detection framework that extracts features from the input data. This encapsulation of the feature extraction task in its own set of \glspl{cnn} allows the designer of the object detection pipeline to swap and test different backbones for the task at hand~\cite{backbones}. In order to demonstrate how backbones of two types can differ we will look at the special characteristics ResNets and MobileNets.
 
 \subsubsection{ResNet}
 
 While the baseline \gls{ann} described in \autoref{ssection:ann} only connects adjacent layers, \glspl{resnet} are a special subclass of \gls{ann} that introduces \textit{shortcut connections}~\cite{backboneResNet}. Shortcut connection are edges in the network that skip one or more layers.
 
-\subsubsection{MobileNet}
+\subsubsection{MobileNet} \label{sssec:mobilenet}
 As the name suggests, MobileNets were developed especially for mobile or embedded computer vision applications. The key innovation of the MobileNet architecture is the combination of two elements:
 \begin{enumerate}
 	\item utilisation of depth-wise separable filters~\cite{depthSep}
 	\item a network structure that enables the developer to scale the model size down by adjusting only two hyper-parameters
 \end{enumerate}
-As a MobileNet is a building block of the detection framework implemented in TUM-Lens, a more detailed description can be found in \autoref{ssec:mobilenetArchitecture}.
 
+\noindent Firstly, using depth-wise separable filters leads to a significantly lower number of parameters the model needs to learn during the training phase. Secondly, the easy shrinking of the model by adjusting the two hyper-parameters (named \textit{width multiplier} and \textit{resolution multiplier}) allows the model-builder to scale the model down to exactly the size that is appropriate for solving the problem the model is applied to~\cite{backboneMobileNet}. Both of these features are incredible valuable for a neural network that needs to run and perform on a mobile device with limited storage and computing resources. This is also the reason why a MobileNet is part of the detection framework implemented in TUM-Lens.
 
-\subsection{Two-Stage Detectors}
+\subsection{Detectors}
 
-This class of detectors separates the object detection task into two distinct stages~\cite{12stageSYNASC2018}. The network of the first stage (named Region Proposal Network (RPN) in the context of the R-CNN detector family) uses the image data to generate region proposals. The second stage is a separate network that takes these region proposals (or ROI - short for regions of interest), potentially decreases the final number of ROI using mechanics that depend on the specific detector, and then performs the classification on each of the final regions. The classified regions are then returned as the detected objects. Two-stage detectors tend to have a higher localization and object recognition accuracy than single-stage detectors but can only achieve that at the cost of considerably slower inference speed~\cite{surveyICBDT2019}. Table \autoref{tab:backbonesDetectors} shows a selection of popular detectors including R-CNN and some of its many successors, Fast-CNN and Faster-CNN.
-%TODO make sure they really do appear in the tabel
+%Nowadays, their are two common types of detectors: two-stage and single-stage detectors.
 
+\subsubsection{Two-Stage Detectors}
 
+This class of detectors separates the object detection task into two distinct stages~\cite{12stageSYNASC2018}. The network of the first stage (named Region Proposal Network (RPN) in the context of the R-CNN detector family~\cite{detectorRCNN}) uses the image data to generate region proposals. The second stage is a separate network that takes these region proposals (or ROI - short for regions of interest), potentially decreases the final number of ROI using mechanics that depend on the specific detector, and then performs the classification on each of the final regions. The classified regions are then returned as the detected objects. Two-stage detectors tend to have a higher localization and object recognition accuracy than single-stage detectors but can only achieve that at the cost of considerably slower inference speed~\cite{surveyICBDT2019}. Well-known representatives of this type are members of the R-CNN family.
 
-\subsection{R-CNN}
+\subsubsection{Single-Stage Detectors}
 
-R-CNN was 
-Fast, Faster R-CNN, and other advancements like Mask-R-CNN
-2014 \cite{detectorRCNN}
-
-\subsection{Single-Stage Detectors}
-
-Detection frameworks are considered to have only a single stage when they consist of one deep neural network only and compute the objects (bounding box coordinates and category) in a single pass through that network. By eliminating the explicit generation of region proposals, single-stage detectors outperform their two-stage competitors with respect to speed while sacrificing a bit of detection accuracy, if at all~\cite{detectorSSD}. %TODO: Cite more sources
-This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Since the object detector implemented in TUM-Lens is described thoroughly in \autoref{sec:mobilessd}, the following overview of selected single-state detectors will help us to understand how the app's object detector differs from other possible options.
-
-\subsubsection{RetinaNet}
-
-2018
-
-\subsubsection{YOLO}
-
-YOLO (You Only Look Once) ; \cite{detectorYOLOv4}
-
+Detection frameworks are considered to have only a single stage when they consist of one deep neural network only and compute the objects (bounding box coordinates and category) in a single pass through that network. By eliminating the explicit generation of region proposals, single-stage detectors outperform their two-stage competitors with respect to speed while sacrificing a bit of detection accuracy, if at all~\cite{detectorSSD}. 
+This speed improvement makes single-stage detectors the preferred choice for applications running on mobile or embedded devices or in applications that require real-time image detection. Alongside detector implemented in TUM-Lens is described in \autoref{sec:mobilessd}, RetinaNet~\cite{detectorRetinaNet} and YOLO (You Only Look Once)~\cite{detectorYOLOv4} are established single-stage detectors.
 
 %%%%
 % Other modern and potentially interesting detectors
@@ -458,21 +430,13 @@ YOLO (You Only Look Once) ; \cite{detectorYOLOv4}
 % FBNet 2019
 %%%%
 
-\section{SSD MobileNet v1} \label{sec:mobilessd}
+\section{The TUM-Lens Object Detector: SSD MobileNet v1} \label{sec:mobilessd}
 
-The SSD MobileNet v1 is the TensorFlow-Lite model used for the new object detection functionality integrated into TUM Lens. The model is pre-trained on the COCO dataset\footnote{\url{https://cocodataset.org/}} and available on TensorFlow Hub\footnote{\url{https://tfhub.dev/tensorflow/lite-model/ssd_mobilenet_v1/1/metadata/2}}. Following the data flow through the object detection framework, we will first have a closer look at the architecture of the MobileNet used as the backbone network. Secondly, we introduce the core concepts of the Single Shot MultiBox Detector (SSD) followed by an detailed description of the SSD architecture. Finally, we conclude with an outlook on the latest improvements to MobileNets, SSDs and their combined applications.
+The SSD MobileNet v1 is the TensorFlow-Lite model used for the new object detection functionality integrated into TUM Lens. The model is pre-trained on the COCO dataset\footnote{\url{https://cocodataset.org/}} and available on TensorFlow Hub\footnote{\url{https://tfhub.dev/tensorflow/lite-model/ssd_mobilenet_v1/1/metadata/2}}. Since the most important characteristics of MobileNets have been covered in \autoref{sssec:mobilenet}, we focus on the core concepts of the Single Shot MultiBox Detector (SSD). \\
 
-\subsection{MobileNet Architecture} \label{ssec:mobilenetArchitecture}
-TBD More Intro \\
-Firstly, using depth-wise separable filters leads to a significantly lower number of parameters the model needs to learn during the training phase. Secondly, the easy shrinking of the model by adjusting the two hyper-parameters (named \textit{width multiplier} and \textit{resolution multiplier}) allows the model-builder to scale the model down to exactly the size that is appropriate for solving the problem the model is applied to~\cite{backboneMobileNet}.
+The SSD consists of a backbone and the \textit{SSD head}. In theory, the backbone can be any of the networks mentioned in \autoref{ssec:backbones} although the choice is not limited to this selection. When SSD was first introduced  in 2015, the authors used the VGG-16 network as the backbone~\cite{detectorSSD}. In the case of the specific SSD variant implemented in TUM-Lens, MobileNet is used as a backbone. The reasons for the particular applicability of MobileNet in our Android app use case are described in \autoref{ssec:backbones}. Independent of the specific type of backbone, it is first trained on publicly available image data, e.g. from a database like ImageNet\footnote{\url{https://image-net.org/}}. Once the network is pre-trained, the final layers that originally handled the classification are then replaced by the SSD head. \\
 
-\subsection{Introduction to SSD}
-
-The SSD consists of a backbone and the \textit{SSD head}. In theory, the backbone can be any of the networks mentioned in \autoref{ssec:backbones} although the choice is not limited to this selection. When SSD was first introduced  in 2015, the authors used the VGG-16 network as the backbone~\cite{detectorSSD}. In the case of the specific SSD variant implemented in TUM-Lens, MobileNet is used as a backbone. The reasons for the particular applicability of MobileNet in our Android app use case are described in \autoref{ssec:backbones}. Independent of the specific type of backbone, it is first trained on publicly available image data, e.g. from a database like ImageNet\footnote{\url{https://image-net.org/}}. Once the network is pre-trained the final layers that originally handled the classification are then replaced by the SSD head.
-
-\subsection{The SSD Head}
-
-The SSD head is the part of the detector that computes category scores and box locations. It is a characteristic of SSD to work with a fixed set of default bounding boxes. To account for the different sizes in which objects might appear in an image, SSD applies a sequence of comparatively small convulational filters to the feature map returned by the backbone network. Each of the feature maps obtained by this process represents a different receptive field and allows the network to detect objects at different scales. Consequently, SSD computes  predictions for all of these feature maps and for each of its predefined aspect ratios. It then fuses the predections of the different aspect ratios and scales in order to improve detection accuracy. The range of aspect ratios and scales, although predeterminded, enables the SSD to detect object in various shapes and sizes. Its multi-scale feature maps are a core differentiator from other single-stage detectors like YOLO~\cite{detectorSSD, detectorYOLOv1} .
+The SSD head is the part of the detector that computes category scores and box locations. It is a characteristic of SSD to work with a fixed set of default bounding boxes. To account for the different sizes in which objects might appear in an image, SSD applies a sequence of comparatively small convulational filters to the feature map returned by the backbone network. Each of the feature maps obtained by this process represents a different receptive field and allows the network to detect objects at different scales. Consequently, SSD computes  predictions for all of these feature maps and for each of its predefined aspect ratios. It then fuses the predections of the different aspect ratios and scales in order to improve detection accuracy. The range of aspect ratios and scales, although predetermined, enables the SSD to detect object in various shapes and sizes. Its multi-scale feature maps are a core differentiator from other single-stage detectors like YOLO~\cite{detectorSSD, detectorYOLOv1} .
 
 \begin{figure}[H] % [H] for HERE
 	\centering
@@ -481,10 +445,6 @@ The SSD head is the part of the detector that computes category scores and box l
 		\tiny{Source:~\cite{detectorSSD}}}
 	\label{fig:ssdFeatureMapScaling} % labels always have to be placed after the caption
 \end{figure}
-
-\subsection{Architecture}
-
-\subsection{Latest Improvements}
 
 
 \part{App Development}
@@ -637,8 +597,8 @@ One of the goals of this work is the expansion of TUM-Lens by integrating a real
 \subsection{Test Environment}
 We measure the real-time characteristic of our implementation not only subjectively by assessing what we see on the screen when we run the app. We also track the time it takes the app between the moment the camera \gls{api} returns a new image and the bounding boxes of the recognitions returned by the detector are actually drawn on top of that image. While the detection time can vary based on the input data it needs to process, we did not try to measure this influence. However, we conduct our test in a private home which actually matches the types of categories the SSD MobileNet can detect quite well (e.g. bottle, cup, chair, couch, bed, dining table, tv, refrigerator, ...). This makes us confident of our analysis being viable for the assessment of the real-time quality of the object detection we implemented.
 
-\subsection{Measuring Performance Using The Android System Trace}
-We log the system trace on the test device directly\footnote{\url{https://developer.android.com/topic/performance/tracing/on-device}} (specs in \autoref{tab:specs}) because it allows us to walk around and capture different scenes without having to be attached to a computer. Once we are done collecting input, we attach the test phone to our computer and retrieve the data with the following command:
+\subsection{Data Collection}
+We log the Android system trace on the test device directly\footnote{\url{https://developer.android.com/topic/performance/tracing/on-device}} (specs in \autoref{tab:specs}) because it allows us to walk around and capture different scenes without having to be attached to a computer. Once we are done collecting input, we attach the test phone to our computer and retrieve the data with the following command:
 
 \begin{lstlisting}[style=standard, language=bash, label=code:adb, caption={The \gls{adb} offer a convenient way to retreive trace files saved on a Android device. This command transfers the system trace from our test device to the development machine it is attached to via an usb cable.}]
 	(base) david@DDs-MBP lens-david % cd thesis/raw_data && adb pull /data/local/traces/ .
