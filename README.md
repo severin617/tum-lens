@@ -1,46 +1,50 @@
-# TUM Lens
+# TUM-Lens
 
-> TUM Lens is a front end application that runs image classification models on Android smartphones for evaluation and showcasing purposes.
+TUM-Lens is a Android application that runs image classification and object detection models locally on the device for evaluation and showcasing purposes.
 
-### Screenshots
-![](./img/Mockup1.png)
-![](./img/Mockup2.png)
+## Screenshots
 
-### Features
-- classify live camera stream and images from gallery
-- choose from multiple models
-- toggle front and back camera
-- double tap to pause classification 
+| Classification | Details and Settings | Detection |
+:-------------------------:|:-------------------------:|:-------------------------:
+![](./thesis/figures/app_class_new.png) | ![](./thesis/figures/app_class_sheet_new.png) | ![](./thesis/figures/app_detection_new.png)
 
 ---
 
-# Running TUM Lens on your Android smartphone
+## Features
 
-### 1 Activate Developer Mode
-1. Open Settings app.
-2. If you run Android 9 or higher, go to "About Phone" and scroll down to "Build Number". Otherwise go to "System", then "About Phone" and scroll down to "Build Number".
-3. Now, **tap 7 times** on **Build Number**.
+- Run classification and object detection on live camera stream
+- Choose from multiple models
+- Double tap to pause classification
 
-Find additional information here: https://developer.android.com/studio/debug/dev-options
+---
 
-### 2 Clone Repository and open it in Android Studio
-1. Clone the project with `git clone ...` inside a local repository or use GitLab's "Download Source Code" option.
-2. In Android Studio, choose "File", "New" and "Import Project ..." and select the `TUM_lens` directory. Make sure that you do not select the root of this repository!
-![](./img/screenshot1.png)
+## Installing and Running TUM-Lens on your Android smartphone
 
-### 3 Connect your phone via cable
-It should appear under "running devices" within the drop down in the upper menu bar of Android Studio.
+- Activate Developer Mode on your Android Device
+  - Open the Settings app.
+  - If you run Android 9 or higher, go to *About Phone* and scroll down to *Build Number*. Otherwise go to *System*, then *About Phone+ and scroll down to *Build Number*.
+  - Now, **tap 7 times** on **Build Number**.
+  - If you run into problems you can find additional information here: https://developer.android.com/studio/debug/dev-options
+
+- Clone Repository and open it in Android Studio
+  - Clone the project with `git clone ...` inside a local repository or use GitLab's *Download Source Code* option.
+  - ![](./img/screenshot1.png)
+  In Android Studio, choose *File*, *New* and *Import Project ...* and select the `TUM_lens` directory. Make sure that you do not select the root of this repository!
+
+- Connect your phone via cable.
 ![](./img/screenshot2.png)
+It should appear under *running devices* within the drop down in the upper menu bar of Android Studio.
 
 
-### 4 Running the app
-Build and run the app by clicking the green play button in the upper menu bar.
+- Run the app
 ![](./img/screenshot3.png)
+Build and run the app by clicking the green play button in the upper menu bar.
 
 ---
 
-# Adding models
-As a tool for rapid prototyping, TUM Lens is set up in such a way that additional models can be added without changing its Java code. However, the project must be re-build. 
+## Adding models
+
+As a tool for rapid prototyping, TUM-Lens is set up in such a way that additional classification models can be added without changing the source code. However, the project must be re-build. 
 
 1. Place your `.tflite` files in the `/assets` directory.
 2. Open `nets.json` in `/assets`.
@@ -51,7 +55,7 @@ As a tool for rapid prototyping, TUM Lens is set up in such a way that additiona
 **Please note** that model file names must not contain any `.` except for separating filename and extension.
 Otherwise, models will be compressed resulting in the app crashing!
 
-#### Mandatory JSON Parameters
+### Mandatory JSON Parameters
 | Parameter          | Use                                                             |
 | :-------------     | :-------------------------------------------------------------- |
 |  `name`            | display name in *model selector*                                |
@@ -66,7 +70,7 @@ Otherwise, models will be compressed resulting in the app crashing!
 
 ---
 
-# Model Zoo
+## Model Zoo
 You can find model that were already converted into the *TF-Lite Model Format* in the `model_zoo` directory. E-Mail me to add your model to that list `:)`
 
 | Model                        | Description                                                     |
@@ -83,7 +87,7 @@ Find more image classification models for TF-Lite on [TensorFlow Hub](https://tf
 
 ---
 
-# Converting (Transfer Learning) Models to TF-Lite
+## Converting (Transfer Learning) Models to TF-Lite
 
 We look at the procedure using the following example: https://gitlab.com/mircotroue/slim-transfer-learning/. 
 
@@ -111,7 +115,7 @@ python export_inference_graph.py \
 	--output_file=/tmp/transferlearning_inferencegraph.pb
 ```
 
-**Please note**
+#### **Please note**
 For the adjustment of the *number of classes* to take effect, we have to specifiy both, the model *structure* and the *dataset* used.
 
 This section is based on the [TF-Slim documentation](https://github.com/tensorflow/models/tree/master/research/slim#exporting-the-inference-graph).
@@ -119,14 +123,14 @@ This section is based on the [TF-Slim documentation](https://github.com/tensorfl
 ### 2 Checkpoint Files
 The `model/` directory contains checkpoint files at different time steps, that we can use for our purpose.
 
-**Please note**
+#### **Please note**
 While there are three types of `.ckpt` files, just use the common *prefix* for `--input_checkpoint`. TensorFlow will find the correct `*.data*` file by itself.
 For example: given `model.ckpt-10000.meta`, `model.ckpt-10000.index` and `model.ckpt-10000.data-00000-of-00001`, use `model.ckpt-10000`.
 
 ### 3 Freezing the Graph
 Freezing the inference graph is the process of merging checkpoints [aka training] with GraphDef [aka model structure] into a single file.
 
-**Preparation**
+#### **Preparation**
 In case you don't know the name of your models output nodes, use TensorFlow's `summarize_graph` tool. It is one of the targets of the initial `bazel build`. 
 You will find it here: `tensorflow-master/bazel-bin/tensorflow/tools/graph_transform`. Usage:
 ```bash
@@ -148,7 +152,9 @@ freeze_graph \
 ```
 
 ### 4 Converting to TF-Lite
-> Please note that this part currently relies on TensorFlow v1
+
+#### **Please note**
+This part currently relies on TensorFlow v1.
 
 Create a new python file, e.g. `tflite_converter.py`. Paste the following few lines:
 
@@ -172,11 +178,3 @@ with open('transferlearning_model.tflite', 'wb') as f:
 Now, run `python tflite_converter.py`. You will find the `transferlearning_model.tflite` file, that can be added to TUM Lens as described above.
 
 This section is based on the [TF-Lite documentation](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/g3doc/r1/convert/python_api.md).
-
-
----
-
-# Please note
-The `legacy` branch holds a less elaborate version of the app that is less performant.
-
-GitLab seems to have problems with displaying images in this `readme.md`; you might want to clone the repository and open the file locally for the best experience
