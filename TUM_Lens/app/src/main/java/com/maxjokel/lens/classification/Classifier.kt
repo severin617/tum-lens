@@ -319,6 +319,7 @@ object Classifier {
             }
         }
 
+
     private val modelFromPrefs: ModelConfig
         get() {
             val id = prefs!!.getInt("model", 0)

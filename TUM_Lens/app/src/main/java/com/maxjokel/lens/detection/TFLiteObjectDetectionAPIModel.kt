@@ -15,11 +15,13 @@ limitations under the License.
 package com.maxjokel.lens.detection
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.RectF
 import android.os.Trace
 import android.util.Log
+import com.maxjokel.lens.helpers.App
 import com.maxjokel.lens.helpers.Recognition
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.metadata.MetadataExtractor
@@ -78,8 +80,15 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
     private var tfLiteOptions: Interpreter.Options? = null
     private var tfLite: Interpreter? = null
 
+    private lateinit var prefs: SharedPreferences
+
+
     override fun recognizeImage(bitmap: Bitmap?): List<Recognition?> {
         // Log this method so that it can be analyzed with systrace.
+
+        prefs = App.context!!.getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
+        val id = prefs.getInt("model_detection", 0)
+
         Trace.beginSection("recognizeImage")
         Trace.beginSection("preprocessBitmap")
         assert(bitmap != null)
@@ -110,11 +119,27 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
         numDetections = FloatArray(1)
         val inputArray = arrayOf<Any?>(imgData)
         val outputMap: MutableMap<Int, Any> = HashMap()
-        outputMap[0] = outputLocations
-        outputMap[1] = outputClasses
-        outputMap[2] = outputScores
-        outputMap[3] = numDetections
+
+        if (id == 0) {
+            // detect.tflite
+            Log.d("OutputMap", "DefafultModel")
+            outputMap[0] = outputLocations
+            outputMap[1] = outputClasses
+            outputMap[2] = outputScores
+            outputMap[3] = numDetections
+        } else {
+            // model_meta.tflite  the model that I am testing
+            Log.d("OutputMap", "NewModel")
+            outputMap[0] = outputScores
+            outputMap[1] = outputLocations
+            outputMap[2] = numDetections
+            outputMap[3] = outputClasses
+        }
+
+
         Trace.endSection()
+
+        Log.d("inputSize", "input size is $inputSize")
 
         // Run the inference call.
         Trace.beginSection("run")
@@ -143,6 +168,7 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
             ))
         }
         Trace.endSection() // "recognizeImage"
+        Log.d("TFLiteObjectDetection", "finished the recognize image function")
         return recognitions
     }
 
@@ -185,6 +211,9 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
         // Float model
         private const val IMAGE_MEAN = 127.5f
         private const val IMAGE_STD = 127.5f
+
+//        private const val IMAGE_MEAN = 0.0f
+//        private const val IMAGE_STD = 1.0f
 
         // Number of threads in the java app
         private const val NUM_THREADS = 4

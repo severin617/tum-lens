@@ -47,7 +47,7 @@ class StartScreenActivity : AppCompatActivity() {
             }
         }
     }
-
+    
     private fun launchWithoutHistory(activity:	Class<*>) {
         val intent = Intent(this@StartScreenActivity, activity)
         startActivity(intent)

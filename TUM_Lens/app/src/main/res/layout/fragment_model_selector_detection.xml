@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".fragments.ModelSelectorDetectionFragment">
+
+
+    <RadioGroup
+        android:id="@+id/modelSelectorDet_RadioGroup"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!--    ROW 1
+                hardcoded 'SSD MobileNetV1' so that the app works,
+                even when there are no custom models    -->
+        <RadioButton
+            android:id="@+id/radioButton_SSDMobileNet"
+            android:buttonTint="@color/colorPrimary"
+            android:text="SSD MobileNetV1"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <!--    ROW 2, 3 ... will be inserted here programmatically    -->
+
+    </RadioGroup>
+
+</LinearLayout>

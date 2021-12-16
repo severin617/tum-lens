@@ -15,21 +15,29 @@
  */
 package com.maxjokel.lens.detection
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.*
 import android.os.Bundle
+import android.os.Handler
 import android.os.SystemClock
+import android.util.Log
 import android.util.Size
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.maxjokel.lens.R
 import com.maxjokel.lens.classification.ClassificationActivity
+import com.maxjokel.lens.helpers.App
 import com.maxjokel.lens.helpers.ImageUtils.getTransformationMatrix
 import com.maxjokel.lens.helpers.ImageUtils.saveBitmap
 import com.maxjokel.lens.helpers.Logger
+import com.maxjokel.lens.helpers.ModelDetectConfig
 import com.maxjokel.lens.helpers.Recognition
 import java.io.IOException
 import java.util.*
@@ -60,10 +68,16 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
     override val layoutId = R.layout.activity_detection_cam_fragment_tracking
     override val desiredPreviewFrameSize = DESIRED_PREVIEW_SIZE
 
+    private lateinit var prefs: SharedPreferences
+
     public override fun onPreviewSizeChosen(size: Size?, rotation: Int) {
         tracker = MultiBoxTracker(this)
         var cropSize = TF_OD_API_INPUT_SIZE
         try {
+            Log.d("modelFileName ", TF_OD_API_MODEL_FILE)
+            Log.d("modelLabelName ", TF_OD_API_LABELS_FILE)
+            Log.d("ModelInputSize ", TF_OD_API_INPUT_SIZE.toString())
+            Log.d("modelQuantized ", TF_OD_API_IS_QUANTIZED.toString())
             detector = TFLiteObjectDetectionAPIModel.create(this, TF_OD_API_MODEL_FILE,
                 TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE, TF_OD_API_IS_QUANTIZED)
             cropSize = TF_OD_API_INPUT_SIZE
@@ -120,43 +134,57 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
         runInBackground {
             LOGGER.i("Running detection on image $currTimestamp")
             val startTime = SystemClock.uptimeMillis()
-            val results = detector!!.recognizeImage(croppedBitmap)
-            lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
-            cropCopyBitmap = Bitmap.createBitmap(croppedBitmap!!)
-            val tmpBitmap = cropCopyBitmap
-            val canvas = if (tmpBitmap != null) {
-                Canvas(tmpBitmap)
+//            Log.d("modelFileName1 ", TF_OD_API_MODEL_FILE)
+//            Log.d("modelLabelName1 ", TF_OD_API_LABELS_FILE)
+//            Log.d("ModelInputSize1 ", TF_OD_API_INPUT_SIZE.toString())
+//            Log.d("modelQuantized1 ", TF_OD_API_IS_QUANTIZED.toString())
+//            Log.d("modelfile", "modelfile is $modelFile")
+            if (modelFile != TF_OD_API_MODEL_FILE) {
+              runOnUiThread {
+                  finish()
+                  startActivity(getIntent())
+                  overridePendingTransition(0, 0)
+                  modelFile = TF_OD_API_MODEL_FILE
+              }
             } else {
-                null
-            }
-            val paint = Paint()
-            paint.color = Color.RED
-            paint.style = Paint.Style.STROKE
-            paint.strokeWidth = 2.0f
-            var minimumConfidence = when (MODE) {
-                DetectorMode.TF_OD_API -> MINIMUM_CONFIDENCE_TF_OD_API
-            }
-            val mappedRecognitions: MutableList<Recognition> = ArrayList()
-            if (results != null) {
-                for (result in results) {
-                    val location = result?.location
-                    if (location != null && result.confidence!! >= minimumConfidence) {
-                        canvas?.drawRect(location, paint)
-                        cropToFrameTransform!!.mapRect(location)
-                        result.location = location
-                        mappedRecognitions.add(result)
+                val results = detector!!.recognizeImage(croppedBitmap)
+                lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
+                cropCopyBitmap = Bitmap.createBitmap(croppedBitmap!!)
+                val tmpBitmap = cropCopyBitmap
+                val canvas = if (tmpBitmap != null) {
+                    Canvas(tmpBitmap)
+                } else {
+                    null
+                }
+                val paint = Paint()
+                paint.color = Color.RED
+                paint.style = Paint.Style.STROKE
+                paint.strokeWidth = 2.0f
+                var minimumConfidence = when (MODE) {
+                    DetectorMode.TF_OD_API -> MINIMUM_CONFIDENCE_TF_OD_API
+                }
+                val mappedRecognitions: MutableList<Recognition> = ArrayList()
+                if (results != null) {
+                    for (result in results) {
+                        val location = result?.location
+                        if (location != null && result.confidence!! >= minimumConfidence) {
+                            canvas?.drawRect(location, paint)
+                            cropToFrameTransform!!.mapRect(location)
+                            result.location = location
+                            mappedRecognitions.add(result)
+                        }
                     }
                 }
-            }
-            tracker!!.trackResults(mappedRecognitions, currTimestamp)
-            trackingOverlay!!.postInvalidate()
-            computingDetection = false
-            runOnUiThread {
-                showFrameInfo(previewWidth.toString() + "x" + previewHeight)
-                if (canvas != null) {
-                    showCropInfo(canvas.width.toString() + "x" + canvas.height)
+                tracker!!.trackResults(mappedRecognitions, currTimestamp)
+                trackingOverlay!!.postInvalidate()
+                computingDetection = false
+                runOnUiThread {
+                    showFrameInfo(previewWidth.toString() + "x" + previewHeight)
+                    if (canvas != null) {
+                        showCropInfo(canvas.width.toString() + "x" + canvas.height)
+                    }
+                    showInference(lastProcessingTimeMs.toString() + "ms")
                 }
-                showInference(lastProcessingTimeMs.toString() + "ms")
             }
         }
     }
@@ -209,22 +237,76 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
         analysisToggleGroup.check(R.id.btn_detection)
     }
 
+    fun initialize () {
+        Companion.prefs = App.context!!.getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
+        Log.d("Initialize", "In the initialize in DetectionActivity called from ModelSelectorDetectionFragment")
+        val id = Companion.prefs.getInt("model_detection", 0)
+        Log.d("ModelDetectionID", "Model Detection ID from prefs is $id")
+        val listModels: List<ModelDetectConfig> = ListSingletonDetection.modelConfigs
+        if (id == 0) {
+            TF_OD_API_INPUT_SIZE = 300
+            TF_OD_API_IS_QUANTIZED = true
+            TF_OD_API_MODEL_FILE = "detect.tflite"
+            TF_OD_API_LABELS_FILE = "labelmap.txt"
+            modelFile = TF_OD_API_MODEL_FILE
+            return
+        }
+        for (m in listModels) {
+            if (id == m.modelId) {
+                TF_OD_API_INPUT_SIZE = m.inputSize
+                TF_OD_API_IS_QUANTIZED = m.quantized
+                TF_OD_API_MODEL_FILE = m.modelFilename.toString()
+                TF_OD_API_LABELS_FILE = m.labelFilename.toString()
+                modelFile = TF_OD_API_MODEL_FILE
+                return
+            }
+        }
+    }
+
+    fun reInitialize () {
+        Companion.prefs = App.context!!.getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
+        Log.d("Initialize", "In the reInitialize in DetectionActivity called from ModelSelectorDetectionFragment")
+        val id = Companion.prefs.getInt("model_detection", 0)
+        Log.d("ModelDetectionID", "Model Detection ID from prefs is $id")
+        val listModels: List<ModelDetectConfig> = ListSingletonDetection.modelConfigs
+        if (id == 0) {
+            TF_OD_API_INPUT_SIZE = 300
+            TF_OD_API_IS_QUANTIZED = true
+            TF_OD_API_MODEL_FILE = "detect.tflite"
+            TF_OD_API_LABELS_FILE = "labelmap.txt"
+            return
+        }
+        for (m in listModels) {
+            if (id == m.modelId) {
+                TF_OD_API_INPUT_SIZE = m.inputSize
+                TF_OD_API_IS_QUANTIZED = m.quantized    
+                TF_OD_API_MODEL_FILE = m.modelFilename.toString()
+                TF_OD_API_LABELS_FILE = m.labelFilename.toString()
+                return
+            }
+        }
+    }
+
 
     companion object {
         private val LOGGER = Logger()
+        private lateinit var prefs: SharedPreferences
 
         // Configuration values for the prepackaged SSD model.
-        private const val TF_OD_API_INPUT_SIZE = 300
-        private const val TF_OD_API_IS_QUANTIZED = true
-        private const val TF_OD_API_MODEL_FILE = "detect.tflite"
-        private const val TF_OD_API_LABELS_FILE = "labelmap.txt"
-        private val MODE = DetectorMode.TF_OD_API
+        private var TF_OD_API_INPUT_SIZE = 0
+        private var TF_OD_API_IS_QUANTIZED = false
+        private var TF_OD_API_MODEL_FILE = ""
+        private var TF_OD_API_LABELS_FILE = ""
+        private var modelFile: String = ""
 
+        private val MODE = DetectorMode.TF_OD_API
+    
         // Minimum detection confidence to track a detection.
         private const val MINIMUM_CONFIDENCE_TF_OD_API = 0.5f
 
         private const val MAINTAIN_ASPECT = false
         private val DESIRED_PREVIEW_SIZE = Size(1440, 720)
         private const val SAVE_PREVIEW_BITMAP = false
+
     }
 }

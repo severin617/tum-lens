@@ -99,6 +99,29 @@
         android:layout_marginVertical="16dp"
         android:background="@android:color/darker_gray" />
 
+    <!--  MODEL SELECTOR  -->
+    <TextView
+        android:id="@+id/model_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="0dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/model"
+        android:textSize="16sp"
+        android:textColor="@color/black" />
+    <FrameLayout
+        android:id="@+id/modelselector_container_detector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!--  horizontal separator  -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginVertical="16dp"
+        android:background="@android:color/darker_gray" />
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

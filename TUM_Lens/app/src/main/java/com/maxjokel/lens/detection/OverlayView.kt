@@ -21,7 +21,7 @@ import android.view.View
 import java.util.*
 
 /** A simple View providing a render callback to other classes.  */
-class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
+class   OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val callbacks: MutableList<DrawCallback> = LinkedList()
     fun addCallback(callback: DrawCallback) {
         callbacks.add(callback)

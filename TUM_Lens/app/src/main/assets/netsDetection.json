@@ -1,0 +1,23 @@
+{
+  "timestamp": "2021-11-28T21:50:00.000Z",
+  "comment": "",
+
+  "recognitionNets": [
+
+    {
+      "name": "SSD MobileNetV2",
+      "comment": "",
+      "version": 2.0,
+
+      "image_mean": 127.5,
+      "image_std": 127.5,
+
+      "filename": "model_meta.tflite",
+      "labels": "labelmap.txt",
+
+      "input_size": 640,
+      "quantized": false
+    }
+
+  ]
+}

@@ -16,6 +16,8 @@
 package com.maxjokel.lens.detection
 
 import android.app.Fragment
+import android.content.Context
+import android.content.SharedPreferences
 import android.hardware.Camera
 import android.hardware.Camera.PreviewCallback
 import android.hardware.camera2.CameraAccessException
@@ -39,6 +41,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.maxjokel.lens.R
 import com.maxjokel.lens.detection.CameraConnectionFragment.ConnectionCallback
+import com.maxjokel.lens.fragments.ModelSelectorDetectionFragment
+import com.maxjokel.lens.fragments.ModelSelectorFragment
+import com.maxjokel.lens.helpers.App
 import com.maxjokel.lens.helpers.ImageUtils.convertYUV420SPToARGB8888
 import com.maxjokel.lens.helpers.ImageUtils.convertYUV420ToARGB8888
 import com.maxjokel.lens.helpers.Logger
@@ -66,7 +71,7 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         LOGGER.d("onCreate $this")
-        super.onCreate(null)
+        super.onCreate(savedInstanceState)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -79,6 +84,17 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
         threadsTextView = findViewById(R.id.threads)
         apiSwitchCompat = findViewById(R.id.api_info_switch)
         apiSwitchCompat.setOnCheckedChangeListener(this)
+
+
+        val msf = ModelSelectorDetectionFragment.newInstance()
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.add(
+                R.id.modelselector_container_detector, msf,
+                "msf")
+        fragmentTransaction.commit()
+
 
         val plusImageView = findViewById<ImageView>(R.id.plus)
         val minusImageView = findViewById<ImageView>(R.id.minus)
@@ -247,7 +263,7 @@ abstract class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailabl
                 ))
                 LOGGER.i("Camera API lv2?: %s", useCamera2API)
                 return cameraId
-            }
+            }   
         } catch (e: CameraAccessException) {
             LOGGER.e(e, "Not allowed to access camera")
         }
