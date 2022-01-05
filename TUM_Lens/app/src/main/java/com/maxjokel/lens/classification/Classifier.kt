@@ -2,7 +2,9 @@ package com.maxjokel.lens.classification
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.os.Environment
 import android.os.SystemClock
 import android.os.Trace
 import com.maxjokel.lens.helpers.App.Companion.context
@@ -22,8 +24,11 @@ import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp
 import org.tensorflow.lite.support.label.TensorLabel
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.io.File
+import java.io.FileInputStream
 import java.io.IOException
 import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
 import java.util.*
 import java.util.concurrent.CountDownLatch
 
@@ -113,6 +118,19 @@ object Classifier {
         }
     }
 
+    /** Memory-map the model file in Assets.  */
+    @Throws(IOException::class)
+    private fun loadModelFile(modelFilename: String): MappedByteBuffer {
+
+        val root : String = Environment.getExternalStorageDirectory().absolutePath + "/models"
+        val path = File(root)
+        val exactPath = File("$path/$modelFilename")
+
+        val inputStream = FileInputStream(exactPath)
+        val fileChannel = inputStream.channel
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, exactPath.length())
+    }
+
     /** This method initializes the global 'tflite' and 'tfliteModel' objects with regards to the
      *  the user's configuration;
      *  The method utilizes a separate thread in order to reduce load on the main-thread */
@@ -149,7 +167,8 @@ object Classifier {
                 // load .tflite file from '/assets'
                 Trace.beginSection("loading file into MODELBUFFER")
                 try {
-                    MODELBUFFER = FileUtil.loadMappedFile(context!!, modelConfig!!.modelFilename!!)
+//                    MODELBUFFER = FileUtil.loadMappedFile(context!!, modelConfig!!.modelFilename!!)
+                    MODELBUFFER = loadModelFile(modelConfig!!.modelFilename!!)
                     LOGGER.i("+++ NEW, initialize(): successfully loaded tflite file into MODELBUFFER")
                 } catch (e: IOException) {
                     LOGGER.i("### NEW, initialize(): FAILED to load tflite file into MODELBUFFER")

@@ -19,16 +19,14 @@ import android.content.SharedPreferences
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.RectF
+import android.os.Environment
 import android.os.Trace
 import android.util.Log
 import com.maxjokel.lens.helpers.App
 import com.maxjokel.lens.helpers.Recognition
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.metadata.MetadataExtractor
-import java.io.BufferedReader
-import java.io.FileInputStream
-import java.io.IOException
-import java.io.InputStreamReader
+import java.io.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
@@ -220,13 +218,22 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
 
         /** Memory-map the model file in Assets.  */
         @Throws(IOException::class)
-        private fun loadModelFile(assets: AssetManager, modelFilename: String): MappedByteBuffer {
-            val fileDescriptor = assets.openFd(modelFilename)
-            val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
+        private fun loadModelFile(modelFilename: String): MappedByteBuffer {
+
+            val root : String = Environment.getExternalStorageDirectory().absolutePath + "/models"
+            val path = File(root)
+            val exactPath = File("$path/$modelFilename")
+
+            val inputStream = FileInputStream(exactPath)
             val fileChannel = inputStream.channel
-            val startOffset = fileDescriptor.startOffset
-            val declaredLength = fileDescriptor.declaredLength
-            return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
+            return fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, exactPath.length())
+
+//            val fileDescriptor = assets.openFd(modelFilename)
+//            val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
+//            val fileChannel = inputStream.channel
+//            val startOffset = fileDescriptor.startOffset
+//            val declaredLength = fileDescriptor.declaredLength
+//            return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
         }
 
         /**
@@ -242,7 +249,7 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
                    isQuantized: Boolean): Detector {
 
             val d = TFLiteObjectDetectionAPIModel()
-            val modelFile = loadModelFile(context.assets, modelFilename)
+            val modelFile = loadModelFile(modelFilename)
             val metadata = MetadataExtractor(modelFile)
             BufferedReader(InputStreamReader(
                 metadata.getAssociatedFile(labelFilename), Charset.defaultCharset()
