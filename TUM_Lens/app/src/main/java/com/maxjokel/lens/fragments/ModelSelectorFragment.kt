@@ -3,23 +3,21 @@ package com.maxjokel.lens.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.view.HapticFeedbackConstants
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.TextView
+import android.os.Environment
+import android.util.Log
+import android.view.*
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.widget.CompoundButtonCompat
 import androidx.fragment.app.Fragment
 import com.maxjokel.lens.R
 import com.maxjokel.lens.classification.Classifier
 import com.maxjokel.lens.classification.ListSingleton
-import java.util.*
+import com.maxjokel.lens.helpers.DownloadFiles
+import java.io.File
 
 /* FRAGMENT FOR 'MODEL SELECTOR' ELEMENT IN BOTTOM SHEET
 *  we use a fragment here, because we reuse this component in ViewFinder and CameraRoll
@@ -33,12 +31,15 @@ class ModelSelectorFragment: Fragment() {
 
     private var MODEL_LIST = ListSingleton.modelConfigs
 
+    private lateinit var downloadFiles : DownloadFiles
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Classifier.initialize()
         // load sharedPreferences object and set up editor
         prefs = this.requireActivity()
             .getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
         prefEditor = prefs.edit()
+        downloadFiles = DownloadFiles(this.requireContext())
         super.onCreate(savedInstanceState)
     }
 
@@ -49,6 +50,9 @@ class ModelSelectorFragment: Fragment() {
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        val root : String = Environment.getExternalStorageDirectory().absolutePath + "/models"
+        val path = File(root)
 
         // workaround for 'dp' instead of 'px' units
         val dpRatio = view.context.resources.displayMetrics.density
@@ -94,10 +98,49 @@ class ModelSelectorFragment: Fragment() {
             textView.textSize = 12.0f
 
 
+            // add download button
+            val button = Button(view.context)
+            button.tag = m.modelFilename
+            button.text = "Download"
+            button.textSize = 11.0f
+
+            val paramsB = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            paramsB.gravity = Gravity.END
+            button.layoutParams = paramsB
+            button.setBackgroundResource(R.drawable.button_custom)
+
+            val exactPath = File("$path/${button.tag}")
+            if (exactPath.exists()) {
+                button.isEnabled = false
+            } else {
+                button.setOnClickListener(View.OnClickListener {
+                    Toast.makeText(context, "Clicked on button ${button.tag}", Toast.LENGTH_LONG).show()
+                    button.isEnabled = false
+                    downloadFiles.reqPermission(requireActivity(), button.tag.toString())
+                })
+            }
+
             radioGroup.addView(radioButton)
             radioGroup.addView(textView)
+            radioGroup.addView(button)
         }
 
+        // default button (first button)
+        val defButton = view.findViewById<Button>(R.id.mobilenet_v1_224_tflite)
+        val exactPath = File("$path/${defButton.tag}")
+
+        if (exactPath.exists()) {   // the file is already downloaded
+            defButton.isEnabled = false
+        } else {  // the file is not downloaded
+            defButton.setOnClickListener(View.OnClickListener {
+                Toast.makeText(context, "Clicked on button ${defButton.tag}", Toast.LENGTH_LONG).show()
+                defButton.isEnabled = false
+                downloadFiles.reqPermission(requireActivity(), defButton.tag.toString())
+            })
+        }
 
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         // +           set INITIAL RadioGroup SELECTION            +
@@ -133,6 +176,23 @@ class ModelSelectorFragment: Fragment() {
             Classifier.onConfigChanged() // trigger classifier update
         }
     }
+
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        when (requestCode) {
+//            downloadFiles.STORAGE_PERMISSION_CODE -> {
+//                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    downloadFiles.startDownloading()
+//                }
+//                else {
+//                    Toast.makeText(context, "Permission Denied", Toast.LENGTH_LONG).show()
+//                }
+//            }
+//        }
+//    }
 
     companion object {
         fun newInstance(): ModelSelectorFragment {

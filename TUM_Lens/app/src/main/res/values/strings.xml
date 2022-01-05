@@ -15,6 +15,7 @@
     <string name="specs">Specifications</string>
     <string name="version">Version 0.1</string>
     <string name="other_settings">Other settings</string>
+    <string name="download">Download</string>
     <string name="model">Model</string>
     <string name="initializing">initializing…</string>
     <string name="tap_to_pick_from_camera_roll">tap to pick from camera roll</string>

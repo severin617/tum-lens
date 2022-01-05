@@ -30,6 +30,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
+        <android.widget.Button
+            android:id="@+id/detect.tflite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@drawable/button_custom"
+            android:tag="detect.tflite"
+            android:text="@string/download"
+            android:textSize="11sp" />
+
         <!--    ROW 2, 3 ... will be inserted here programmatically    -->
 
     </RadioGroup>

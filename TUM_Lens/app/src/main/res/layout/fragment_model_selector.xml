@@ -38,6 +38,16 @@
             android:layout_marginTop="-10dp"
             android:text="Top-5 accuracy: 89.9%"/>
 
+        <android.widget.Button
+            android:id="@+id/mobilenet_v1_224.tflite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@drawable/button_custom"
+            android:tag="mobilenet_v1_224.tflite"
+            android:text="@string/download"
+            android:textSize="11sp" />
+
         <!--    ROW 2, 3 ... will be inserted here programmatically    -->
 
     </RadioGroup>

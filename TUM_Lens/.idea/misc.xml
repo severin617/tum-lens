@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/elmohandes tech/Desktop/lens/TUM_Lens/app/src/main/res/drawable/button_custom.xml" value="0.25833333333333336" />
+        <entry key="..\:/Users/elmohandes tech/Desktop/lens/TUM_Lens/app/src/main/res/layout/btn_detection_mode.xml" value="0.1" />
+        <entry key="..\:/Users/elmohandes tech/Desktop/lens/TUM_Lens/app/src/main/res/layout/fragment_model_selector.xml" value="0.1" />
+        <entry key="..\:/Users/elmohandes tech/Desktop/lens/TUM_Lens/app/src/main/res/layout/fragment_model_selector_detection.xml" value="0.3169601482854495" />
+      </map>
+    </option>
+  </component>
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>

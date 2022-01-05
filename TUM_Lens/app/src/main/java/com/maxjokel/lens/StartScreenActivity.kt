@@ -4,6 +4,8 @@ import android.Manifest.permission
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.maxjokel.lens.classification.ClassificationActivity
 import com.maxjokel.lens.helpers.Logger
+import java.io.File
 
 // This is the first activity that is shown to the user. Asks for permissions (camera, etc.) and
 // states reasons why they are necessary.
@@ -19,6 +22,15 @@ class StartScreenActivity : AppCompatActivity() {
     private val permissions = arrayOf(permission.CAMERA, permission.READ_EXTERNAL_STORAGE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val root = Environment.getExternalStorageDirectory()
+        val myDir = File("$root/models")   //sdcard/models
+
+        if (!myDir.exists()) {
+            myDir.mkdirs()
+        }
+        Log.d("Directory", myDir.toString())
+
         // we only jump into this activity when permissions are still missing
         if (areAllPermissionsGranted()) launchWithoutHistory(ClassificationActivity::class.java)
         // replace splash screen placeholder with app theme once this activity is fully loaded

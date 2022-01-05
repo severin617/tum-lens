@@ -42,8 +42,6 @@ import androidx.appcompat.widget.SwitchCompat
 import com.maxjokel.lens.R
 import com.maxjokel.lens.detection.CameraConnectionFragment.ConnectionCallback
 import com.maxjokel.lens.fragments.ModelSelectorDetectionFragment
-import com.maxjokel.lens.fragments.ModelSelectorFragment
-import com.maxjokel.lens.helpers.App
 import com.maxjokel.lens.helpers.ImageUtils.convertYUV420SPToARGB8888
 import com.maxjokel.lens.helpers.ImageUtils.convertYUV420ToARGB8888
 import com.maxjokel.lens.helpers.Logger
