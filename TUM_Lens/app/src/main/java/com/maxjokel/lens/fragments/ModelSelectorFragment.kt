@@ -1,12 +1,14 @@
 package com.maxjokel.lens.fragments
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -83,6 +85,11 @@ class ModelSelectorFragment: Fragment() {
                 ColorStateList.valueOf(ContextCompat.getColor(view.context, R.color.colorPrimary))
             )
 
+            val exactPath = File("$path/${radioButton.tag}")
+
+            radioButton.isClickable = exactPath.exists()
+
+
             // create the 'info' TextView
             val textView = TextView(view.context)
             textView.text = "" + m.top5accuracy
@@ -112,14 +119,15 @@ class ModelSelectorFragment: Fragment() {
             button.layoutParams = paramsB
             button.setBackgroundResource(R.drawable.button_custom)
 
-            val exactPath = File("$path/${button.tag}")
+//            val exactPath = File("$path/${button.tag}")
             if (exactPath.exists()) {
                 button.isEnabled = false
             } else {
                 button.setOnClickListener(View.OnClickListener {
-                    Toast.makeText(context, "Clicked on button ${button.tag}", Toast.LENGTH_LONG).show()
-                    button.isEnabled = false
-                    downloadFiles.reqPermission(requireActivity(), button.tag.toString())
+                    Toast.makeText(context, "Clicked on button ${button.tag}", Toast.LENGTH_SHORT).show()
+                    if (downloadFiles.reqPermission(requireActivity(), button.tag.toString(), radioButton)) {
+                        button.isEnabled = false
+                    }
                 })
             }
 
@@ -129,18 +137,18 @@ class ModelSelectorFragment: Fragment() {
         }
 
         // default button (first button)
-        val defButton = view.findViewById<Button>(R.id.mobilenet_v1_224_tflite)
-        val exactPath = File("$path/${defButton.tag}")
-
-        if (exactPath.exists()) {   // the file is already downloaded
-            defButton.isEnabled = false
-        } else {  // the file is not downloaded
-            defButton.setOnClickListener(View.OnClickListener {
-                Toast.makeText(context, "Clicked on button ${defButton.tag}", Toast.LENGTH_LONG).show()
-                defButton.isEnabled = false
-                downloadFiles.reqPermission(requireActivity(), defButton.tag.toString())
-            })
-        }
+//        val defButton = view.findViewById<Button>(R.id.mobilenet_v1_224_tflite)
+//        val exactPath = File("$path/${defButton.tag}")
+//
+//        if (exactPath.exists()) {   // the file is already downloaded
+//            defButton.isEnabled = false
+//        } else {  // the file is not downloaded
+//            defButton.setOnClickListener(View.OnClickListener {
+//                Toast.makeText(context, "Clicked on button ${defButton.tag}", Toast.LENGTH_LONG).show()
+//                defButton.isEnabled = false
+//                downloadFiles.reqPermission(requireActivity(), defButton.tag.toString())
+//            })
+//        }
 
         // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         // +           set INITIAL RadioGroup SELECTION            +

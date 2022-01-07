@@ -46,6 +46,7 @@
             android:background="@drawable/button_custom"
             android:tag="mobilenet_v1_224.tflite"
             android:text="@string/download"
+            android:enabled="false"
             android:textSize="11sp" />
 
         <!--    ROW 2, 3 ... will be inserted here programmatically    -->

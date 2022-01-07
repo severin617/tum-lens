@@ -19,7 +19,7 @@ import java.io.File
 // states reasons why they are necessary.
 class StartScreenActivity : AppCompatActivity() {
 
-    private val permissions = arrayOf(permission.CAMERA, permission.READ_EXTERNAL_STORAGE)
+    private val permissions = arrayOf(permission.CAMERA, permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -67,7 +67,7 @@ class StartScreenActivity : AppCompatActivity() {
     }
 
     private fun areAllPermissionsGranted(): Boolean {
-        return isGranted(permission.CAMERA) && isGranted(permission.READ_EXTERNAL_STORAGE)
+        return isGranted(permission.CAMERA) && isGranted(permission.READ_EXTERNAL_STORAGE) && isGranted(permission.WRITE_EXTERNAL_STORAGE)
     }
 
     private fun isGranted(permission: String): Boolean {

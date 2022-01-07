@@ -121,14 +121,13 @@ object Classifier {
     /** Memory-map the model file in Assets.  */
     @Throws(IOException::class)
     private fun loadModelFile(modelFilename: String): MappedByteBuffer {
+            val root : String = Environment.getExternalStorageDirectory().absolutePath + "/models"
+            val path = File(root)
+            val exactPath = File("$path/$modelFilename")
 
-        val root : String = Environment.getExternalStorageDirectory().absolutePath + "/models"
-        val path = File(root)
-        val exactPath = File("$path/$modelFilename")
-
-        val inputStream = FileInputStream(exactPath)
-        val fileChannel = inputStream.channel
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, exactPath.length())
+            val inputStream = FileInputStream(exactPath)
+            val fileChannel = inputStream.channel
+            return fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, exactPath.length())
     }
 
     /** This method initializes the global 'tflite' and 'tfliteModel' objects with regards to the
@@ -167,8 +166,12 @@ object Classifier {
                 // load .tflite file from '/assets'
                 Trace.beginSection("loading file into MODELBUFFER")
                 try {
-//                    MODELBUFFER = FileUtil.loadMappedFile(context!!, modelConfig!!.modelFilename!!)
-                    MODELBUFFER = loadModelFile(modelConfig!!.modelFilename!!)
+                    MODELBUFFER = if (modelConfig!!.modelFilename!! == "mobilenet_v1_224.tflite") {
+                        FileUtil.loadMappedFile(context!!, modelConfig!!.modelFilename!!)
+                    } else {
+                        loadModelFile(modelConfig!!.modelFilename!!)
+                    }
+
                     LOGGER.i("+++ NEW, initialize(): successfully loaded tflite file into MODELBUFFER")
                 } catch (e: IOException) {
                     LOGGER.i("### NEW, initialize(): FAILED to load tflite file into MODELBUFFER")
