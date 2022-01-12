@@ -166,7 +166,7 @@ object Classifier {
                 // load .tflite file from '/assets'
                 Trace.beginSection("loading file into MODELBUFFER")
                 try {
-                    MODELBUFFER = if (modelConfig!!.modelFilename!! == "mobilenet_v1_224.tflite") {
+                    MODELBUFFER = if (modelConfig!!.modelFilename!! == "mobilenet_v1_224_quant.tflite") {
                         FileUtil.loadMappedFile(context!!, modelConfig!!.modelFilename!!)
                     } else {
                         loadModelFile(modelConfig!!.modelFilename!!)

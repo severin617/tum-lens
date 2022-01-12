@@ -158,7 +158,7 @@ class ModelSelectorFragment: Fragment() {
         val id = prefs.getInt("model", 0)
         var r = view.findViewById<RadioButton>(id)
         if (id == 0 || r == null) {
-            r = view.findViewById(R.id.radioButton_FloatMobileNet)
+            r = view.findViewById(R.id.radioButton_QuantizedMobileNet)
         }
 
         // set initial selection
@@ -175,7 +175,7 @@ class ModelSelectorFragment: Fragment() {
             // save selection to SharedPreferences
             prefEditor.run {
                 // check if it is the default RadioButton
-                if (checkedId != R.id.radioButton_FloatMobileNet) {
+                if (checkedId != R.id.radioButton_QuantizedMobileNet) {
                     modelId = view.findViewById<View>(checkedId).id
                 }
                 putInt("model", modelId) // save selection to SharedPreferences

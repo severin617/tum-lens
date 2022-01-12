@@ -5,19 +5,19 @@
     "recognitionNets": [
 
         {
-            "name": "Quantized MobileNet V1",
+            "name": "Float MobileNet V1",
             "comment": "",
             "version": 1.0,
         
-            "image_mean": 0.0,
-            "image_std": 1.0,
+            "image_mean": 127.5,
+            "image_std": 127.5,
             "probability_mean": 0.0,
-            "probability_std": 255.0,
+            "probability_std": 1.0,
         
-            "filename": "mobilenet_v1_224_quant.tflite",
+            "filename": "mobilenet_v1_224.tflite",
             "labels": "labels.txt",
         
-            "top5accuracy": "Top-5 accuracy: 89.0%"
+            "top5accuracy": "Top-5 accuracy: 89,9%"
         },
 
         {

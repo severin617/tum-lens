@@ -15,12 +15,12 @@
         android:layout_height="wrap_content">
 
         <!--    ROW 1
-                hardcoded 'Float MobileNet V1' so that the app works,
+                hardcoded 'Quantized MobileNet V1' so that the app works,
                 even when there are no custom models    -->
         <RadioButton
-            android:id="@+id/radioButton_FloatMobileNet"
+            android:id="@+id/radioButton_QuantizedMobileNet"
             android:buttonTint="@color/colorPrimary"
-            android:text="Float MobileNet V1"
+            android:text="Quantized MobileNet V1"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:layout_width="match_parent"
@@ -36,15 +36,15 @@
             android:textColor="@color/black"
             android:textSize="12sp"
             android:layout_marginTop="-10dp"
-            android:text="Top-5 accuracy: 89.9%"/>
+            android:text="Top-5 accuracy: 89.0%"/>
 
         <android.widget.Button
-            android:id="@+id/mobilenet_v1_224.tflite"
+            android:id="@+id/mobilenet_v1_224_quant.tflite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:background="@drawable/button_custom"
-            android:tag="mobilenet_v1_224.tflite"
+            android:tag="mobilenet_v1_224_quant.tflite"
             android:text="@string/download"
             android:enabled="false"
             android:textSize="11sp" />

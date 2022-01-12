@@ -43,15 +43,15 @@ class ModelConfig {
         LOGGER.i("Created ModelConfig for $modelName with id $modelId")
     }
 
-    constructor() { // constructor for default 'Float MobileNet V1'
-        modelName = "Float MobileNet V1"
-        modelFilename = "mobilenet_v1_224.tflite"
+    constructor() { // constructor for default 'Quantized MobileNet V1'
+        modelName = "Quantized MobileNet V1"
+        modelFilename = "mobilenet_v1_224_quant.tflite"
         labelFilename = "labels.txt"
-        top5accuracy = "89,9%"
-        imageMean = 127.5f
-        imageStd = 127.5f
+        top5accuracy = "89,0%"
+        imageMean = 0.0f
+        imageStd = 1.0f
         probabilityMean = 0.0f
-        probabilityStd = 1.0f
+        probabilityStd = 255.0f
         modelId = modelFilename.hashCode()
         LOGGER.i("Created DEFAULT ModelConfig for $modelName")
     }
