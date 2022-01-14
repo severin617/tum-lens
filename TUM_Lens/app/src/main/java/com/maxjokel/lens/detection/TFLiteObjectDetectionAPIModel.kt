@@ -119,7 +119,7 @@ class TFLiteObjectDetectionAPIModel private constructor() : Detector {
         val outputMap: MutableMap<Int, Any> = HashMap()
 
         if (id == 0) {
-            // detect.tflite
+            // detect.tflite  and i think all the other models if I found.
             Log.d("OutputMap", "DefafultModel")
             outputMap[0] = outputLocations
             outputMap[1] = outputClasses

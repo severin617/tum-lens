@@ -79,10 +79,10 @@ class SmoothedPredictionsFragment: Fragment() {
     @UiThread
     @SuppressLint("DefaultLocale", "SetTextI18n")
     fun showSmoothedRecognitionResults(results: List<Recognition?>?) {
-        if (_counter <= 9) {
+        if (_counter <= 19) {   // around 6 seconds of changing the values
 
             // IDEA:
-            // while the counter is less than 10, add the first three most promising classification results to a list
+            // while the counter is less than 19, add the first three most promising classification results to a list
             if (results != null && results.size > 0) { // if there are results, add them to the list
                 val recognition0 = results[0]
                 if (recognition0 != null && recognition0.title != null && recognition0.confidence != null) {

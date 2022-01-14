@@ -112,6 +112,7 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
     }
 
     override fun processImage() {
+
         ++timestamp
         val currTimestamp = timestamp
         trackingOverlay!!.postInvalidate()
@@ -121,72 +122,75 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
             readyForNextImage()
             return
         }
-        computingDetection = true
-        LOGGER.i("Preparing image $currTimestamp for detection in bg thread.")
-        rgbFrameBitmap!!.setPixels(getConvertedRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight)
-        readyForNextImage()
-        val canvas = Canvas(croppedBitmap!!)
-        canvas.drawBitmap(rgbFrameBitmap!!, frameToCropTransform!!, null)
-        // For examining the actual TF input.
-        if (SAVE_PREVIEW_BITMAP) {
-            saveBitmap(croppedBitmap!!)
-        }
-        runInBackground {
-            LOGGER.i("Running detection on image $currTimestamp")
-            val startTime = SystemClock.uptimeMillis()
+        Handler().postDelayed({
+            computingDetection = true
+            LOGGER.i("Preparing image $currTimestamp for detection in bg thread.")
+            rgbFrameBitmap!!.setPixels(getConvertedRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight)
+            readyForNextImage()
+            val canvas = Canvas(croppedBitmap!!)
+            canvas.drawBitmap(rgbFrameBitmap!!, frameToCropTransform!!, null)
+            // For examining the actual TF input.
+            if (SAVE_PREVIEW_BITMAP) {
+                saveBitmap(croppedBitmap!!)
+            }
+            runInBackground {
+                LOGGER.i("Running detection on image $currTimestamp")
+                val startTime = SystemClock.uptimeMillis()
 //            Log.d("modelFileName1 ", TF_OD_API_MODEL_FILE)
 //            Log.d("modelLabelName1 ", TF_OD_API_LABELS_FILE)
 //            Log.d("ModelInputSize1 ", TF_OD_API_INPUT_SIZE.toString())
 //            Log.d("modelQuantized1 ", TF_OD_API_IS_QUANTIZED.toString())
 //            Log.d("modelfile", "modelfile is $modelFile")
-            if (modelFile != TF_OD_API_MODEL_FILE) {
-              runOnUiThread {
-                  finish()
-                  startActivity(getIntent())
-                  overridePendingTransition(0, 0)
-                  modelFile = TF_OD_API_MODEL_FILE
-              }
-            } else {
-                val results = detector!!.recognizeImage(croppedBitmap)
-                lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
-                cropCopyBitmap = Bitmap.createBitmap(croppedBitmap!!)
-                val tmpBitmap = cropCopyBitmap
-                val canvas = if (tmpBitmap != null) {
-                    Canvas(tmpBitmap)
+                if (modelFile != TF_OD_API_MODEL_FILE) {
+                    runOnUiThread {
+                        finish()
+                        startActivity(getIntent())
+                        overridePendingTransition(0, 0)
+                        modelFile = TF_OD_API_MODEL_FILE
+                    }
                 } else {
-                    null
-                }
-                val paint = Paint()
-                paint.color = Color.RED
-                paint.style = Paint.Style.STROKE
-                paint.strokeWidth = 2.0f
-                var minimumConfidence = when (MODE) {
-                    DetectorMode.TF_OD_API -> MINIMUM_CONFIDENCE_TF_OD_API
-                }
-                val mappedRecognitions: MutableList<Recognition> = ArrayList()
-                if (results != null) {
-                    for (result in results) {
-                        val location = result?.location
-                        if (location != null && result.confidence!! >= minimumConfidence) {
-                            canvas?.drawRect(location, paint)
-                            cropToFrameTransform!!.mapRect(location)
-                            result.location = location
-                            mappedRecognitions.add(result)
+                    val results = detector!!.recognizeImage(croppedBitmap)
+                    lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
+                    cropCopyBitmap = Bitmap.createBitmap(croppedBitmap!!)
+                    val tmpBitmap = cropCopyBitmap
+                    val canvas = if (tmpBitmap != null) {
+                        Canvas(tmpBitmap)
+                    } else {
+                        null
+                    }
+                    val paint = Paint()
+                    paint.color = Color.RED
+                    paint.style = Paint.Style.STROKE
+                    paint.strokeWidth = 2.0f
+                    var minimumConfidence = when (MODE) {
+                        DetectorMode.TF_OD_API -> MINIMUM_CONFIDENCE_TF_OD_API
+                    }
+                    val mappedRecognitions: MutableList<Recognition> = ArrayList()
+                    if (results != null) {
+                        for (result in results) {
+                            val location = result?.location
+                            if (location != null && result.confidence!! >= minimumConfidence) {
+                                canvas?.drawRect(location, paint)
+                                cropToFrameTransform!!.mapRect(location)
+                                result.location = location
+                                mappedRecognitions.add(result)
+                            }
                         }
                     }
-                }
-                tracker!!.trackResults(mappedRecognitions, currTimestamp)
-                trackingOverlay!!.postInvalidate()
-                computingDetection = false
-                runOnUiThread {
-                    showFrameInfo(previewWidth.toString() + "x" + previewHeight)
-                    if (canvas != null) {
-                        showCropInfo(canvas.width.toString() + "x" + canvas.height)
+                    tracker!!.trackResults(mappedRecognitions, currTimestamp)
+                    trackingOverlay!!.postInvalidate()
+                    computingDetection = false
+                    runOnUiThread {
+                        showFrameInfo(previewWidth.toString() + "x" + previewHeight)
+                        if (canvas != null) {
+                            showCropInfo(canvas.width.toString() + "x" + canvas.height)
+                        }
+                        showInference(lastProcessingTimeMs.toString() + "ms")
                     }
-                    showInference(lastProcessingTimeMs.toString() + "ms")
                 }
             }
-        }
+        }, 2000)
+
     }
 
     // Which detection model to use: by default uses TF Object Detection API frozen checkpoints.
