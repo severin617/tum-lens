@@ -15,6 +15,7 @@
  */
 package com.maxjokel.lens.detection
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -27,6 +28,8 @@ import android.util.Size
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
@@ -34,6 +37,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.maxjokel.lens.R
 import com.maxjokel.lens.classification.ClassificationActivity
 import com.maxjokel.lens.helpers.App
+import com.maxjokel.lens.helpers.App.Companion.context
 import com.maxjokel.lens.helpers.ImageUtils.getTransformationMatrix
 import com.maxjokel.lens.helpers.ImageUtils.saveBitmap
 import com.maxjokel.lens.helpers.Logger
@@ -65,10 +69,16 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
     private lateinit var btnDetection: Button
     private lateinit var btnClassification: Button
 
+    private lateinit var delayText: TextView
+    private lateinit var delayButton: Button
+    private lateinit var delayEditText: EditText
+    private var delayTime = 0
+
     override val layoutId = R.layout.activity_detection_cam_fragment_tracking
     override val desiredPreviewFrameSize = DESIRED_PREVIEW_SIZE
 
     private lateinit var prefs: SharedPreferences
+    var prefEditor: SharedPreferences.Editor? = null
 
     public override fun onPreviewSizeChosen(size: Size?, rotation: Int) {
         tracker = MultiBoxTracker(this)
@@ -189,8 +199,7 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
                     }
                 }
             }
-        }, 2000)
-
+        }, (delayTime*1000).toLong())
     }
 
     // Which detection model to use: by default uses TF Object Detection API frozen checkpoints.
@@ -218,12 +227,44 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    protected fun updateDelayTime() {
+
+        // save number of threads to sharedPreferences
+        prefEditor!!.putInt("delay_detector", delayTime)
+        prefEditor!!.apply()
+
+        // update UI
+        delayText.text = "delay time is $delayTime seconds"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         analysisToggleGroup = findViewById(R.id.analysisToggleGroup)
         btnClassification = findViewById(R.id.btn_classification)
         btnDetection = findViewById(R.id.btn_detection)
+
+        delayText = findViewById(R.id.delay_text_detector)
+        delayButton = findViewById(R.id.delay_time_button_detector)
+        delayEditText = findViewById(R.id.delay_time_edit_text_detector)
+
+        prefs = this.getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
+        prefEditor = prefs!!.edit()
+
+        val savedDelayTime = prefs!!.getInt("delay_detector", 0)
+        delayTime = savedDelayTime
+        delayText.text = "delay time is $delayTime seconds"
+
+        delayButton.setOnClickListener(View.OnClickListener {
+            if (delayEditText.text.isNotEmpty()) {
+                delayTime = Integer.parseInt(delayEditText.text.toString())
+                delayEditText.text.clear()
+                updateDelayTime()
+            } else {
+                Toast.makeText(context, "You did not enter the delay time needed!", Toast.LENGTH_SHORT).show()
+            }
+        })
 
         analysisToggleGroup.addOnButtonCheckedListener { group, checkedId, _ ->
             if (checkedId == btnClassification.id) {

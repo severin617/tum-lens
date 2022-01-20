@@ -109,6 +109,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         smoothedPredictionsFragment = SmoothedPredictionsFragment.newInstance()
         val cameraSettingsFragment = CameraSettingsFragment()
         val threadNumberFragment = ThreadNumberFragment()
+        val delayTimeFragment = DelayTimeFragment()
         val processingUnitSelectorFragment = ProcessingUnitSelectorFragment()
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
@@ -127,6 +128,10 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         fragmentTransaction.add(
             R.id.camera_settings_container, cameraSettingsFragment,
             "cameraSettingsFragment"
+        )
+        fragmentTransaction.add(
+            R.id.delay_time_container, delayTimeFragment,
+            "delayTimeFragment"
         )
         fragmentTransaction.add(
             R.id.thread_number_container, threadNumberFragment,

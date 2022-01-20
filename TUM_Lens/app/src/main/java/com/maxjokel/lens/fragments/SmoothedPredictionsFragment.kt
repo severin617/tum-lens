@@ -1,7 +1,10 @@
 package com.maxjokel.lens.fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +17,7 @@ import com.maxjokel.lens.helpers.Recognition
 import com.maxjokel.lens.helpers.ResultItem
 import com.maxjokel.lens.helpers.ResultItemComparator
 import java.util.*
+import kotlin.properties.Delegates
 
 /* + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 *
@@ -41,13 +45,25 @@ class SmoothedPredictionsFragment: Fragment() {
     var _map: Map<String, ResultItem> = HashMap()
     var _collection: MutableList<Recognition> = LinkedList()
 
+    var prefs: SharedPreferences? = null
+    var prefEditor: SharedPreferences.Editor? = null
+    var delayTime = 0
+    var counterLimit = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
+        prefs = this.requireActivity()
+            .getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
+        prefEditor = prefs!!.edit()
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_smoothed_predictions, container, false)
+
+        delayTime = prefs!!.getInt("delay", 0)
+        Log.d("DelayTime", "Delay time is $delayTime")
+        counterLimit = delayTime * 3 + 1
 
         // set up all layout elements here as we will run into NullPointerExceptions when we use
         // the dynamic 'getView()...' approach;
@@ -79,7 +95,8 @@ class SmoothedPredictionsFragment: Fragment() {
     @UiThread
     @SuppressLint("DefaultLocale", "SetTextI18n")
     fun showSmoothedRecognitionResults(results: List<Recognition?>?) {
-        if (_counter <= 19) {   // around 6 seconds of changing the values
+        // formula used:    Counter = Time * 3 +1
+        if (_counter <= counterLimit) {
 
             // IDEA:
             // while the counter is less than 19, add the first three most promising classification results to a list
@@ -177,7 +194,10 @@ class SmoothedPredictionsFragment: Fragment() {
                 conf4!!.text = String.format("%.1f", 100 * r4.confidence / r4.occurrences) + "%"
             }
 
-
+            delayTime = prefs!!.getInt("delay", 0)
+            Log.d("DelayTime", "Delay time is $delayTime")
+            counterLimit = delayTime * 3 + 1
+            Log.d("CounterLimit", "counter limit is $counterLimit")
             // reset data structures for next iteration
             _counter = 0
             _map = HashMap()
