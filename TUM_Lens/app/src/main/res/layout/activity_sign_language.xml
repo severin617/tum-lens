@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--
+    <FrameLayout
+        android:id="@+id/sign_language_camera"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+    </FrameLayout>
+    -->
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/sign_language_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionName="camera"
+        />
+
+    <!--  TOGGLE TO SWITCH DETECTION MODES  -->
+    <include layout="@layout/btn_detection_mode" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

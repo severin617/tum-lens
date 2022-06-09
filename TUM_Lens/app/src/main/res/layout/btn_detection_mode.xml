@@ -23,6 +23,11 @@
             android:text="@string/object_detection"
             style="@style/MaterialButtonToggleGroupStyle"
             />
+        <Button
+            android:id="@+id/btn_sign_language"
+            android:text="@string/sign_language"
+            style="@style/MaterialButtonToggleGroupStyle"
+            />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
 </RelativeLayout>

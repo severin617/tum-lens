@@ -28,4 +28,5 @@
     <string name="image_classification">Classifier</string>
     <string name="object_detection">Detector</string>
     <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
+    <string name="sign_language">Sign Language</string>
 </resources>
