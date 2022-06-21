@@ -80,7 +80,15 @@ class PredictionsFragment: Fragment() {
             if (resultsLength < 2) pf_row1!!.visibility = View.GONE
             if (resultsLength < 1) pf_row0!!.visibility = View.GONE // hide all
 
-
+            for (i in 0 until resultsLength){
+                // result at index i
+                val recognition = results[i]
+                if (recognition?.title != null && recognition.confidence != null) {
+                    pf_description0!!.text = recognition.title
+                    pf_confidence0!!.text = String.format("%.1f", 100 * recognition.confidence) + "%"
+                }
+            }
+            /*
             // result at index 0
             val recognition0 = results[0]
             if (recognition0 != null && recognition0.title != null && recognition0.confidence != null) {
@@ -114,7 +122,7 @@ class PredictionsFragment: Fragment() {
             if (recognition4 != null && recognition4.title != null && recognition4.confidence != null) {
                 pf_description4!!.text = recognition4.title
                 pf_confidence4!!.text = String.format("%.1f", 100 * recognition4.confidence) + "%"
-            }
+            }*/
 
             // set time
             latency!!.text = "classifying this frame took $time ms"

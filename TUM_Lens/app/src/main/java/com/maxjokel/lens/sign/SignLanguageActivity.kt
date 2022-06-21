@@ -25,6 +25,8 @@ import com.google.mediapipe.glutil.EglManager
 import com.maxjokel.lens.R
 import com.maxjokel.lens.classification.ClassificationActivity
 import com.maxjokel.lens.detection.DetectionActivity
+import com.maxjokel.lens.fragments.*
+import com.maxjokel.lens.helpers.Recognition
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
@@ -68,6 +70,9 @@ class SignLanguageActivity : AppCompatActivity() {
     private lateinit var btnDetection: Button
     private lateinit var btnClassification: Button
     private lateinit var btnSignLanguage: Button
+
+    // Fragments
+    private var predictionsFragment: PredictionsFragment? = null
 
     // progress
     //private lateinit var progress: RelativeLayout
@@ -120,19 +125,6 @@ class SignLanguageActivity : AppCompatActivity() {
                 )
             )
 
-        // classification callback
-        processor!!.addPacketCallback(
-            OUTPUT_CLASSIFICATION_STREAM
-        ) {
-                packet: Packet? ->
-            val classifications = PacketGetter.getProto(packet, ClassificationProto.ClassificationList.getDefaultInstance())
-
-            for(c in classifications.classificationList){
-                Log.println(Log.DEBUG, DEBUG_TAG, c.toString())
-            }
-        }
-
-
         analysisToggleGroup = findViewById(R.id.analysisToggleGroup)
         btnClassification = findViewById(R.id.btn_classification)
         btnDetection = findViewById(R.id.btn_detection)
@@ -153,6 +145,23 @@ class SignLanguageActivity : AppCompatActivity() {
             }
         }
 
+        // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+        // +             SETUP BOTTOM SHEET FRAGMENTS              +
+        // + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+
+        // init new Fragment Instances
+        val msf = ModelSelectorFragment.newInstance()
+        predictionsFragment = PredictionsFragment.newInstance()
+
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.add(
+            R.id.perframe_results_container_sign, predictionsFragment!!,
+            "predictionsFragment"
+        )
+        fragmentTransaction.commit()
+
         //progress = findViewById(R.id.loadingPanel)
 
         GlobalScope.async {
@@ -161,6 +170,24 @@ class SignLanguageActivity : AppCompatActivity() {
             startCamera()
             //progress.visibility = View.GONE
         }
+
+        // classification callback
+        processor!!.addPacketCallback(
+            OUTPUT_CLASSIFICATION_STREAM
+        ) {
+                packet: Packet? ->
+            val classifications = PacketGetter.getProto(packet, ClassificationProto.ClassificationList.getDefaultInstance())
+            val results = arrayListOf<Recognition>()
+            for(c in classifications.classificationList){
+                results.add(Recognition(""+c.index, c.label, c.score, null))
+                Log.println(Log.DEBUG, DEBUG_TAG, c.toString())
+            }
+            this.
+            runOnUiThread {
+                predictionsFragment!!.showRecognitionResults(results, 0)
+            }
+        }
+
         //processor!!.setAsynchronousErrorListener { _ -> startCamera() }
         Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity onCreate() finished")
     }
