@@ -1,6 +1,5 @@
 package com.maxjokel.lens.sign
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
@@ -12,17 +11,22 @@ import android.view.*
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButtonToggleGroup
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mediapipe.components.CameraHelper.CameraFacing
 import com.google.mediapipe.components.CameraXPreviewHelper
 import com.google.mediapipe.components.ExternalTextureConverter
 import com.google.mediapipe.components.FrameProcessor
-import com.google.mediapipe.components.PermissionHelper
+import com.google.mediapipe.formats.proto.ClassificationProto
+import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmarkList
 import com.google.mediapipe.framework.AndroidAssetUtil
+import com.google.mediapipe.framework.Packet
+import com.google.mediapipe.framework.PacketGetter
+import com.google.mediapipe.framework.ProtoUtil
 import com.google.mediapipe.glutil.EglManager
 import com.maxjokel.lens.R
 import com.maxjokel.lens.classification.ClassificationActivity
 import com.maxjokel.lens.detection.DetectionActivity
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 
 
 class SignLanguageActivity : AppCompatActivity() {
@@ -54,6 +58,10 @@ class SignLanguageActivity : AppCompatActivity() {
     // ApplicationInfo for retrieving metadata defined in the manifest.
     private lateinit var applicationInfos: ApplicationInfo
 
+    // stream of classifications
+    private val OUTPUT_CLASSIFICATION_STREAM = "classifications"
+    private var cameraOpens = 0
+
 
     // Buttons from toggle button group
     private lateinit var analysisToggleGroup: MaterialButtonToggleGroup
@@ -61,14 +69,19 @@ class SignLanguageActivity : AppCompatActivity() {
     private lateinit var btnClassification: Button
     private lateinit var btnSignLanguage: Button
 
+    // progress
+    //private lateinit var progress: RelativeLayout
+
     private val DEBUG_TAG = "sign_debug"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity onCreate()")
         super.onCreate(savedInstanceState)
-
+        ProtoUtil.registerTypeName(
+            ClassificationProto.ClassificationList::class.java,
+            "mediapipe.ClassificationList"
+        )
         setContentView(R.layout.activity_sign_language)
-        Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity after setContentView()")
 
         try {
             applicationInfos = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
@@ -81,7 +94,7 @@ class SignLanguageActivity : AppCompatActivity() {
             applicationInfos.metaData.putBoolean("flipFramesVertically", true)
             applicationInfos.metaData.putBoolean("cameraFacingFront", false)
             applicationInfos.metaData.putInt("converterNumBuffers", 3)
-            Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity could not get meta data")
+            Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity could not get meta data from AndroidManifest")
         }
 
         previewDisplayView = SurfaceView(this)
@@ -107,6 +120,19 @@ class SignLanguageActivity : AppCompatActivity() {
                 )
             )
 
+        // classification callback
+        processor!!.addPacketCallback(
+            OUTPUT_CLASSIFICATION_STREAM
+        ) {
+                packet: Packet? ->
+            val classifications = PacketGetter.getProto(packet, ClassificationProto.ClassificationList.getDefaultInstance())
+
+            for(c in classifications.classificationList){
+                Log.println(Log.DEBUG, DEBUG_TAG, c.toString())
+            }
+        }
+
+
         analysisToggleGroup = findViewById(R.id.analysisToggleGroup)
         btnClassification = findViewById(R.id.btn_classification)
         btnDetection = findViewById(R.id.btn_detection)
@@ -126,7 +152,16 @@ class SignLanguageActivity : AppCompatActivity() {
                 finish()
             }
         }
-        //startCamera()
+
+        //progress = findViewById(R.id.loadingPanel)
+
+        GlobalScope.async {
+            Log.println(Log.DEBUG, DEBUG_TAG,"${Thread.currentThread()} has run COROUTINE.")
+            Thread.sleep(1_500)
+            startCamera()
+            //progress.visibility = View.GONE
+        }
+        //processor!!.setAsynchronousErrorListener { _ -> startCamera() }
         Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity onCreate() finished")
     }
 
@@ -197,6 +232,10 @@ class SignLanguageActivity : AppCompatActivity() {
 
     private fun startCamera() {
         Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity startCamera()")
+        if(cameraOpens > 1){
+            return
+        }
+        cameraOpens++
         cameraHelper = CameraXPreviewHelper()
         previewFrameTexture = converter!!.surfaceTexture
         cameraHelper!!.setOnCameraStartedListener { surfaceTexture: SurfaceTexture? ->
@@ -225,9 +264,9 @@ class SignLanguageActivity : AppCompatActivity() {
             applicationInfos.metaData.getBoolean("flipFramesVertically", FLIP_FRAMES_VERTICALLY)
         )
         converter!!.setConsumer(processor)
-        if (PermissionHelper.cameraPermissionsGranted(this)) {
+        //if (PermissionHelper.cameraPermissionsGranted(this)) {
             startCamera()
-        }
+       // }
     }
 
     override fun onPause() {
