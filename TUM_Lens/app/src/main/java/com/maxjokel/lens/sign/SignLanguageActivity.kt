@@ -72,7 +72,7 @@ class SignLanguageActivity : AppCompatActivity() {
     private lateinit var btnSignLanguage: Button
 
     // Fragments
-    private var predictionsFragment: PredictionsFragment? = null
+    private var predictionsFragment: SignPredictionsFragment? = null
 
     // progress
     //private lateinit var progress: RelativeLayout
@@ -151,7 +151,7 @@ class SignLanguageActivity : AppCompatActivity() {
 
         // init new Fragment Instances
         val msf = ModelSelectorFragment.newInstance()
-        predictionsFragment = PredictionsFragment.newInstance()
+        predictionsFragment = SignPredictionsFragment.newInstance()
 
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
