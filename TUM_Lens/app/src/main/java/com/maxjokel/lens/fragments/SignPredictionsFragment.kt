@@ -42,6 +42,25 @@ class SignPredictionsFragment: Fragment() {
         return view
     }
 
+    // clears the predictions
+    @UiThread
+    fun clearFragment(){
+        pf_description0!!.text = ""
+        pf_confidence0!!.text = ""
+        pf_description1!!.text = ""
+        pf_confidence1!!.text = ""
+        pf_description2!!.text = ""
+        pf_confidence2!!.text = ""
+        pf_row2!!.visibility = View.GONE
+        pf_row1!!.visibility = View.GONE
+        pf_row0!!.visibility = View.GONE
+    }
+
+    @UiThread
+    fun setInfo(info: String){
+
+    }
+
     // runs in UI Thread and displays the classification statistics to the user
     @UiThread
     @SuppressLint("DefaultLocale", "SetTextI18n")

@@ -37,6 +37,7 @@
 
     <!--  PER FRAME RESULTS CONTAINER  -->
     <!--  SUB-HEADING of bottom sheet  -->
+    <!--
     <TextView
         android:id="@+id/sub_heading_sign"
         android:layout_width="match_parent"
@@ -45,7 +46,7 @@
         android:fontFamily="sans-serif-medium"
         android:text="@string/per_frame_classification_results"
         android:textSize="16sp"
-        android:textColor="@color/black" />
+        android:textColor="@color/black" />-->
     <FrameLayout
         android:id="@+id/perframe_results_container_sign"
         android:layout_width="match_parent"

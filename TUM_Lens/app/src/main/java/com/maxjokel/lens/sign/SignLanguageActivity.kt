@@ -31,11 +31,17 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
 
-class SignLanguageActivity : AppCompatActivity() {
+// Mediapipe constants
+private const val FLIP_FRAMES_VERTICALLY: Boolean = true
+private const val NUM_BUFFERS = 2
 
-    // Mediapipe constants
-    private val FLIP_FRAMES_VERTICALLY: Boolean = true
-    private val NUM_BUFFERS = 2
+// callback streams
+private const val OUTPUT_CLASSIFICATION_STREAM = "classifications"
+private const val OUTPUT_MISSING_INFO_STREAM = "my_missing_landmarks"
+
+private const val DEBUG_TAG = "sign_debug"
+
+class SignLanguageActivity : AppCompatActivity() {
 
     // Sends camera-preview frames into a MediaPipe graph for processing, and displays the processed
     // frames onto a {@link Surface}.
@@ -60,11 +66,6 @@ class SignLanguageActivity : AppCompatActivity() {
     // ApplicationInfo for retrieving metadata defined in the manifest.
     private lateinit var applicationInfos: ApplicationInfo
 
-    // stream of classifications
-    private val OUTPUT_CLASSIFICATION_STREAM = "classifications"
-    private var cameraOpens = 0
-
-
     // Buttons from toggle button group
     private lateinit var analysisToggleGroup: MaterialButtonToggleGroup
     private lateinit var btnDetection: Button
@@ -76,8 +77,6 @@ class SignLanguageActivity : AppCompatActivity() {
 
     // progress
     //private lateinit var progress: RelativeLayout
-
-    private val DEBUG_TAG = "sign_debug"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity onCreate()")
@@ -188,6 +187,13 @@ class SignLanguageActivity : AppCompatActivity() {
             }
         }
 
+        /*processor!!.addPacketCallback(OUTPUT_MISSING_INFO_STREAM){
+            packet: Packet? ->
+            runOnUiThread{
+                predictionsFragment!!.clearFragment()
+            }
+        }*/
+
         //processor!!.setAsynchronousErrorListener { _ -> startCamera() }
         Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity onCreate() finished")
     }
@@ -259,10 +265,7 @@ class SignLanguageActivity : AppCompatActivity() {
 
     private fun startCamera() {
         Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity startCamera()")
-        if(cameraOpens > 1){
-            return
-        }
-        cameraOpens++
+
         cameraHelper = CameraXPreviewHelper()
         previewFrameTexture = converter!!.surfaceTexture
         cameraHelper!!.setOnCameraStartedListener { surfaceTexture: SurfaceTexture? ->
