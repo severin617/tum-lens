@@ -25,6 +25,8 @@ class SignPredictionsFragment: Fragment() {
     private var pf_confidence1: TextView? = null
     private var pf_confidence2: TextView? = null
 
+    private var missing_info: TextView? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -39,6 +41,7 @@ class SignPredictionsFragment: Fragment() {
         pf_confidence0 = view.findViewById(R.id.pf_confidence0)
         pf_confidence1 = view.findViewById(R.id.pf_confidence1)
         pf_confidence2 = view.findViewById(R.id.pf_confidence2)
+        missing_info = view.findViewById(R.id.missing_info)
         return view
     }
 
@@ -57,8 +60,9 @@ class SignPredictionsFragment: Fragment() {
     }
 
     @UiThread
-    fun setInfo(info: String){
-
+    fun setMissingInfo(info: String){
+        missing_info!!.visibility = View.VISIBLE
+        missing_info!!.text = info
     }
 
     // runs in UI Thread and displays the classification statistics to the user
@@ -76,6 +80,9 @@ class SignPredictionsFragment: Fragment() {
             pf_row1!!.visibility = View.VISIBLE
             pf_row0!!.visibility = View.VISIBLE
 
+            // hide missing info
+            missing_info!!.visibility = View.GONE
+
             // hide result rows, if there are not enough classes
             if (resultsLength < 3) pf_row2!!.visibility = View.GONE
             if (resultsLength < 2) pf_row1!!.visibility = View.GONE
@@ -83,7 +90,7 @@ class SignPredictionsFragment: Fragment() {
 
             // result at index 0
             val recognition0 = results[0]
-            if (recognition0 != null && recognition0.title != null && recognition0.confidence != null) {
+            if (recognition0?.title != null && recognition0.confidence != null) {
                 pf_description0!!.text = recognition0.title
                 pf_confidence0!!.text = String.format("%.1f", 100 * recognition0.confidence) + "%"
             }
@@ -92,7 +99,7 @@ class SignPredictionsFragment: Fragment() {
 
             // result at index 1
             val recognition1 = results[1]
-            if (recognition1 != null && recognition1.title != null && recognition1.confidence != null) {
+            if (recognition1?.title != null && recognition1.confidence != null) {
                 pf_description1!!.text = recognition1.title
                 pf_confidence1!!.text = String.format("%.1f", 100 * recognition1.confidence) + "%"
             }
@@ -101,7 +108,7 @@ class SignPredictionsFragment: Fragment() {
 
             // result at index 2
             val recognition2 = results[2]
-            if (recognition2 != null && recognition2.title != null && recognition2.confidence != null) {
+            if (recognition2?.title != null && recognition2.confidence != null) {
                 pf_description2!!.text = recognition2.title
                 pf_confidence2!!.text = String.format("%.1f", 100 * recognition2.confidence) + "%"
             }
