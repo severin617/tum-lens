@@ -16,7 +16,6 @@ import com.google.mediapipe.components.CameraXPreviewHelper
 import com.google.mediapipe.components.ExternalTextureConverter
 import com.google.mediapipe.components.FrameProcessor
 import com.google.mediapipe.formats.proto.ClassificationProto
-import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmarkList
 import com.google.mediapipe.framework.AndroidAssetUtil
 import com.google.mediapipe.framework.Packet
 import com.google.mediapipe.framework.PacketGetter
@@ -37,7 +36,7 @@ private const val NUM_BUFFERS = 2
 
 // callback streams
 private const val OUTPUT_CLASSIFICATION_STREAM = "classifications"
-private const val OUTPUT_MISSING_INFO_STREAM = "my_missing_landmarks"
+private const val OUTPUT_MISSING_INFO_STREAM = "missing_landmarks"
 
 private const val DEBUG_TAG = "sign_debug"
 
@@ -175,47 +174,48 @@ class SignLanguageActivity : AppCompatActivity() {
             OUTPUT_CLASSIFICATION_STREAM
         ) {
                 packet: Packet? ->
+            //Log.println(Log.DEBUG, DEBUG_TAG, "classifications packet")
             val classifications = PacketGetter.getProto(packet, ClassificationProto.ClassificationList.getDefaultInstance())
             val results = arrayListOf<Recognition>()
             for(c in classifications.classificationList){
                 results.add(Recognition(""+c.index, c.label, c.score, null))
-                Log.println(Log.DEBUG, DEBUG_TAG, c.toString())
+                //Log.println(Log.DEBUG, DEBUG_TAG, c.toString())
             }
             this.
             runOnUiThread {
                 predictionsFragment!!.showRecognitionResults(results, 0)
             }
         }
-        /*
+
         processor!!.addPacketCallback(OUTPUT_MISSING_INFO_STREAM){
             packet: Packet? ->
             val classification = PacketGetter.getProto(packet, ClassificationProto.ClassificationList.getDefaultInstance()).getClassification(0)
-            var info_str = ""
+            var infoCode = ""
             when (classification.index) {
-                0 -> info_str = "alles erkannt"
-                1 -> info_str = "Gesicht nicht erkannt"
-                2 -> info_str = "Linke Hand nicht erkannt"
-                3 -> info_str = "Linke Hand, Gesicht nicht erkannt"
-                4 -> info_str = "Rechte Hand nicht erkannt"
-                5 -> info_str = "Rechte Hand, Gesicht nicht erkannt"
-                6 -> info_str = "Beide Haende nicht erkannt"
-                7 -> info_str = "Beide Haende, Gesicht nicht erkannt"
-                8 -> info_str = "Pose nicht erkannt"
-                9 -> info_str = "Pose, Gesicht nicht erkannt"
-                10 -> info_str = "Pose, linke Hand nicht erkannt"
-                11 -> info_str = "Pose, linke Hand, Gesicht nicht erkannt"
-                12 -> info_str = "Pose, rechte Hand nicht erkannt"
-                13 -> info_str = "Pose, rechte Hand, Gesicht nicht erkannt"
-                14 -> info_str = "Pose, beide Haende nicht erkannt"
-                15 -> info_str = "Nichts erkannt"
-                else -> info_str = "Unbekannter Code"
+                0 -> infoCode = "detected all landmarks"
+                1 -> infoCode = "Cannot detect the face"
+                2 -> infoCode = "Cannot detect the left hand"
+                3 -> infoCode = "Cannot detect the face and left hand"
+                4 -> infoCode = "Cannot detect the right hand"
+                5 -> infoCode = "Cannot detect the right hand and face"
+                6 -> infoCode = "Cannot detect the left and right hand"
+                7 -> infoCode = "Cannot detect the face and both hands"
+                8 -> infoCode = "Cannot detect the pose"
+                9 -> infoCode = "Cannot detect the pose and face"
+                10 -> infoCode = "Cannot detect the pose and left hand"
+                11 -> infoCode = "Cannot detect the pose, left hand and face"
+                12 -> infoCode = "Cannot detect the pose and right hand"
+                13 -> infoCode = "Cannot detect the pose, right hand and face"
+                14 -> infoCode = "Cannot detect the pose and left and right hand"
+                15 -> infoCode = "Cannot detect anything"
+                else -> infoCode = "Unknown signal code"
             }
             runOnUiThread{
                 predictionsFragment!!.clearFragment()
-                predictionsFragment!!.setMissingInfo(info_str)
+                predictionsFragment!!.setMissingInfo(infoCode)
             }
         }
-        */
+
         //processor!!.setAsynchronousErrorListener { _ -> startCamera() }
         Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity onCreate() finished")
     }
