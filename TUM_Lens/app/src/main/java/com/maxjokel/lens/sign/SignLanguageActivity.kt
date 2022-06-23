@@ -163,9 +163,10 @@ class SignLanguageActivity : AppCompatActivity() {
         //progress = findViewById(R.id.loadingPanel)
 
         GlobalScope.async {
-            Log.println(Log.DEBUG, DEBUG_TAG,"${Thread.currentThread()} has run COROUTINE.")
+            Log.println(Log.DEBUG, DEBUG_TAG,"${Thread.currentThread()} has started COROUTINE.")
             Thread.sleep(1_500)
             startCamera()
+            Log.println(Log.DEBUG, DEBUG_TAG,"${Thread.currentThread()} has finished COROUTINE.")
             //progress.visibility = View.GONE
         }
 
@@ -185,7 +186,7 @@ class SignLanguageActivity : AppCompatActivity() {
                 predictionsFragment!!.showRecognitionResults(results, 0)
             }
         }
-
+        /*
         processor!!.addPacketCallback(OUTPUT_MISSING_INFO_STREAM){
             packet: Packet? ->
             val classification = PacketGetter.getProto(packet, ClassificationProto.ClassificationList.getDefaultInstance()).getClassification(0)
@@ -214,7 +215,7 @@ class SignLanguageActivity : AppCompatActivity() {
                 predictionsFragment!!.setMissingInfo(info_str)
             }
         }
-
+        */
         //processor!!.setAsynchronousErrorListener { _ -> startCamera() }
         Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity onCreate() finished")
     }
@@ -286,7 +287,6 @@ class SignLanguageActivity : AppCompatActivity() {
 
     private fun startCamera() {
         Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity startCamera()")
-
         cameraHelper = CameraXPreviewHelper()
         previewFrameTexture = converter!!.surfaceTexture
         cameraHelper!!.setOnCameraStartedListener { surfaceTexture: SurfaceTexture? ->
@@ -317,7 +317,7 @@ class SignLanguageActivity : AppCompatActivity() {
         converter!!.setConsumer(processor)
         //if (PermissionHelper.cameraPermissionsGranted(this)) {
             startCamera()
-       // }
+        //}
     }
 
     override fun onPause() {

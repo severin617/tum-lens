@@ -59,6 +59,7 @@ class SignPredictionsFragment: Fragment() {
         pf_row0!!.visibility = View.GONE
     }
 
+    // sets the missing landmarks info
     @UiThread
     fun setMissingInfo(info: String){
         missing_info!!.visibility = View.VISIBLE
