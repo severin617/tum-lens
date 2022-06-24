@@ -1,0 +1,62 @@
+# Tracks pose + hands + face landmarks and uses the landmarks to translate them from gesture to word .
+
+# GPU buffer. (GpuBuffer)
+input_stream: "input_video"
+
+# GPU image with rendered results. (GpuBuffer)
+output_stream: "output_video"
+
+# Classifications
+output_stream: "classifications"
+output_stream: "missing_landmarks"
+
+#profiler_config {
+#  trace_enabled: true
+#  enable_profiler: true
+#  trace_log_interval_count: 200
+#  trace_log_path: "/sdcard/Download/"
+#}
+node {
+  calculator: "FlowLimiterCalculator"
+  input_stream: "input_video"
+  input_stream: "FINISHED:output_video"
+  input_stream_info: {
+    tag_index: "FINISHED"
+    back_edge: true
+  }
+  output_stream: "throttled_input_video"
+  node_options: {
+    [type.googleapis.com/mediapipe.FlowLimiterCalculatorOptions] {
+      max_in_flight: 1
+      max_in_queue: 1
+      # Timeout is disabled (set to 0) as first frame processing can take more
+      # than 1 second.
+      in_flight_timeout: 0
+    }
+  }
+}
+
+# landmark tracking
+node {
+  calculator: "HolisticLandmarkGpu"
+  input_stream: "IMAGE:throttled_input_video"
+  output_stream: "RENDER_DATA_VECTOR:render_data_vector"
+  output_stream: "classifications"
+  output_stream: "missing_landmarks"
+}
+
+# Gets image size.
+node {
+  calculator: "ImagePropertiesCalculator"
+  input_stream: "IMAGE_GPU:throttled_input_video"
+  output_stream: "SIZE:image_size"
+}
+
+# Draws annotations and overlays them on top of the input images.
+node {
+  calculator: "AnnotationOverlayCalculator"
+  input_stream: "IMAGE_GPU:throttled_input_video"
+  input_stream: "VECTOR:render_data_vector"
+  output_stream: "IMAGE_GPU:output_video"
+}
+
