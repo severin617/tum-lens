@@ -80,7 +80,6 @@ class PredictionsFragment: Fragment() {
             if (resultsLength < 2) pf_row1!!.visibility = View.GONE
             if (resultsLength < 1) pf_row0!!.visibility = View.GONE // hide all
 
-
             // result at index 0
             val recognition0 = results[0]
             if (recognition0 != null && recognition0.title != null && recognition0.confidence != null) {
@@ -118,6 +117,7 @@ class PredictionsFragment: Fragment() {
 
             // set time
             latency!!.text = "classifying this frame took $time ms"
+
         } else { // hide all result rows
             pf_row4!!.visibility = View.GONE
             pf_row3!!.visibility = View.GONE

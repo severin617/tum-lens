@@ -31,6 +31,7 @@ import com.maxjokel.lens.helpers.FreezeAnalyzer
 import com.maxjokel.lens.helpers.FreezeCallback
 import com.maxjokel.lens.helpers.ImageUtils.toCroppedBitmap
 import com.maxjokel.lens.helpers.Logger
+import com.maxjokel.lens.sign.SignLanguageActivity
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -61,6 +62,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
     private lateinit var analysisToggleGroup: MaterialButtonToggleGroup
     private lateinit var btnDetection: Button
     private lateinit var btnClassification: Button
+    private lateinit var btnSignLanguage: Button
 
     // TF-Lite related to CLASSIFICATION:   [source: TF-Lite example app]
     private var previewDimX = 960
@@ -94,6 +96,7 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
         analysisToggleGroup = findViewById(R.id.analysisToggleGroup)
         btnClassification = findViewById(R.id.btn_classification)
         btnDetection = findViewById(R.id.btn_detection)
+        btnSignLanguage = findViewById(R.id.btn_sign_language)
 
         // [source: https://developer.android.com/training/gestures/detector#java]
         // Set up and instantiate the gesture detector with the application context
@@ -171,6 +174,12 @@ class ClassificationActivity : AppCompatActivity(), GestureDetector.OnGestureLis
             if (checkedId == btnDetection.id) {
                 group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
                 val intent = Intent(this, DetectionActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+            if (checkedId == btnSignLanguage.id){
+                group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
+                val intent = Intent(this, SignLanguageActivity::class.java)
                 startActivity(intent)
                 finish()
             }

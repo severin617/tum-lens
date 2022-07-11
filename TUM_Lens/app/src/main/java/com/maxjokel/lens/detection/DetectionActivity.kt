@@ -31,8 +31,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.maxjokel.lens.R
 import com.maxjokel.lens.classification.ClassificationActivity
@@ -43,6 +41,7 @@ import com.maxjokel.lens.helpers.ImageUtils.saveBitmap
 import com.maxjokel.lens.helpers.Logger
 import com.maxjokel.lens.helpers.ModelDetectConfig
 import com.maxjokel.lens.helpers.Recognition
+import com.maxjokel.lens.sign.SignLanguageActivity
 import java.io.IOException
 import java.util.*
 
@@ -68,6 +67,7 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
     private lateinit var analysisToggleGroup: MaterialButtonToggleGroup
     private lateinit var btnDetection: Button
     private lateinit var btnClassification: Button
+    private lateinit var btnSignLanguage: Button
 
     private lateinit var delayText: TextView
     private lateinit var delayButton: Button
@@ -244,6 +244,7 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
         analysisToggleGroup = findViewById(R.id.analysisToggleGroup)
         btnClassification = findViewById(R.id.btn_classification)
         btnDetection = findViewById(R.id.btn_detection)
+        btnSignLanguage = findViewById(R.id.btn_sign_language);
 
         delayText = findViewById(R.id.delay_text_detector)
         delayButton = findViewById(R.id.delay_time_button_detector)
@@ -270,6 +271,12 @@ class DetectionActivity : CameraActivity(), OverlayView.DrawCallback {
             if (checkedId == btnClassification.id) {
                 group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
                 val intent = Intent(this, ClassificationActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+            if (checkedId == btnSignLanguage.id) {
+                group.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS)
+                val intent = Intent(this, SignLanguageActivity::class.java)
                 startActivity(intent)
                 finish()
             }
