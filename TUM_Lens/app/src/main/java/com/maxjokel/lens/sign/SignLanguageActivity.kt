@@ -149,6 +149,7 @@ class SignLanguageActivity : AppCompatActivity() {
 
         // init new Fragment Instances
         predictionsFragment = SignPredictionsFragment.newInstance()
+        val msf = ModelSelectorSignFragment.newInstance()
 
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
@@ -157,6 +158,9 @@ class SignLanguageActivity : AppCompatActivity() {
             R.id.perframe_results_container_sign, predictionsFragment!!,
             "predictionsFragment"
         )
+        fragmentTransaction.add(
+            R.id.modelselector_container, msf,
+            "msf")
         fragmentTransaction.commit()
 
         //progress = findViewById(R.id.loadingPanel)

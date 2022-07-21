@@ -1,0 +1,23 @@
+{
+  "timestamp": "2022-07-21T09:30:00.000Z",
+  "comment": "",
+
+  "recognitionNets": [
+
+    {
+      "name": "CNN Batchnorm",
+      "comment": "",
+      "version": 1.0,
+
+      "image_mean": 127.5,
+      "image_std": 127.5,
+      "probability_mean": 0.0,
+      "probability_std": 1.0,
+
+      "filename": "model_sign_batch.tflite",
+      "labels": "labelmap_sign.txt",
+
+      "top5accuracy": "Accuracy: 36.0%"
+    }
+  ]
+}
