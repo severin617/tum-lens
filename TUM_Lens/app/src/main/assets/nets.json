@@ -50,38 +50,7 @@
             "labels": "IIC_labels.txt",
         
             "top5accuracy": "Transfer learning use case"
-        },
-
-        {
-            "name": "ResNet Intel Dataset",
-            "comment": "transfer learning use case, ResNet Model, Adam Optimizer",
-            "version": 0.1,
-
-            "image_mean": 127.5,
-            "image_std": 127.5,
-            "probability_mean": 0.0,
-            "probability_std": 1.0,
-
-            "filename": "Intel_Resnet_adam.tflite",
-            "labels": "IIC_labels.txt",
-
-            "top5accuracy": "Transfer learning use case Intel dataset"
-        },
-
-        {
-            "name": "Inception_ResNet Cinic-10 Dataset",
-            "comment": "transfer learning use case, Inception_ResNet model, Sgd optimizer",
-            "version": 0.1,
-
-            "image_mean": 127.5,
-            "image_std": 127.5,
-            "probability_mean": 0.0,
-            "probability_std": 1.0,
-
-            "filename": "cinic_incResnet_sgd.tflite",
-            "labels": "cinicLabel.txt",
-
-            "top5accuracy": "Transfer learning use case Cinic-10 dataset"
         }
+
     ]
   }
