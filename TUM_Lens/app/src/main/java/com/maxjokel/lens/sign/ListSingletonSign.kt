@@ -22,20 +22,20 @@ object ListSingletonSign {
 
         val list: MutableList<ModelConfig> = ArrayList()
 
-        val jsonString = ListSingletonSign.readJSON(ListSingletonSign.CONFIG_FILEPATH)
+c        val jsonString = readJSON(CONFIG_FILEPATH)
 
         val jsonObject = try {
             JSONObject(jsonString)
         } catch (e: JSONException) {
-            ListSingletonSign.LOGGER.e("Error in 'ModelConfig' constructor while parsing JSON file.")
+            LOGGER.e("Error in 'ModelConfig' constructor while parsing JSON file.")
             e.printStackTrace()
             return list
         }
 
         val netsArray = try {
-            jsonObject.getJSONArray(ListSingletonSign.RECOGNITION_ARRAY)
+            jsonObject.getJSONArray(RECOGNITION_ARRAY)
         } catch (e: JSONException) {
-            ListSingletonSign.LOGGER.e("Error in 'ModelConfig' constructor while parsing the ${ListSingletonSign.RECOGNITION_ARRAY} array.")
+            LOGGER.e("Error in 'ModelConfig' constructor while parsing the $RECOGNITION_ARRAY array.")
             e.printStackTrace()
             return list
         }
@@ -45,7 +45,7 @@ object ListSingletonSign {
                 val obj = netsArray.getJSONObject(i)
                 list.add(ModelConfig(obj))
             } catch (e: JSONException) {
-                ListSingletonSign.LOGGER.e(
+                LOGGER.e(
                     "Error while parsing jsonObject at position $i in $netsArray. " +
                         "Object wasn't added to list of ModelConfigs."
                 )
