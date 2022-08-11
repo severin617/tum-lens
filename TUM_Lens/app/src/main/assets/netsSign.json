@@ -14,7 +14,7 @@
       "probability_mean": 0.0,
       "probability_std": 1.0,
 
-      "filename": "model_sign_batch.tflite",
+      "filename": "top100_batch.tflite",
       "labels": "labelmap_sign.txt",
 
       "top5accuracy": "Accuracy: 36.0%"

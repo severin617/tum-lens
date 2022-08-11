@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.*
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.maxjokel.lens.R
 import com.maxjokel.lens.classification.Classifier
 import com.maxjokel.lens.classification.ListSingleton
+import com.maxjokel.lens.helpers.App
 import com.maxjokel.lens.helpers.DownloadFiles
 import com.maxjokel.lens.sign.ListSingletonSign
 import java.io.File
@@ -44,7 +46,11 @@ class ModelSelectorSignFragment: Fragment(){
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val root : String = Environment.getExternalStorageDirectory().absolutePath + "/models"
+        val root : String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            App.context!!.getExternalFilesDir(null)!!.path + "/models"
+        }else{
+            Environment.getExternalStorageDirectory().absolutePath + "/models"
+        }
         val path = File(root)
 
         // workaround for 'dp' instead of 'px' units
