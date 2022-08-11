@@ -34,7 +34,18 @@ class DownloadFiles(val context: Context) {
 //        request.setDescription("The file is downloading")
         request.allowScanningByMediaScanner()
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        request.setDestinationInExternalPublicDir("/models", filename)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if(Environment.isExternalStorageLegacy()){
+                request.setDestinationInExternalPublicDir("/models", filename)
+            } else {
+                //request.setDestinationInExternalPublicDir( Environment.DIRECTORY_DOWNLOADS, filename)
+                //val path =  context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!.path + "/models/" + filename
+                val path = "models/$filename"
+                request.setDestinationInExternalFilesDir(context, null, path)
+            }
+        }else {
+            request.setDestinationInExternalPublicDir("/models", filename)
+        }
 
         val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         myDownloadId = manager.enqueue(request)

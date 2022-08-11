@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Environment
 import android.os.SystemClock
 import android.os.Trace
@@ -121,13 +122,22 @@ object Classifier {
     /** Memory-map the model file in Assets.  */
     @Throws(IOException::class)
     private fun loadModelFile(modelFilename: String): MappedByteBuffer {
-            val root : String = Environment.getExternalStorageDirectory().absolutePath + "/models"
-            val path = File(root)
-            val exactPath = File("$path/$modelFilename")
+        val root : String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if(Environment.isExternalStorageLegacy()){
+                Environment.getExternalStorageDirectory().absolutePath + "/models"
+            } else {
+                context!!.getExternalFilesDir(null)!!.path + "/models"
+            }
+        }else {
+            Environment.getExternalStorageDirectory().absolutePath + "/models"
+        }
 
-            val inputStream = FileInputStream(exactPath)
-            val fileChannel = inputStream.channel
-            return fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, exactPath.length())
+        val path = File(root)
+        val exactPath = File("$path/$modelFilename")
+
+        val inputStream = FileInputStream(exactPath)
+        val fileChannel = inputStream.channel
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, exactPath.length())
     }
 
     /** This method initializes the global 'tflite' and 'tfliteModel' objects with regards to the

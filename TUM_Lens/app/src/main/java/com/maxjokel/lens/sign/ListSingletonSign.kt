@@ -22,7 +22,7 @@ object ListSingletonSign {
 
         val list: MutableList<ModelConfig> = ArrayList()
 
-c        val jsonString = readJSON(CONFIG_FILEPATH)
+        val jsonString = readJSON(CONFIG_FILEPATH)
 
         val jsonObject = try {
             JSONObject(jsonString)
