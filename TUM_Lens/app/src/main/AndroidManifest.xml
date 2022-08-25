@@ -61,10 +61,11 @@
         <activity
             android:name=".sign.SignLanguageActivity"
             android:theme="@style/AppTheme"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask" />
         <activity
             android:name=".StartScreenActivity"
-            android:theme="@style/AppTheme.Launcher">
+            android:theme="@style/AppTheme.Launcher"
+            android:requestLegacyExternalStorage="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
