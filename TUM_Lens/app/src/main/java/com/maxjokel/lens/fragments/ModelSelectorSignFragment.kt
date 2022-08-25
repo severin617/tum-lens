@@ -2,6 +2,7 @@ package com.maxjokel.lens.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.os.Build
@@ -18,6 +19,7 @@ import com.maxjokel.lens.classification.ListSingleton
 import com.maxjokel.lens.helpers.App
 import com.maxjokel.lens.helpers.DownloadFiles
 import com.maxjokel.lens.sign.ListSingletonSign
+import com.maxjokel.lens.sign.SignLanguageActivity
 import java.io.File
 
 class ModelSelectorSignFragment: Fragment(){
@@ -29,7 +31,6 @@ class ModelSelectorSignFragment: Fragment(){
     private lateinit var downloadFiles : DownloadFiles
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Classifier.initialize()
         // load sharedPreferences object and set up editor
         prefs = this.requireActivity()
             .getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)
@@ -179,7 +180,12 @@ class ModelSelectorSignFragment: Fragment(){
                 putInt("model_sign", modelId) // save selection to SharedPreferences
                 apply()
             }
-            Classifier.onConfigChanged() // trigger classifier update
+            //val intent = Intent(context, SignLanguageActivity::class.java)
+            //startActivity(intent)
+            //finish()
+            if(modelId != 0){
+                Toast.makeText(context, "Coming soon ...", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

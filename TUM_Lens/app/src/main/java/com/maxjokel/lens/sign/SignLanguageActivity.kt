@@ -1,5 +1,6 @@
 package com.maxjokel.lens.sign
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
@@ -100,6 +101,13 @@ class SignLanguageActivity : AppCompatActivity() {
             Log.println(Log.DEBUG, DEBUG_TAG, "Sign Activity could not get meta data from AndroidManifest")
         }
 
+        //for switching models
+        if(getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE).getInt("model_sign", 0) == 0){
+            applicationInfos.metaData.putString("binaryGraphName", "sign_translating_gpu.binarypb")
+        }else{
+            applicationInfos.metaData.putString("binaryGraphName", "sign_translating_gpu_batch.binarypb")
+        }
+
         previewDisplayView = SurfaceView(this)
         setupPreviewDisplayView()
 
@@ -123,6 +131,7 @@ class SignLanguageActivity : AppCompatActivity() {
                 )
             )
 
+        processor!!.close()
         analysisToggleGroup = findViewById(R.id.analysisToggleGroup)
         btnClassification = findViewById(R.id.btn_classification)
         btnDetection = findViewById(R.id.btn_detection)

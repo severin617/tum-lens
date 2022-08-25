@@ -188,6 +188,7 @@ class ModelSelectorFragment: Fragment() {
                 putInt("model", modelId) // save selection to SharedPreferences
                 apply()
             }
+            //Toast.makeText(context, ""+ App.context!!.getSharedPreferences("TUM_Lens_Prefs", Context.MODE_PRIVATE)!!.getInt("model", 0), Toast.LENGTH_SHORT).show()
             Classifier.onConfigChanged() // trigger classifier update
         }
     }
