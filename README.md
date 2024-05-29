@@ -3,7 +3,7 @@
 TUM-Lens is a Android application that runs image classification and object detection models locally on the device for evaluation and showcasing purposes.
 
 
-App is available in the Google Playstore [here](https://play.google.com/store/apps/details?id=com.maxjokel.lens&hl=de&gl=US&pli=1), roughly 75 Downloads.
+App is available in the Google Playstore [here](https://play.google.com/store/apps/details?id=com.maxjokel.lens&hl=de&gl=US&pli=1), where we have roughly 75 Downloads.
 
 ## Screenshots
 
@@ -22,6 +22,8 @@ App is available in the Google Playstore [here](https://play.google.com/store/ap
 ---
 
 ## Installing and Running TUM-Lens on your Android smartphone
+
+- Install it regularly from [Google Playstore](https://play.google.com/store/apps/details?id=com.maxjokel.lens&hl=de&gl=US&pli=1)
 
 - Activate Developer Mode on your Android Device
   - Open the Settings app.
